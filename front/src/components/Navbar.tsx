@@ -12,8 +12,8 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 
 const Navbar = () => {
 	return (
-    <nav className="flex items-center justify-between p-4 bg-white border-b">
-      <SidebarTrigger />
+    <nav className="flex items-center justify-between md:justify-end p-4 bg-white border-b">
+      <SidebarTrigger className="md:hidden" />
       <h1 className="text-xl font-semibold md:hidden">커플 다이어리</h1>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
