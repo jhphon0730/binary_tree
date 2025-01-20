@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={inter.className}>
-				<main>
+				<main className='min-h-screen min-w-full'>
 					{children}
 				</main>
 				<footer className="py-4 bg-gray-200">

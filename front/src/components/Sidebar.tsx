@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/sidebar'
 
 const sidebarItems = [
-  { icon: Home, label: '홈', href: '/' },
+  { icon: Home, label: '홈', href: '/dashboard' },
   { icon: Calendar, label: '캘린더', href: '/calendar' },
   { icon: MessageSquare, label: '메시지', href: '/messages' },
   { icon: Settings, label: '설정', href: '/settings' },
@@ -27,14 +27,14 @@ const Sidebar = () => {
       <SidebarHeader className="p-4">
         <h1 className="text-2xl font-bold text-center">커플 다이어리</h1>
       </SidebarHeader>
-      <SidebarContent className="p-4">
+      <SidebarContent>
         <nav className="space-y-2">
           {sidebarItems.map((item) => (
             <Button
               key={item.href}
               variant="ghost"
               className={cn(
-                'w-full justify-start',
+                'w-full justify-start px-4 py-6',
                 pathname === item.href && 'bg-gray-200'
               )}
               asChild
