@@ -1,9 +1,17 @@
+'use client'
+
+import { useRouter } from 'next/navigation'
+import { AuthForm } from '@/components/auth/AuthForm'
+
 const LoginPage = () => {
-	return (
-		<div>
-			<h1>Login Page</h1>
-		</div>
-	)
+  const router = useRouter()
+
+  const handleSubmit = (data: Record<string, string>) => {
+    console.log('Login attempt with:', data)
+    router.push('/')
+  }
+
+  return <AuthForm type="login" onSubmit={handleSubmit} />
 }
 
 export default LoginPage
