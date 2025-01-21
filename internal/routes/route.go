@@ -29,15 +29,12 @@ func (route *Route) RegisterRoutes() {
 	registerV1Routes(v1)
 }
 
-// setting the product mode 
-func (route *Route) setProductMode() {
-	gin.SetMode(gin.ReleaseMode)
-} 
-
 // Run Server 
 func (route *Route) RunServer(port string, serverType string) {
 	if serverType == "product" {
-		route.setProductMode()
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
 	}
 	route.r.Run(port)
 }

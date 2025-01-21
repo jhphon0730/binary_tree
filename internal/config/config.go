@@ -11,6 +11,14 @@ import (
 type Config struct {
 	AppEnv   string
 	Port     string
+	
+	DB_HOST string
+	DB_USER string
+	DB_PASSWORD string
+	DB_NAME string
+	DB_PORT string
+	SSL_MODE string
+	TIMEZONE string
 }
 
 var (
@@ -27,9 +35,19 @@ func LoadConfig() (*Config) {
 		os.Exit(1)
 	}
 
+	log.Println("Loading configuration...")
+
 	return &Config{
 		AppEnv:   getEnv("APP_ENV", "development"),
 		Port:     getEnv("PORT", "8080"),
+
+		DB_HOST: getEnv("DB_HOST", "localhost"),
+		DB_USER: getEnv("DB_USER", "postgres"),
+		DB_PASSWORD: getEnv("DB_PASSWORD", "postgres"),
+		DB_NAME: getEnv("DB_NAME", "postgres5"),
+		DB_PORT: getEnv("DB_PORT", "5432"),
+		SSL_MODE: getEnv("SSL_MODE", "disable"),
+		TIMEZONE: getEnv("TIMEZONE", "Asia/Shanghai"),
 	}
 }
 
