@@ -13,20 +13,12 @@ func Init() *Route {
 	return &Route{r}
 }
 
-// Register v1 routes
-func registerV1Routes(router *gin.RouterGroup) {
-    router.GET("/ping", func(c *gin.Context) {
-        c.JSON(200, gin.H{
-            "message": "pong",
-        })
-    })
-}
-
 // Register the routes
 func (route *Route) RegisterRoutes() {
-	// group v1
-	v1 := route.r.Group("/v1")
-	registerV1Routes(v1)
+	user_router := route.r.Group("/users")
+	{
+		registerUserRoutes(user_router)
+	}
 }
 
 // Run Server 
