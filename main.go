@@ -9,12 +9,12 @@ import (
 )
 
 func main() {
-	// Server
-	r := routes.Init();
 	// Config
 	cfg := config.LoadConfig()
+	// Server
+	r := routes.Init();
 	// database
-	database.Init()
+	_ = database.Init()
 
 	// Run server
 	log.Printf("Starting server in %s mode on port %s", cfg.AppEnv, cfg.Port)
