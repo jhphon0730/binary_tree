@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 )
 
 type Route struct {
@@ -10,6 +11,10 @@ type Route struct {
 
 func Init() *Route {
 	r := gin.Default()
+
+	// CORS
+	r.Use(cors.Default())
+
 	return &Route{r}
 }
 
