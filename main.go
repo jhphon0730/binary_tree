@@ -14,10 +14,9 @@ func main() {
 	// Server
 	r := routes.Init();
 	// database
-	_ = database.Init()
+	database.Init()
 	database.MigrateDB() // migrate database
 	defer database.CloseDB() // close database connection
-
 	// Run server
 	log.Printf("Starting server in %s mode on port %s", cfg.AppEnv, cfg.Port)
 	r.RegisterRoutes()
