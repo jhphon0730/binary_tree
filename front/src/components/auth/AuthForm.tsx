@@ -9,12 +9,12 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 
 type AuthFormProps = {
   type: 'login' | 'signup'
-  onSubmit: (data: Record<string, string>) => void
+  onSubmitAction: (data: Record<string, string>) => void
 }
 
 const formFields = {
-  login: ['id', 'password'],
-  signup: ['id', 'name', 'email', 'password']
+  login: ['username', 'password'],
+  signup: ['id', 'username', 'name', 'email', 'password']
 }
 
 const fieldLabels: Record<string, string> = {
@@ -24,12 +24,12 @@ const fieldLabels: Record<string, string> = {
   password: '비밀번호'
 }
 
-export function AuthForm({ type, onSubmit }: AuthFormProps) {
+export function AuthForm({ type, onSubmitAction }: AuthFormProps) {
   const [formData, setFormData] = useState<Record<string, string>>({})
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit(formData)
+    onSubmitAction(formData)
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

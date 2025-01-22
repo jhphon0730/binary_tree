@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { AuthForm } from '@/components/auth/AuthForm'
 
-export const SignupPage = () => {
+const SignupPage = () => {
   const router = useRouter()
 
   const handleSubmit = (data: Record<string, string>) => {
@@ -11,7 +11,7 @@ export const SignupPage = () => {
     router.push('/auth/login')
   }
 
-  return <AuthForm type="signup" onSubmit={handleSubmit} />
+  return <AuthForm type="signup" onSubmitAction={handleSubmit} />
 }
 
 export default SignupPage;

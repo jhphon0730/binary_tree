@@ -2,6 +2,7 @@ package database
 
 import (
 	"binary_tree/internal/config"
+	"binary_tree/internal/model"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -35,4 +36,22 @@ func Init() *gorm.DB {
 // GetDB returns the singleton database instance
 func GetDB() *gorm.DB {
 	return db_instance
+}
+
+// CloseDB closes the database connection
+func CloseDB() {
+	log.Println("Closing database connection...")
+	db, err := db_instance.DB()
+	if err != nil {
+		log.Fatalf("Error closing database: %v", err)
+	}
+	db.Close()
+	log.Println("Database connection closed!")
+}
+
+// MigrateDB migrates the database schema
+func MigrateDB() {
+	log.Println("Migrating database schema...")
+	db_instance.AutoMigrate(&model.User{})
+	log.Println("Database schema migrated!")
 }

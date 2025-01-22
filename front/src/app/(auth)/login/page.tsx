@@ -11,7 +11,7 @@ const LoginPage = () => {
     router.push('/')
   }
 
-  return <AuthForm type="login" onSubmit={handleSubmit} />
+  return <AuthForm type="login" onSubmitAction={handleSubmit} />
 }
 
 export default LoginPage
