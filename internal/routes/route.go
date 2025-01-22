@@ -20,7 +20,7 @@ func Init() *Route {
 
 // Register the routes
 func (route *Route) RegisterRoutes() {
-	user_router := route.r.Group("/users")
+	user_router := route.r.Group("/users/")
 	{
 		registerUserRoutes(user_router)
 	}

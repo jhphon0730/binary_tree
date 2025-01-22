@@ -32,6 +32,9 @@ func Init() {
 
 // GetDB returns the singleton database instance
 func GetDB() *gorm.DB {
+	once.Do(func() {
+		Init()
+	})
 	return db_instance
 }
 

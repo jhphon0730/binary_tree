@@ -6,10 +6,13 @@ import (
 	"binary_tree/internal/controller/service"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 var (
-	userService service.UserService = service.NewUserService(database.GetDB())
+	DB *gorm.DB = database.GetDB()
+
+	userService service.UserService = service.NewUserService(DB)
 	userController controller.UserController = controller.NewUserController(userService)
 )
 
