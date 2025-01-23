@@ -2,10 +2,13 @@ package controller
 
 import (
 	"binary_tree/pkg/response"
+	"binary_tree/internal/model"
 	"binary_tree/internal/model/DTO"
 	"binary_tree/internal/controller/service"
 
 	"github.com/gin-gonic/gin"
+
+	"net/http"
 )
 
 type UserController interface {
@@ -23,17 +26,27 @@ func NewUserController(userService service.UserService) UserController {
 func (u *userController) SignUpUser(c *gin.Context) {
 	var userDTO dto.UserSignUpDTO
 	if err := c.ShouldBind(&userDTO); err != nil {
-		response.Error(c, 400, "모든 항목을 입력해주세요.")
+		response.Error(c, http.StatusBadRequest, model.ErrAllFieldsRequired.Error())
 		return
 	}
 	if err := userDTO.Validate(); err != nil {
-		response.Error(c, 400, err.Error())
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	// TODO : 비밀번호 암호화
+
+	err := u.userService.CheckUserExists(userDTO.Username)
+	if err != nil {
+		if err == model.ErrUsernameAlreadyExists {
+			response.Error(c, http.StatusConflict, err.Error())
+			return
+		}
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	createdUser, err := u.userService.SignUpUser(userDTO)
 	if err != nil {
-		response.Error(c, 500, err.Error())
+		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	response.Created(c, createdUser)
