@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"binary_tree/pkg/utils"
 	"binary_tree/pkg/response"
 	"binary_tree/internal/model"
 	"binary_tree/internal/model/DTO"
@@ -41,6 +42,12 @@ func (u *userController) SignUpUser(c *gin.Context) {
 			response.Error(c, http.StatusConflict, err.Error())
 			return
 		}
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	userDTO.Password, err = utils.EncryptPassword(userDTO.Password)
+	if err != nil {
 		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
