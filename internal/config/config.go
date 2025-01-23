@@ -7,6 +7,16 @@ import (
 	"github.com/joho/godotenv"
 )
 
+type Postgres struct {
+	DB_HOST string
+	DB_USER string
+	DB_PASSWORD string
+	DB_NAME string
+	DB_PORT string
+	SSL_MODE string
+	TIMEZONE string
+}
+
 type Redis struct {
 	Host     string
 	Password string
@@ -17,16 +27,9 @@ type Config struct {
 	AppEnv   string
 	Port     string
 	
-	DB_HOST string
-	DB_USER string
-	DB_PASSWORD string
-	DB_NAME string
-	DB_PORT string
-	SSL_MODE string
-	TIMEZONE string
-
 	BCRYPT_COST string
 
+	Postgres Postgres
 	Redis Redis
 }
 
@@ -47,16 +50,17 @@ func LoadConfig() (*Config, error) {
 		AppEnv:   getEnv("APP_ENV", "development"),
 		Port:     getEnv("PORT", "8080"),
 
-		DB_HOST: getEnv("DB_HOST", "localhost"),
-		DB_USER: getEnv("DB_USER", "postgres"),
-		DB_PASSWORD: getEnv("DB_PASSWORD", "postgres"),
-		DB_NAME: getEnv("DB_NAME", "postgres5"),
-		DB_PORT: getEnv("DB_PORT", "5432"),
-		SSL_MODE: getEnv("SSL_MODE", "disable"),
-		TIMEZONE: getEnv("TIMEZONE", "Asia/Shanghai"),
-
 		BCRYPT_COST: getEnv("BCRYPT_COST", "5"),
 
+		Postgres: Postgres{
+			DB_HOST: getEnv("DB_HOST", "localhost"),
+			DB_USER: getEnv("DB_USER", "postgres"),
+			DB_PASSWORD: getEnv("DB_PASSWORD", "postgres"),
+			DB_NAME: getEnv("DB_NAME", "postgres5"),
+			DB_PORT: getEnv("DB_PORT", "5432"),
+			SSL_MODE: getEnv("SSL_MODE", "disable"),
+			TIMEZONE: getEnv("TIMEZONE", "Asia/Shanghai"),
+		},
 		Redis: Redis{
 			Host:     getEnv("REDIS_HOST", "localhost:6379"),
 			Password: getEnv("REDIS_PASSWORD", ""),

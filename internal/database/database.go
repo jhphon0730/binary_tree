@@ -20,7 +20,7 @@ var (
 func InitDatabase() error {
 	var err error
 	cfg := config.GetConfig()
-	dsn := "host=" + cfg.DB_HOST + " user=" + cfg.DB_USER + " password=" + cfg.DB_PASSWORD + " dbname=" + cfg.DB_NAME + " port=" + cfg.DB_PORT + " sslmode=" + cfg.SSL_MODE + " TimeZone=" + cfg.TIMEZONE
+	dsn := "host=" + cfg.Postgres.DB_HOST + " user=" + cfg.Postgres.DB_USER + " password=" + cfg.Postgres.DB_PASSWORD + " dbname=" + cfg.Postgres.DB_NAME + " port=" + cfg.Postgres.DB_PORT + " sslmode=" + cfg.Postgres.SSL_MODE + " TimeZone=" + cfg.Postgres.TIMEZONE
 	db_instance, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return err
