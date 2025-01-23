@@ -23,6 +23,7 @@ func NewUserController(userService service.UserService) UserController {
 	return &userController{userService: userService}
 }
 
+// 사용자 회원가입 / 등록
 func (u *userController) SignUpUser(c *gin.Context) {
 	var userDTO dto.UserSignUpDTO
 	if err := c.ShouldBind(&userDTO); err != nil {

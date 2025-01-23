@@ -19,6 +19,8 @@ type Config struct {
 	DB_PORT string
 	SSL_MODE string
 	TIMEZONE string
+
+	BCRYPT_COST string
 }
 
 var (
@@ -27,12 +29,11 @@ var (
 )
 
 // LoadConfig initializes and loads the configuration from environment variables
-func LoadConfig() (*Config) {
+func LoadConfig() (*Config, error) {
 	// Load .env file
 	err := godotenv.Load()
 	if err != nil {
-		log.Println("Error loading .env file")
-		os.Exit(1)
+		return nil, err
 	}
 
 	log.Println("Loading configuration...")
@@ -48,13 +49,15 @@ func LoadConfig() (*Config) {
 		DB_PORT: getEnv("DB_PORT", "5432"),
 		SSL_MODE: getEnv("SSL_MODE", "disable"),
 		TIMEZONE: getEnv("TIMEZONE", "Asia/Shanghai"),
-	}
+
+		BCRYPT_COST: getEnv("BCRYPT_COST", "5"),
+	}, nil
 }
 
 // GetConfig provides access to the singleton Config instance
 func GetConfig() *Config {
 	once.Do(func() {
-		configInstance = LoadConfig()
+		configInstance, _ = LoadConfig()
 	})
 	return configInstance
 }

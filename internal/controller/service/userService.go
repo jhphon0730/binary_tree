@@ -22,7 +22,7 @@ func NewUserService(DB *gorm.DB) UserService {
 	}
 }
 
-// Check if the user already exists in the database
+// 사용자가 이미 존재하는지 확인
 func (u *userService) CheckUserExists(username string) (error) {
 	var count int64
 	if err := u.DB.Model(&model.User{}).Where("username = ?", username).Count(&count).Error; err != nil {
@@ -34,6 +34,7 @@ func (u *userService) CheckUserExists(username string) (error) {
 	return nil
 }
 
+// 사용자 회원가입 / 등록
 func (u *userService) SignUpUser(userDTO dto.UserSignUpDTO) (model.User, error) {
 	user := model.User{
 		Username: userDTO.Username,

@@ -17,7 +17,7 @@ var (
 )
 
 // Init initializes the database connection
-func Init() {
+func Init() error {
 	log.Println("Connecting to database...")
 
 	var err error
@@ -25,9 +25,10 @@ func Init() {
 	dsn := "host=" + cfg.DB_HOST + " user=" + cfg.DB_USER + " password=" + cfg.DB_PASSWORD + " dbname=" + cfg.DB_NAME + " port=" + cfg.DB_PORT + " sslmode=" + cfg.SSL_MODE + " TimeZone=" + cfg.TIMEZONE
 	db_instance, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("Error connecting to database: %v", err)
+		return err
 	}
 	log.Println("Database connection established!")
+	return nil
 }
 
 // GetDB returns the singleton database instance
@@ -50,8 +51,6 @@ func CloseDB() {
 }
 
 // MigrateDB migrates the database schema
-func MigrateDB() {
-	log.Println("Migrating database schema...")
-	db_instance.AutoMigrate(&model.User{})
-	log.Println("Database schema migrated!")
+func MigrateDB() error {
+	return db_instance.AutoMigrate(&model.User{})
 }
