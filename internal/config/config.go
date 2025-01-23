@@ -1,7 +1,6 @@
 package config
 
 import (
-	"log"
 	"os"
 	"sync"
 
@@ -43,8 +42,6 @@ func LoadConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	log.Println("Loading configuration...")
 
 	return &Config{
 		AppEnv:   getEnv("APP_ENV", "development"),

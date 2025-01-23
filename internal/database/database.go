@@ -18,8 +18,6 @@ var (
 
 // Init initializes the database connection
 func InitDatabase() error {
-	log.Println("Connecting to database...")
-
 	var err error
 	cfg := config.GetConfig()
 	dsn := "host=" + cfg.DB_HOST + " user=" + cfg.DB_USER + " password=" + cfg.DB_PASSWORD + " dbname=" + cfg.DB_NAME + " port=" + cfg.DB_PORT + " sslmode=" + cfg.SSL_MODE + " TimeZone=" + cfg.TIMEZONE
@@ -27,7 +25,6 @@ func InitDatabase() error {
 	if err != nil {
 		return err
 	}
-	log.Println("Database connection established!")
 	return nil
 }
 
@@ -41,13 +38,11 @@ func GetDB() *gorm.DB {
 
 // CloseDB closes the database connection
 func CloseDB() {
-	log.Println("Closing database connection...")
 	db, err := db_instance.DB()
 	if err != nil {
 		log.Fatalf("Error closing database: %v", err)
 	}
 	db.Close()
-	log.Println("Database connection closed!")
 }
 
 // MigrateDB migrates the database schema

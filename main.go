@@ -12,6 +12,7 @@ import (
 
 func main() {
 	// Config
+	log.Println("Loading config...")
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Fatalf("Error loading config: %s", err)
@@ -21,21 +22,25 @@ func main() {
 	r := routes.Init()
 
 	// database
+	log.Println("Initializing database...")
 	if err := database.InitDatabase(); err != nil {
 		log.Fatalf("Error initializing database: %s", err)
 	}
+	log.Println("Migrating database...")
 	if err := database.MigrateDB(); err != nil {
 		log.Fatalf("Error migrating database: %s", err)
 	}
 	defer database.CloseDB() // close database connection
 
 	// redis
+	log.Println("Initializing redis...")
 	if err := redis.InitRedis(); err != nil {
 		log.Fatalf("Error initializing redis: %s", err)
 	}
 	defer redis.CloseRedis() // close redis connection
 
 	// Bcrypt
+	log.Println("Initializing Bcrypt...")
 	if err := utils.InitBcrypt(); err != nil {
 		log.Fatalf("BCRYPT Setting Error: %s", err)
 	}
