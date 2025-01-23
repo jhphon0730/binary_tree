@@ -17,7 +17,7 @@ var (
 )
 
 // Init initializes the database connection
-func Init() error {
+func InitDatabase() error {
 	log.Println("Connecting to database...")
 
 	var err error
@@ -34,7 +34,7 @@ func Init() error {
 // GetDB returns the singleton database instance
 func GetDB() *gorm.DB {
 	once.Do(func() {
-		Init()
+		InitDatabase()
 	})
 	return db_instance
 }

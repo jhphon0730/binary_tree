@@ -8,6 +8,12 @@ import (
 	"github.com/joho/godotenv"
 )
 
+type Redis struct {
+	Host     string
+	Password string
+	DB       int
+}
+
 type Config struct {
 	AppEnv   string
 	Port     string
@@ -21,6 +27,8 @@ type Config struct {
 	TIMEZONE string
 
 	BCRYPT_COST string
+
+	Redis Redis
 }
 
 var (
@@ -51,6 +59,12 @@ func LoadConfig() (*Config, error) {
 		TIMEZONE: getEnv("TIMEZONE", "Asia/Shanghai"),
 
 		BCRYPT_COST: getEnv("BCRYPT_COST", "5"),
+
+		Redis: Redis{
+			Host:     getEnv("REDIS_HOST", "localhost:6379"),
+			Password: getEnv("REDIS_PASSWORD", ""),
+			DB:       0,
+		},
 	}, nil
 }
 

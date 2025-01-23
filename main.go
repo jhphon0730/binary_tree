@@ -1,10 +1,11 @@
 package main
 
 import (
+	"binary_tree/pkg/utils"
+	"binary_tree/pkg/redis"
 	"binary_tree/internal/config"
 	"binary_tree/internal/routes"
 	"binary_tree/internal/database"
-	"binary_tree/pkg/utils"
 
 	"log"
 )
@@ -20,13 +21,19 @@ func main() {
 	r := routes.Init()
 
 	// database
-	if err := database.Init(); err != nil {
+	if err := database.InitDatabase(); err != nil {
 		log.Fatalf("Error initializing database: %s", err)
 	}
 	if err := database.MigrateDB(); err != nil {
 		log.Fatalf("Error migrating database: %s", err)
 	}
 	defer database.CloseDB() // close database connection
+
+	// redis
+	if err := redis.InitRedis(); err != nil {
+		log.Fatalf("Error initializing redis: %s", err)
+	}
+	defer redis.CloseRedis() // close redis connection
 
 	// Bcrypt
 	if err := utils.InitBcrypt(); err != nil {
