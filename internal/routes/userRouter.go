@@ -1,6 +1,7 @@
 package routes 
 
 import (
+	"binary_tree/internal/middleware"
 	"binary_tree/internal/database"
 	"binary_tree/internal/controller"
 	"binary_tree/internal/controller/service"
@@ -19,4 +20,11 @@ var (
 func registerUserRoutes(router *gin.RouterGroup) {
 	router.POST("/", userController.SignUpUser)
 	router.POST("/login", userController.SignInUser)
+
+	// middleware test
+	router.GET("/test", middleware.AuthMiddleware(), func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "success",
+		})
+	})
 }

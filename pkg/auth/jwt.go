@@ -1,4 +1,4 @@
-package utils
+package auth
 
 import (
 	"binary_tree/internal/config"
@@ -31,42 +31,27 @@ func GenerateJWT(userID int) (string, error) {
 	return token.SignedString(jwtSecret)
 }
 
-// 토큰 유효성 검사 함수
-func ValidateJWT(tokenString string) (bool, error) {
+// 토큰을 검증하고, 유효하면 데이터를 반환하는 함수
+func ValidateAndParseJWT(tokenString string) (*TokenClaims, error) {
+	// 토큰을 파싱하고 클레임을 추출
 	token, err := jwt.ParseWithClaims(tokenString, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("unexpected signing method")
+			return nil, errors.New("토큰을 검증할 수 없습니다")
 		}
-		return jwtSecret, nil
-	})
-	if err != nil {
-		return false, err
-	}
-
-	// 토큰이 유효한 경우
-	if claims, ok := token.Claims.(*TokenClaims); ok && token.Valid {
-		// 만료 여부 확인
-		if claims.ExpiresAt.Time.Before(time.Now()) {
-			return false, errors.New("token has expired")
-		}
-		return true, nil
-	}
-
-	return false, errors.New("invalid token")
-}
-
-// 토큰에서 데이터를 추출하여 구조체로 반환
-func ParseJWT(tokenString string) (*TokenClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtSecret, nil
 	})
 	if err != nil {
 		return nil, err
 	}
 
+	// 토큰이 유효한지 확인하고, 유효한 경우 클레임을 반환
 	if claims, ok := token.Claims.(*TokenClaims); ok && token.Valid {
+		// 만료 여부 확인
+		if claims.ExpiresAt.Time.Before(time.Now()) {
+			return nil, errors.New("토큰이 만료되었습니다")
+		}
 		return claims, nil
 	}
 
-	return nil, errors.New("failed to parse token")
+	return nil, errors.New("올바르지 않은 토큰입니다")
 }
