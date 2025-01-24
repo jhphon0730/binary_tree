@@ -14,12 +14,12 @@ var (
 )
 
 type TokenClaims struct {
-	UserID string `json:"userID"`
+	UserID int `json:"userID"`
 	jwt.RegisteredClaims
 }
 
 // 토큰 생성 함수
-func GenerateJWT(userID string) (string, error) {
+func GenerateJWT(userID int) (string, error) {
 	claims := TokenClaims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{

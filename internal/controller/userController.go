@@ -10,10 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"net/http"
+
+	// TEST
+	"binary_tree/pkg/redis"
 )
 
 type UserController interface {
 	SignUpUser(c *gin.Context)
+	SignInUser(c *gin.Context)
 }
 
 type userController struct {
@@ -62,3 +66,43 @@ func (u *userController) SignUpUser(c *gin.Context) {
 }
 
 // 사용자 로그인
+func (u *userController) SignInUser(c *gin.Context) {
+	userID := 1
+	key, err := utils.GenerateJWT(userID)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	bool, err := utils.ValidateJWT(key)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if !bool {
+		response.Error(c, http.StatusInternalServerError, "토큰 검증 실패")
+		return
+	} 
+
+	check, err := utils.ParseJWT(key)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := redis.SetUserLoginSession(check.UserID, key); err != nil {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	testA, err := redis.GetUserLoginSession(check.UserID)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, "세션 정보 저장 실패")
+		return
+	}
+
+	response.Success(c, gin.H{
+		"token": key,
+		"session": testA,
+	})
+}
