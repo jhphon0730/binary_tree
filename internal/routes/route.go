@@ -1,6 +1,8 @@
 package routes 
 
 import (
+	"binary_tree/internal/middleware"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 )
@@ -20,6 +22,12 @@ func Init() *Route {
 
 // Register the routes
 func (route *Route) RegisterRoutes() {
+	// ping 
+	route.r.GET("/ping", middleware.AuthMiddleware(), func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
 	user_router := route.r.Group("/users/")
 	{
 		registerUserRoutes(user_router)
