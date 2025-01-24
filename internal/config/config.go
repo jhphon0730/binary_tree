@@ -31,6 +31,8 @@ type Config struct {
 
 	Postgres Postgres
 	Redis Redis
+
+	JWT_SECRET string
 }
 
 var (
@@ -66,6 +68,7 @@ func LoadConfig() (*Config, error) {
 			Password: getEnv("REDIS_PASSWORD", ""),
 			DB:       0,
 		},
+		JWT_SECRET: getEnv("JWT_SECRET", ""),
 	}, nil
 }
 
