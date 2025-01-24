@@ -33,7 +33,7 @@ func EncryptPassword(password string) (string, error) {
 }
 
 // 비밀번호 확인 함수
-func CheckPasswordHash(password, hash string) error {
+func ComparePassword(password, hash string) error {
 	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
 		return model.ErrInvalidPassword
 	}

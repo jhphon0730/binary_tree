@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"binary_tree/pkg/auth"
 	"binary_tree/pkg/utils"
 	"binary_tree/pkg/response"
 	"binary_tree/internal/model"
@@ -68,31 +67,26 @@ func (u *userController) SignUpUser(c *gin.Context) {
 
 // 사용자 로그인
 func (u *userController) SignInUser(c *gin.Context) {
-	userID := 1
-	key, err := auth.GenerateJWT(userID)
-	if err != nil {
-		response.Error(c, http.StatusInternalServerError, err.Error())
+	var userDTO dto.UserSignInDTO
+	if err := c.ShouldBindJSON(&userDTO); err != nil {
+		response.Error(c, http.StatusBadRequest, model.ErrAllFieldsRequired.Error())
 		return
 	}
-	claims, err := auth.ValidateAndParseJWT(key)
+
+	user, token, err := u.userService.SignInUser(userDTO)
 	if err != nil {
+		if err == model.ErrUserNotFound || err == model.ErrInvalidPassword {
+			response.Error(c, http.StatusNotFound, err.Error())
+			return
+		}
 		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	if err := redis.SetUserLoginSession(claims.UserID, key); err != nil {
+	if err := redis.SetUserLoginSession(int(user.ID), token); err != nil {
 		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	testA, err := redis.GetUserLoginSession(claims.UserID)
-	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "세션 정보 저장 실패")
-		return
-	}
-
-	response.Success(c, gin.H{
-		"token": key,
-		"session": testA,
-	})
+	response.Success(c, gin.H{"user": user, "token": token})
 }

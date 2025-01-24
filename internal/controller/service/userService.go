@@ -1,6 +1,8 @@
 package service
 
 import (
+	"binary_tree/pkg/auth"
+	"binary_tree/pkg/utils"
 	"binary_tree/internal/model"
 	"binary_tree/internal/model/DTO"
 
@@ -10,6 +12,7 @@ import (
 type UserService interface {
 	CheckUserExists(username string) (error)
 	SignUpUser(userDTO dto.UserSignUpDTO) (model.User, error)
+	SignInUser(userDTO dto.UserSignInDTO) (model.User, string, error)
 }
 
 type userService struct {
@@ -46,4 +49,20 @@ func (u *userService) SignUpUser(userDTO dto.UserSignUpDTO) (model.User, error) 
 		return model.User{}, err
 	}
 	return user, nil
+}
+
+// 사용자 로그인
+func (u *userService) SignInUser(userDTO dto.UserSignInDTO) (model.User, string, error) {
+	var user model.User
+	if err := u.DB.Where("username = ?", userDTO.Username).First(&user).Error; err != nil {
+		return model.User{}, "", model.ErrUserNotFound
+	}
+	if err := utils.ComparePassword(userDTO.Password, user.Password); err != nil {
+		return model.User{}, "", err // invalid password
+	}
+	token, err := auth.GenerateJWT(int(user.ID))
+	if err != nil {
+		return model.User{}, "", model.ErrInternalServer
+	}
+	return user, token, nil
 }

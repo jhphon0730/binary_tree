@@ -73,3 +73,56 @@ func (dto *UserSignUpDTO) validatePassword() error {
 	}
 	return nil
 }
+
+type UserSignInDTO struct {
+	Username string `form:"username" binding:"required"`
+	Password string `form:"password" binding:"required"`
+}
+
+// 유효성 검사 함수
+func (dto *UserSignInDTO) Validate() error {
+	if err := dto.validateUsername(); err != nil {
+		return err
+	}
+	if err := dto.validatePassword(); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Username 유효성 검사: 최소 3자 이상
+func (dto *UserSignInDTO) validateUsername() error {
+	if len(dto.Username) < 3 {
+		return errors.New("username must be at least 3 characters")
+	}
+	// 추가 조건: 공백을 허용하지 않음
+	if strings.Contains(dto.Username, " ") {
+		return errors.New("username cannot contain spaces")
+	}
+	return nil
+}
+
+// Password 유효성 검사: 최소 8자 이상
+func (dto *UserSignInDTO) validatePassword() error {
+	if len(dto.Password) < 8 {
+		return errors.New("password must be at least 8 characters")
+	}
+	// 대소문자, 숫자 포함 체크
+	hasUpper := false
+	hasLower := false
+	hasDigit := false
+	for _, char := range dto.Password {
+		switch {
+		case char >= 'A' && char <= 'Z':
+			hasUpper = true
+		case char >= 'a' && char <= 'z':
+			hasLower = true
+		case char >= '0' && char <= '9':
+			hasDigit = true
+		}
+	}
+	if !hasUpper || !hasLower || !hasDigit {
+		return errors.New("password must contain at least one uppercase letter, one lowercase letter, and one number")
+	}
+	return nil
+}

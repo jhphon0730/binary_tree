@@ -25,7 +25,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		// Bearer 토큰에서 실제 토큰 추출
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
-		// 3. 토큰 검증 및 만료 확인과 클레임 추출
+		// 토큰 검증 및 만료 확인과 클레임 추출
 		claims, err := auth.ValidateAndParseJWT(tokenString)
 		if err != nil {
 			response.Error(c, http.StatusUnauthorized, "토큰이 유효하지 않습니다.")
@@ -33,10 +33,10 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// 4. JWT 토큰에서 userID 추출
+		// JWT 토큰에서 userID 추출
 		userID := claims.UserID
 
-		// 5. Redis에서 userID에 해당하는 로그인 세션이 존재하는지 확인
+		// Redis에서 userID에 해당하는 로그인 세션이 존재하는지 확인
 		token, err := redis.GetUserLoginSession(userID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "사용자를 인증할 수 없습니다."})
