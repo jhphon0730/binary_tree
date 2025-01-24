@@ -7,7 +7,7 @@ var (
 	ErrAllFieldsRequired = errors.New("모든 항목을 입력해주세요.")
 	ErrUsernameAlreadyExists = errors.New("이미 존재하는 사용자입니다.")
 
-	// Login 
+	//// Login 
 	ErrUserNotFound = errors.New("사용자를 찾을 수 없습니다.")
 	ErrGenerateToken = errors.New("토큰을 발급할 수 없습니다.")
 	ErrInternalServer = errors.New("서버 내부 오류가 발생했습니다.")
