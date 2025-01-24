@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { AuthForm } from '@/components/auth/AuthForm'
 
-const LoginPage = () => {
+const SignInPage = () => {
   const router = useRouter()
 
   const handleSubmit = (data: Record<string, string>) => {
@@ -14,4 +14,4 @@ const LoginPage = () => {
   return <AuthForm type="login" onSubmitAction={handleSubmit} />
 }
 
-export default LoginPage
+export default SignInPage
