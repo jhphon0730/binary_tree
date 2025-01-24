@@ -16,6 +16,8 @@ import (
 var (
 	redis_instance *redis.Client
 	once sync.Once
+
+	ctx = context.Background()
 )
 
 func InitRedis() error {
