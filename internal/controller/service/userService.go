@@ -1,18 +1,20 @@
 package service
 
 import (
-	"binary_tree/pkg/auth"
-	"binary_tree/pkg/utils"
 	"binary_tree/internal/model"
-	"binary_tree/internal/model/DTO"
+	"binary_tree/internal/model/dto"
+	"binary_tree/pkg/auth"
+	"binary_tree/pkg/redis"
+	"binary_tree/pkg/utils"
 
 	"gorm.io/gorm"
 )
 
 type UserService interface {
-	CheckUserExists(username string) (error)
+	CheckUserExists(username string) error
 	SignUpUser(userDTO dto.UserSignUpDTO) (model.User, error)
 	SignInUser(userDTO dto.UserSignInDTO) (model.User, string, error)
+	SignOutUser(userID int) error
 }
 
 type userService struct {
@@ -26,7 +28,7 @@ func NewUserService(DB *gorm.DB) UserService {
 }
 
 // 사용자가 이미 존재하는지 확인
-func (u *userService) CheckUserExists(username string) (error) {
+func (u *userService) CheckUserExists(username string) error {
 	var count int64
 	if err := u.DB.Model(&model.User{}).Where("username = ?", username).Count(&count).Error; err != nil {
 		return err
@@ -65,4 +67,12 @@ func (u *userService) SignInUser(userDTO dto.UserSignInDTO) (model.User, string,
 		return model.User{}, "", model.ErrInternalServer
 	}
 	return user, token, nil
+}
+
+// 사용자 로그아웃
+func (*userService) SignOutUser(userID int) error {
+	if err := redis.DeleteUserLoginSession(userID); err != nil {
+		return err
+	}
+	return nil
 }

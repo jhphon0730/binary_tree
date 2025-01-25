@@ -1,19 +1,2 @@
-# 사용자 로그인 추가 
-1. 로그인 Service 추가 
-2. 로그인 Controller 추가 
-
-3. 로그인 시에 Redis 추가 
-
-4. 로그아웃 Service 추가 
-5. 로그아웃 Controller 추가
-
-6. 로그아웃 시에 Redis 삭제
-
-7. 로그인 상태 확인 Service 추가
-8. 로그인 상태 확인 Controller 추가
-
-9. 로그인 상태 확인 시에 Redis 확인
-
-10. 로그인 상태 전용 Middleware 추가 
-
-11. ( 7, 8 ) 에 Middleware 적용
+# 로그아웃 사용자 
+1. redis에 있는 key 삭제 해주기

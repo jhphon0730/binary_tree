@@ -1,23 +1,22 @@
 package controller
 
 import (
-	"binary_tree/pkg/utils"
-	"binary_tree/pkg/response"
-	"binary_tree/internal/model"
-	"binary_tree/internal/model/DTO"
 	"binary_tree/internal/controller/service"
+	"binary_tree/internal/model"
+	"binary_tree/internal/model/dto"
+	"binary_tree/pkg/redis"
+	"binary_tree/pkg/response"
+	"binary_tree/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 
 	"net/http"
-
-	// TEST
-	"binary_tree/pkg/redis"
 )
 
 type UserController interface {
 	SignUpUser(c *gin.Context)
 	SignInUser(c *gin.Context)
+	SignOutUser(c *gin.Context)
 }
 
 type userController struct {
@@ -89,4 +88,16 @@ func (u *userController) SignInUser(c *gin.Context) {
 	}
 
 	response.Success(c, gin.H{"user": user, "token": token})
+	return
+}
+
+// 사용자 로그아웃
+func (u *userController) SignOutUser(c *gin.Context) {
+	userID := c.GetInt("userID")
+	if err := redis.DeleteUserLoginSession(userID); err != nil {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	response.Success(c, nil)
+	return
 }

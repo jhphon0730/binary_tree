@@ -4,6 +4,7 @@ import (
 	"binary_tree/internal/controller"
 	"binary_tree/internal/controller/service"
 	"binary_tree/internal/database"
+	"binary_tree/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -19,4 +20,5 @@ var (
 func registerUserRoutes(router *gin.RouterGroup) {
 	router.POST("/sign-up", userController.SignUpUser)
 	router.POST("/sign-in", userController.SignInUser)
+	router.POST("/sign-out", middleware.AuthMiddleware(), userController.SignOutUser)
 }
