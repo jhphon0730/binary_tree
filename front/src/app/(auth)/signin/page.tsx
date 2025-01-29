@@ -1,7 +1,7 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import Swal from 'sweetalert2'
+import { useRouter } from 'next/navigation'
 
 import { AuthForm } from '@/components/auth/AuthForm'
 
@@ -34,6 +34,7 @@ const SignInPage = () => {
       title: '로그인 성공',
       text: '로그인에 성공했습니다.',
     }).then(() => {
+      localStorage.setItem('token', res.data.token)
       router.push('/')
     })
     return
