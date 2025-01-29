@@ -20,8 +20,23 @@ const SignInPage = () => {
       })
       return
     }
-    const a = await RequestSignIn({ username, password })
-    console.log(a)
+    const res = await RequestSignIn({ username, password })
+    if (res.error) {
+      Swal.fire({
+        icon: 'error',
+        title: '로그인 실패',
+        text: res.error || '로그인에 실패했습니다.',
+      })
+      return
+    }
+    await Swal.fire({
+      icon: 'success',
+      title: '로그인 성공',
+      text: '로그인에 성공했습니다.',
+    }).then(() => {
+      router.push('/')
+    })
+    return
   }
 
   return <AuthForm type="login" onSubmitAction={handleSubmit} />
