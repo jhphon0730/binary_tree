@@ -1,6 +1,4 @@
-import { cookies } from "next/headers"
-
-const API_BASE_URL = process.env.API_BASE_URL
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 export interface response<T> {
 	data: T,
@@ -10,9 +8,17 @@ export interface response<T> {
 }
 
 export const getJWT = async () => {
-  const cookieStore = await cookies()
-  const token = cookieStore.get("token")
-  return token?.value
+  let token
+
+  if (typeof window !== "undefined") {
+    // 클라이언트 사이드
+    token = localStorage.getItem("token")
+  } else {
+    // 서버 사이드
+    const { cookies } = await import("next/headers")
+    token = (await cookies()).get("token")
+  }
+  return token
 }
 
 export interface fetchOptions {
