@@ -1,6 +1,6 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
-export interface response<T> {
+export interface Response<T> {
 	data: T,
 	state: number,
 	message: string,
@@ -32,7 +32,7 @@ const defaultHeaders = {
 }
 
 // NO JWT 
-export const FetchWithOutAuth = async <T>(url: string, options: fetchOptions = {}): Promise<response<T>> => {
+export const FetchWithOutAuth = async (url: string, options: fetchOptions = {}) => {
   const mergeOptions = {
     ...options,
     headers: {
@@ -45,7 +45,7 @@ export const FetchWithOutAuth = async <T>(url: string, options: fetchOptions = {
 }
 
 // JWT
-export const FetchWithAuth = async <T>(url: string, options: fetchOptions = {}): Promise<response<T>> => {
+export const FetchWithAuth = async (url: string, options: fetchOptions = {}) => {
   const token = await getJWT()
   const mergeOptions = {
     ...options,
