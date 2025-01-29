@@ -75,7 +75,7 @@ func (u *userController) SignInUser(c *gin.Context) {
 	user, token, err := u.userService.SignInUser(userDTO)
 	if err != nil {
 		if err == model.ErrUserNotFound || err == model.ErrInvalidPassword {
-			response.Error(c, http.StatusNotFound, err.Error())
+			response.Error(c, http.StatusUnauthorized, err.Error())
 			return
 		}
 		response.Error(c, http.StatusInternalServerError, err.Error())
