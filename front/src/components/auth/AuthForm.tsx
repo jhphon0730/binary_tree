@@ -14,11 +14,11 @@ type AuthFormProps = {
 
 const formFields = {
   login: ['username', 'password'],
-  signup: ['id', 'username', 'name', 'email', 'password']
+  signup: ['username', 'name', 'email', 'password']
 }
 
 const fieldLabels: Record<string, string> = {
-  id: '아이디',
+  username: '아이디',
   name: '이름',
   email: '이메일',
   password: '비밀번호'
@@ -94,7 +94,7 @@ export function AuthForm({ type, onSubmitAction }: AuthFormProps) {
         {type === 'login' ? (
           <p>계정이 없으신가요? <Link href="/signup" className="text-blue-600 hover:underline">회원가입</Link></p>
         ) : (
-          <p>이미 계정이 있으신가요? <Link href="/login" className="text-blue-600 hover:underline">로그인</Link></p>
+          <p>이미 계정이 있으신가요? <Link href="/signin" className="text-blue-600 hover:underline">로그인</Link></p>
         )}
       </CardFooter>
     </Card>
