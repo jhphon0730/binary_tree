@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation'
 
 import { AuthForm } from '@/components/auth/AuthForm'
 
+import { useAuthStore } from '@/store/authStore'
 import { RequestSignIn } from '@/lib/api/user'
 
 const SignInPage = () => {
   const router = useRouter()
+  const authStore = useAuthStore()
 
   const handleSubmit = async (data: Record<string, string>) => {
     const { username, password } = data
@@ -34,6 +36,7 @@ const SignInPage = () => {
       title: '로그인 성공',
       text: '로그인에 성공했습니다.',
     }).then(() => {
+      authStore.setUser(res.data.user)
       localStorage.setItem('token', res.data.token)
       router.push('/')
     })
