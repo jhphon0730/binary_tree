@@ -35,7 +35,7 @@ const Sidebar = () => {
               variant="ghost"
               className={cn(
                 'w-full justify-start px-4 py-6',
-                pathname === item.href && 'bg-gray-200'
+                pathname === item.href && 'bg-gray-100'
               )}
               asChild
             >
@@ -47,7 +47,7 @@ const Sidebar = () => {
           ))}
         </nav>
       </SidebarContent>
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="p-2">
         {/* 여기에 추가적인 푸터 내용을 넣을 수 있습니다 */}
       </SidebarFooter>
     </ShadcnSidebar>
