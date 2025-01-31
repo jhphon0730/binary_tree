@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Swal from 'sweetalert2'
+import Cookies from 'js-cookie'
 import { User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -33,6 +34,9 @@ const Navbar = () => {
 			icon: 'success',
 			showConfirmButton: false,
 			timer: 1500,
+		}).then(() => {
+			Cookies.remove('token');
+			authStore.clearUser();
 		})
 		router.push('/sign-in')
 	}
