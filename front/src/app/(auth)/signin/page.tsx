@@ -12,7 +12,7 @@ const SignInPage = () => {
   const router = useRouter()
   const authStore = useAuthStore()
 
-  const handleSubmit = async (data: Record<string, string>) => {
+  const handleSubmit = async (data: Record<string, string>): Promise<void> => {
     const { username, password } = data
     if (!username || !password) {
       Swal.fire({
