@@ -1,4 +1,4 @@
-import { FetchWithOutAuth, Response } from "@/lib/api"
+import { FetchWithOutAuth, FetchWithAuth, Response } from "@/lib/api"
 import { User } from '@/types/user'
 
 type SignInRequest = {
@@ -35,6 +35,20 @@ export const RequestSignUp = async (signUpProps: SignUpRequest): Promise<Respons
 	const res = await FetchWithOutAuth('/users/sign-up', {
 		method: 'POST',
 		body: JSON.stringify({ ...signUpProps }),
+	})
+	return {
+		data: res.data,
+		state: res.state,
+		message: res.message,
+		error: res.error,
+	}
+}
+
+type SignOutResponse = null
+type SignOutRequest = null
+export const RequestSignOut = async (_: SignOutRequest): Promise<Response<SignOutResponse>> => {
+	const res = await FetchWithAuth('/users/sign-out', {
+		method: 'POST',
 	})
 	return {
 		data: res.data,

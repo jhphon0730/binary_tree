@@ -11,8 +11,8 @@ export const getJWT = async () => {
   let token
 
   if (typeof window !== "undefined") {
-    // 클라이언트 사이드
-    token = localStorage.getItem("token")
+		const Cookies = await import("js-cookie")
+		token = Cookies.default.get("token")
   } else {
     // 서버 사이드
     const { cookies } = await import("next/headers")
