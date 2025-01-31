@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from 'zustand/middleware'
 
 import { User } from '@/types/user'
 
@@ -9,9 +10,16 @@ interface AuthStore {
   clearUser: () => void;
 }
 
-export const useAuthStore = create<AuthStore>((set) => ({
-  user: null, // default value
-
-  setUser: (user) => set({ user }),
-  clearUser: () => set({ user: null }),
-}));
+export const useAuthStore = create<AuthStore>()(
+  persist(
+    (set) => ({
+      user: null,
+      setUser: (user) => set({ user }),
+      clearUser: () => set({ user: null }),
+    }),
+    {
+      name: "auth-storage",
+			storage: createJSONStorage(() => sessionStorage),
+    }
+  )
+);

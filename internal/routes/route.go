@@ -15,7 +15,12 @@ func Init() *Route {
 	r := gin.Default()
 
 	// CORS
-	r.Use(cors.Default())
+	// 3000 is the frontend port
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"*"},
+	}))
 
 	return &Route{r}
 }
