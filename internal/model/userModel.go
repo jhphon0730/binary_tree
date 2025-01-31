@@ -4,7 +4,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// signup: ['id', 'username', 'name', 'email', 'password']
 type User struct {
 	gorm.Model
 	Username string `json:"username" gorm:"unique" binding:"required" validate:"required"`
