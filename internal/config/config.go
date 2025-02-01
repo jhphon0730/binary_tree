@@ -20,7 +20,8 @@ type Postgres struct {
 type Redis struct {
 	Host     string
 	Password string
-	DB       int
+
+	USER_DB int
 }
 
 type Config struct {
@@ -68,7 +69,7 @@ func LoadConfig() (*Config, error) {
 		Redis: Redis{
 			Host:     getEnv("REDIS_HOST", "localhost:6379"),
 			Password: getEnv("REDIS_PASSWORD", ""),
-			DB:       0,
+			USER_DB:  0,
 		},
 		JWT_SECRET: getEnv("JWT_SECRET", ""),
 		CHAR_SET:   getEnv("CHAR_SET", "asdqwe123"),

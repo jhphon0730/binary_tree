@@ -22,7 +22,7 @@ func InitUserRedis(ctx context.Context) error {
 	user_redis_instance = redis.NewClient(&redis.Options{
 		Addr:     config.GetConfig().Redis.Host,
 		Password: config.GetConfig().Redis.Password,
-		DB:       0,
+		DB:       config.GetConfig().Redis.USER_DB,
 	})
 
 	_, err := user_redis_instance.Ping(ctx).Result()
