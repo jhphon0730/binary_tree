@@ -17,6 +17,7 @@ type UserController interface {
 	SignUpUser(c *gin.Context)
 	SignInUser(c *gin.Context)
 	SignOutUser(c *gin.Context)
+	GenerateInviteCode(c *gin.Context)
 }
 
 type userController struct {
@@ -99,5 +100,17 @@ func (u *userController) SignOutUser(c *gin.Context) {
 		return
 	}
 	response.Success(c, nil)
+	return
+}
+
+// 초대 코드 생성
+func (u *userController) GenerateInviteCode(c *gin.Context) {
+	userID := c.GetInt("userID")
+	inviteCode, err := u.userService.GenerateInviteCode(uint(userID))
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	response.Success(c, gin.H{"inviteCode": inviteCode})
 	return
 }

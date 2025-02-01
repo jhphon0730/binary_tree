@@ -21,4 +21,6 @@ func registerUserRoutes(router *gin.RouterGroup) {
 	router.POST("/sign-up", userController.SignUpUser)
 	router.POST("/sign-in", userController.SignInUser)
 	router.POST("/sign-out", middleware.AuthMiddleware(), userController.SignOutUser)
+
+	router.POST("/invite-generate", middleware.AuthMiddleware(), userController.GenerateInviteCode)
 }

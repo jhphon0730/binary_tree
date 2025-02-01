@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"strings"
 	"net/http"
+	"strings"
 )
 
 // JWT 토큰을 확인하고 세션을 검증하는 미들웨어
@@ -17,7 +17,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		// Authorization 헤더에서 토큰 확인
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			response.Error(c, http.StatusUnauthorized, "토큰이 필요합니다.")
+			response.Error(c, http.StatusUnauthorized, "유효하지 않은 요청입니다.")
 			c.Abort()
 			return
 		}
@@ -39,12 +39,12 @@ func AuthMiddleware() gin.HandlerFunc {
 		// Redis에서 userID에 해당하는 로그인 세션이 존재하는지 확인
 		token, err := redis.GetUserLoginSession(userID)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "사용자를 인증할 수 없습니다."})
+			response.Error(c, http.StatusInternalServerError, "사용자를 인증할 수 없습니다.")
 			c.Abort()
 			return
 		}
 		if token != tokenString {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "세션이 만료되었습니다."})
+			response.Error(c, http.StatusUnauthorized, "로그인 세션이 만료되었습니다.")
 			c.Abort()
 			return
 		}
