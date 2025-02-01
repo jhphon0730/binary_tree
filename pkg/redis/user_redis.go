@@ -32,15 +32,18 @@ func InitUserRedis(ctx context.Context) error {
 	return nil
 }
 
-func GetUserRedis() *redis.Client {
+func GetUserRedis(ctx context.Context) *redis.Client {
 	user_once.Do(func() {
-		ctx := context.Background()
 		InitUserRedis(ctx)
 	})
 	return user_redis_instance
 }
 
 func CloseUserRedis() {
+	if user_redis_instance == nil {
+		log.Println("Redis connection not initialized or already closed.")
+		return
+	}
 	log.Println("Closing redis connection...")
 	err := user_redis_instance.Close()
 	if err != nil {
