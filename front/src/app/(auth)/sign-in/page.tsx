@@ -1,8 +1,9 @@
 'use client'
 
+import React from 'react';
 import Swal from 'sweetalert2'
-import { useRouter } from 'next/navigation'
 import Cookies from 'js-cookie'
+import { useRouter } from 'next/navigation'
 
 import { AuthForm } from '@/components/auth/AuthForm'
 
@@ -12,6 +13,12 @@ import { RequestSignIn } from '@/lib/api/user'
 const SignInPage = () => {
   const router = useRouter()
   const authStore = useAuthStore()
+
+  // 로그인 페이지 진입 시 로그인 정보 초기화
+  React.useEffect(() => {
+    authStore.clearUser()
+    Cookies.remove('token')
+  }, [])
 
   const handleSubmit = async (data: Record<string, string>): Promise<void> => {
     const { username, password } = data
@@ -38,7 +45,9 @@ const SignInPage = () => {
       text: '로그인에 성공했습니다.',
     }).then(async () => {
       authStore.setUser(res.data.user)
-			Cookies.set('token', res.data.token)
+			Cookies.set('token', res.data.token, {
+        expires: 1 / 24,
+      })
       router.push('/dashboard')
     })
     return
