@@ -3,10 +3,9 @@
 import React from 'react'
 import Swal from 'sweetalert2'
 import Cookies from 'js-cookie'
-import { User } from 'lucide-react'
+import { User, UserRoundPlusIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { Button } from '@/components/ui/button';
 
 import { RequestSignOut } from '@/lib/api/user';
 import { useAuthStore } from '@/store/authStore'
@@ -45,13 +45,14 @@ const Navbar = () => {
     <nav className="flex items-center justify-between md:justify-end p-4 bg-white border-b">
       <SidebarTrigger className="md:hidden" />
       <h1 className="text-xl font-semibold md:hidden">커플 다이어리</h1>
-      <div>
-        <span className='me-2'>{authStore.user?.name}</span>
+      <div className='flex items-center'>
+        <Button className='me-4'>
+          <UserRoundPlusIcon />
+        </Button>
+        <h1 className='me-2'>{authStore.user?.name}</h1>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <User className="h-6 w-6" />
-            </Button>
+          <DropdownMenuTrigger asChild className='cursor-pointer'>
+            <User className="h-5 w-5" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem>프로필</DropdownMenuItem>
