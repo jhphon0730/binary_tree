@@ -37,7 +37,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		userID := claims.UserID
 
 		// Redis에서 userID에 해당하는 로그인 세션이 존재하는지 확인
-		token, err := redis.GetUserLoginSession(userID)
+		token, err := redis.GetUserLoginSession(c, userID)
 		if err != nil {
 			response.Error(c, http.StatusInternalServerError, "사용자를 인증할 수 없습니다.")
 			c.Abort()

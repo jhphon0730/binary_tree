@@ -17,7 +17,6 @@ BCRYPT_COST=5
 # Redis
 REDIS_HOST=localhost:6379
 REDIS_PASSWORD=
-REDIS_DB=0
 
 # JWT 
 JWT_SECRET=my_jwt_secret

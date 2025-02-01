@@ -1,12 +1,13 @@
 package main
 
 import (
-	"binary_tree/pkg/utils"
-	"binary_tree/pkg/redis"
 	"binary_tree/internal/config"
-	"binary_tree/internal/routes"
 	"binary_tree/internal/database"
+	"binary_tree/internal/routes"
+	"binary_tree/pkg/redis"
+	"binary_tree/pkg/utils"
 
+	"context"
 	"log"
 )
 
@@ -33,11 +34,12 @@ func main() {
 	defer database.CloseDB() // close database connection
 
 	// redis
-	log.Println("Initializing redis...")
-	if err := redis.InitRedis(); err != nil {
-		log.Fatalf("Error initializing redis: %s", err)
+	ctx := context.Background()
+	log.Println("Initializing User redis...")
+	if err := redis.InitUserRedis(ctx); err != nil {
+		log.Fatalf("Error initializing user redis: %s", err)
 	}
-	defer redis.CloseRedis() // close redis connection
+	defer redis.CloseUserRedis()
 
 	// Bcrypt
 	log.Println("Initializing Bcrypt...")
@@ -50,4 +52,3 @@ func main() {
 	r.RegisterRoutes()
 	r.RunServer(cfg.Port, cfg.AppEnv)
 }
-

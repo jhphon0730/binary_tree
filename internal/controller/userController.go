@@ -83,7 +83,7 @@ func (u *userController) SignInUser(c *gin.Context) {
 		return
 	}
 
-	if err := redis.SetUserLoginSession(int(user.ID), token); err != nil {
+	if err := redis.SetUserLoginSession(c, int(user.ID), token); err != nil {
 		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -95,7 +95,7 @@ func (u *userController) SignInUser(c *gin.Context) {
 // 사용자 로그아웃
 func (u *userController) SignOutUser(c *gin.Context) {
 	userID := c.GetInt("userID")
-	if err := redis.DeleteUserLoginSession(userID); err != nil {
+	if err := redis.DeleteUserLoginSession(c, userID); err != nil {
 		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}

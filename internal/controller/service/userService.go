@@ -5,7 +5,6 @@ import (
 	"binary_tree/internal/model"
 	"binary_tree/internal/model/dto"
 	"binary_tree/pkg/auth"
-	"binary_tree/pkg/redis"
 	"binary_tree/pkg/utils"
 
 	"gorm.io/gorm"
@@ -20,7 +19,6 @@ type UserService interface {
 	// 사용자
 	SignUpUser(userDTO dto.UserSignUpDTO) (model.User, error)
 	SignInUser(userDTO dto.UserSignInDTO) (model.User, string, error)
-	SignOutUser(userID int) error
 
 	// 상대 사용자
 	GenerateInviteCode(userID uint) (string, error)
@@ -76,14 +74,6 @@ func (u *userService) SignInUser(userDTO dto.UserSignInDTO) (model.User, string,
 		return model.User{}, "", model.ErrInternalServer
 	}
 	return user, token, nil
-}
-
-// 사용자 로그아웃
-func (*userService) SignOutUser(userID int) error {
-	if err := redis.DeleteUserLoginSession(userID); err != nil {
-		return err
-	}
-	return nil
 }
 
 // 초대 코드 생성
