@@ -7,4 +7,6 @@ export type User = {
   CreatedAt: string;
   UpdatedAt: string;
   DeletedAt: string;
+
+  partner_id: string;
 }
