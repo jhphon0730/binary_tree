@@ -34,7 +34,7 @@ const SignupPage = () => {
 			title: '회원가입 성공',
 			text: '회원가입에 성공했습니다.',
 		}).then(() => {
-			router.push('/signin')
+			router.push('/sign-in')
 		})
   }
 

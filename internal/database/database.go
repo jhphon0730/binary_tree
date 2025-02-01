@@ -13,7 +13,7 @@ import (
 
 var (
 	db_instance *gorm.DB
-	once sync.Once
+	once        sync.Once
 )
 
 // Init initializes the database connection
@@ -47,5 +47,7 @@ func CloseDB() {
 
 // MigrateDB migrates the database schema
 func MigrateDB() error {
-	return db_instance.AutoMigrate(&model.User{})
+	return db_instance.AutoMigrate(
+		&model.User{}, &model.CoupleInvitation{},
+	)
 }
