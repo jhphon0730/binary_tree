@@ -21,3 +21,6 @@ REDIS_DB=0
 
 # JWT 
 JWT_SECRET=my_jwt_secret
+
+# Seed 
+CHAR_SET=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789

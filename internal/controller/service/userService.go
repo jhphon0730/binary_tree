@@ -1,6 +1,7 @@
 package service
 
 import (
+	"binary_tree/internal/config"
 	"binary_tree/internal/model"
 	"binary_tree/internal/model/dto"
 	"binary_tree/pkg/auth"
@@ -8,13 +9,21 @@ import (
 	"binary_tree/pkg/utils"
 
 	"gorm.io/gorm"
+
+	"math/rand"
+	"time"
 )
 
 type UserService interface {
 	CheckUserExists(username string) error
+
+	// 사용자
 	SignUpUser(userDTO dto.UserSignUpDTO) (model.User, error)
 	SignInUser(userDTO dto.UserSignInDTO) (model.User, string, error)
 	SignOutUser(userID int) error
+
+	// 상대 사용자
+	GenerateInviteCode(userID uint) (string, error)
 }
 
 type userService struct {
@@ -75,4 +84,33 @@ func (*userService) SignOutUser(userID int) error {
 		return err
 	}
 	return nil
+}
+
+// 초대 코드 생성
+func (u *userService) GenerateInviteCode(userID uint) (string, error) {
+	var existingInvite model.CoupleInvitation
+	// 사용자가 보낸 초대 코드가 아직 처리되지 않았다면 기존 초대 코드를 반환
+	if err := u.DB.Where("sender_id = ? AND status = 'pending'", userID).First(&existingInvite).Error; err == nil {
+		return existingInvite.InviteCode, nil
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	charset := config.GetConfig().CHAR_SET
+	code := make([]byte, 8)
+	for i := range code {
+		code[i] = charset[rand.Intn(len(charset))]
+	}
+	inviteCode := string(code)
+
+	// 초대 코드 저장
+	invitation := model.CoupleInvitation{
+		SenderID:   userID,
+		InviteCode: inviteCode,
+		Status:     "pending",
+	}
+	if err := u.DB.Create(&invitation).Error; err != nil {
+		return "", err
+	}
+
+	return inviteCode, nil
 }

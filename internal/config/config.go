@@ -8,13 +8,13 @@ import (
 )
 
 type Postgres struct {
-	DB_HOST string
-	DB_USER string
+	DB_HOST     string
+	DB_USER     string
 	DB_PASSWORD string
-	DB_NAME string
-	DB_PORT string
-	SSL_MODE string
-	TIMEZONE string
+	DB_NAME     string
+	DB_PORT     string
+	SSL_MODE    string
+	TIMEZONE    string
 }
 
 type Redis struct {
@@ -24,15 +24,17 @@ type Redis struct {
 }
 
 type Config struct {
-	AppEnv   string
-	Port     string
-	
+	AppEnv string
+	Port   string
+
 	BCRYPT_COST string
 
 	Postgres Postgres
-	Redis Redis
+	Redis    Redis
 
 	JWT_SECRET string
+
+	CHAR_SET string
 }
 
 var (
@@ -49,19 +51,19 @@ func LoadConfig() (*Config, error) {
 	}
 
 	return &Config{
-		AppEnv:   getEnv("APP_ENV", "development"),
-		Port:     getEnv("PORT", "8080"),
+		AppEnv: getEnv("APP_ENV", "development"),
+		Port:   getEnv("PORT", "8080"),
 
 		BCRYPT_COST: getEnv("BCRYPT_COST", "5"),
 
 		Postgres: Postgres{
-			DB_HOST: getEnv("DB_HOST", "localhost"),
-			DB_USER: getEnv("DB_USER", "postgres"),
+			DB_HOST:     getEnv("DB_HOST", "localhost"),
+			DB_USER:     getEnv("DB_USER", "postgres"),
 			DB_PASSWORD: getEnv("DB_PASSWORD", "postgres"),
-			DB_NAME: getEnv("DB_NAME", "postgres5"),
-			DB_PORT: getEnv("DB_PORT", "5432"),
-			SSL_MODE: getEnv("SSL_MODE", "disable"),
-			TIMEZONE: getEnv("TIMEZONE", "Asia/Shanghai"),
+			DB_NAME:     getEnv("DB_NAME", "postgres5"),
+			DB_PORT:     getEnv("DB_PORT", "5432"),
+			SSL_MODE:    getEnv("SSL_MODE", "disable"),
+			TIMEZONE:    getEnv("TIMEZONE", "Asia/Shanghai"),
 		},
 		Redis: Redis{
 			Host:     getEnv("REDIS_HOST", "localhost:6379"),
@@ -69,6 +71,7 @@ func LoadConfig() (*Config, error) {
 			DB:       0,
 		},
 		JWT_SECRET: getEnv("JWT_SECRET", ""),
+		CHAR_SET:   getEnv("CHAR_SET", "asdqwe123"),
 	}, nil
 }
 
