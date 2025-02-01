@@ -92,9 +92,9 @@ export function AuthForm({ type, onSubmitAction }: AuthFormProps) {
       </CardContent>
       <CardFooter className="justify-center">
         {type === 'login' ? (
-          <p>계정이 없으신가요? <Link href="/signup" className="text-blue-600 hover:underline">회원가입</Link></p>
+          <p>계정이 없으신가요? <Link href="/sign-up" className="text-blue-600 hover:underline">회원가입</Link></p>
         ) : (
-          <p>이미 계정이 있으신가요? <Link href="/signin" className="text-blue-600 hover:underline">로그인</Link></p>
+          <p>이미 계정이 있으신가요? <Link href="/sign-in" className="text-blue-600 hover:underline">로그인</Link></p>
         )}
       </CardFooter>
     </Card>
