@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"binary_tree/internal/controller/service"
-	"binary_tree/internal/model"
 	"binary_tree/internal/model/dto"
+	"binary_tree/internal/errors"
+	"binary_tree/internal/controller/service"
 	"binary_tree/pkg/redis"
 	"binary_tree/pkg/response"
 	"binary_tree/pkg/utils"
@@ -32,7 +32,7 @@ func NewUserController(userService service.UserService) UserController {
 func (u *userController) SignUpUser(c *gin.Context) {
 	var userDTO dto.UserSignUpDTO
 	if err := c.ShouldBind(&userDTO); err != nil {
-		response.Error(c, http.StatusBadRequest, model.ErrAllFieldsRequired.Error())
+		response.Error(c, http.StatusBadRequest, errors.ErrAllFieldsRequired.Error())
 		return
 	}
 	if err := userDTO.Validate(); err != nil {
@@ -42,7 +42,7 @@ func (u *userController) SignUpUser(c *gin.Context) {
 
 	err := u.userService.CheckUserExists(userDTO.Username)
 	if err != nil {
-		if err == model.ErrUsernameAlreadyExists {
+		if err == errors.ErrUsernameAlreadyExists {
 			response.Error(c, http.StatusConflict, err.Error())
 			return
 		}
@@ -69,13 +69,13 @@ func (u *userController) SignUpUser(c *gin.Context) {
 func (u *userController) SignInUser(c *gin.Context) {
 	var userDTO dto.UserSignInDTO
 	if err := c.ShouldBindJSON(&userDTO); err != nil {
-		response.Error(c, http.StatusBadRequest, model.ErrAllFieldsRequired.Error())
+		response.Error(c, http.StatusBadRequest, errors.ErrAllFieldsRequired.Error())
 		return
 	}
 
 	user, token, err := u.userService.SignInUser(userDTO)
 	if err != nil {
-		if err == model.ErrUserNotFound || err == model.ErrInvalidPassword {
+		if err == errors.ErrUserNotFound || err == errors.ErrInvalidPassword {
 			response.Error(c, http.StatusUnauthorized, err.Error())
 			return
 		}

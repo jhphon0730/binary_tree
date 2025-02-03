@@ -4,6 +4,7 @@ import (
 	"binary_tree/internal/config"
 	"binary_tree/internal/model"
 	"binary_tree/internal/model/dto"
+	"binary_tree/internal/errors"
 	"binary_tree/pkg/auth"
 	"binary_tree/pkg/utils"
 
@@ -41,7 +42,7 @@ func (u *userService) CheckUserExists(username string) error {
 		return err
 	}
 	if count > 0 {
-		return model.ErrUsernameAlreadyExists
+		return errors.ErrUsernameAlreadyExists
 	}
 	return nil
 }
@@ -64,14 +65,14 @@ func (u *userService) SignUpUser(userDTO dto.UserSignUpDTO) (model.User, error) 
 func (u *userService) SignInUser(userDTO dto.UserSignInDTO) (model.User, string, error) {
 	var user model.User
 	if err := u.DB.Where("username = ?", userDTO.Username).First(&user).Error; err != nil {
-		return model.User{}, "", model.ErrUserNotFound
+		return model.User{}, "", errors.ErrUserNotFound
 	}
 	if err := utils.ComparePassword(userDTO.Password, user.Password); err != nil {
 		return model.User{}, "", err // invalid password
 	}
 	token, err := auth.GenerateJWT(int(user.ID))
 	if err != nil {
-		return model.User{}, "", model.ErrInternalServer
+		return model.User{}, "", errors.ErrInternalServer
 	}
 	return user, token, nil
 }

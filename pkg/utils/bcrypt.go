@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"binary_tree/internal/model"
+	"binary_tree/internal/errors"
 	"binary_tree/internal/config"
 
 	"golang.org/x/crypto/bcrypt"
@@ -19,7 +19,7 @@ func InitBcrypt() error {
 		BCRYPT_COST = cost
 		return nil
 	}
-	return model.ErrBCRYPT_COSTNotSet
+	return errors.ErrBCRYPT_COSTNotSet
 }
 
 // 비밀번호 암호화
@@ -35,7 +35,7 @@ func EncryptPassword(password string) (string, error) {
 // 비밀번호 확인 함수
 func ComparePassword(password, hash string) error {
 	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
-		return model.ErrInvalidPassword
+		return errors.ErrInvalidPassword
 	}
 	return nil
 }
