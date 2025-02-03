@@ -55,12 +55,13 @@ func (u *userService) SignUpUser(userDTO dto.UserSignUpDTO) (model.User, error) 
 		Email:    userDTO.Email,
 		Password: userDTO.Password,
 	}
-	profilePath, err := utils.UploadProfileImage(userDTO.ProfileImageFile)
-	if err != nil {
-		return model.User{}, err
+	if userDTO.ProfileImageFile != nil {
+		profilePath, err := utils.UploadProfileImage(userDTO.ProfileImageFile)
+		if err != nil {
+			return model.User{}, err
+		}
+		user.ProfileImageFile = profilePath
 	}
-	user.ProfileImageFile = profilePath
-
 	if err := u.DB.Create(&user).Error; err != nil {
 		return model.User{}, err
 	}

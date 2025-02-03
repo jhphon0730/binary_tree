@@ -58,3 +58,17 @@ export const FetchWithAuth = async (url: string, options: fetchOptions = {}) => 
   const res = await fetch(`${API_BASE_URL}${url}`, mergeOptions)
   return await res.json()
 }
+
+// JWT & FormData
+export const FetchWithAuthFormData = async (url: string, options: fetchOptions = {}) => {
+  const token = await getJWT()
+  const mergeOptions = {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ...options.headers
+    }
+  }
+  const res = await fetch(`${API_BASE_URL}${url}`, mergeOptions)
+  return await res.json()
+}

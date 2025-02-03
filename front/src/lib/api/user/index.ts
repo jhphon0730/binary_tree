@@ -1,4 +1,4 @@
-import { FetchWithOutAuth, FetchWithAuth, Response } from "@/lib/api"
+import { FetchWithAuthFormData, FetchWithOutAuth, FetchWithAuth, Response } from "@/lib/api"
 import { User } from '@/types/user'
 
 type SignInRequest = {
@@ -32,9 +32,14 @@ type SignUpResponse = {
 	user: User; // But this is not used in the code
 }
 export const RequestSignUp = async (signUpProps: SignUpRequest): Promise<Response<SignUpResponse>> => {
-	const res = await FetchWithOutAuth('/users/sign-up', {
+	const formData = new FormData()
+	formData.append('username', signUpProps.username)
+	formData.append('name', signUpProps.name)
+	formData.append('email', signUpProps.email)
+	formData.append('password', signUpProps.password)
+	const res = await FetchWithAuthFormData('/users/sign-up', {
 		method: 'POST',
-		body: JSON.stringify({ ...signUpProps }),
+		body: formData,
 	})
 	return {
 		data: res.data,
