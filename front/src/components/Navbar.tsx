@@ -49,13 +49,16 @@ const Navbar = () => {
       <div className='flex items-center'>
 				{authStore.user && <DropdownMenu>
           <DropdownMenuTrigger asChild className='cursor-pointer'>
-						<Image 
-							src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${authStore.user.profile_image_file}`}
-							alt={authStore.user.name}
-							width={40}
-							height={40}
-							className='rounded-full'
-						/>
+						<div className="w-10 h-10 rounded-full border overflow-hidden">
+							<Image 
+								className="w-full h-full object-cover"
+								src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${authStore.user.profile_image_file}`}
+								alt={authStore.user.name}
+								width={40}
+								height={40}
+								sizes="100%"
+							/>
+						</div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
 						{/*title*/}
