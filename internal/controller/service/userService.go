@@ -15,7 +15,7 @@ import (
 )
 
 type UserService interface {
-	CheckUserExists(username string) error
+	CheckUserExists(username, email string) error
 
 	// 사용자
 	SignUpUser(userDTO dto.UserSignUpDTO) (model.User, error)
@@ -36,13 +36,20 @@ func NewUserService(DB *gorm.DB) UserService {
 }
 
 // 사용자가 이미 존재하는지 확인
-func (u *userService) CheckUserExists(username string) error {
+func (u *userService) CheckUserExists(username, email string) error {
 	var count int64
+	// check username, email
 	if err := u.DB.Model(&model.User{}).Where("username = ?", username).Count(&count).Error; err != nil {
 		return err
 	}
 	if count > 0 {
 		return errors.ErrUsernameAlreadyExists
+	}
+	if err := u.DB.Model(&model.User{}).Where("email = ?", email).Count(&count).Error; err != nil {
+		return err
+	}
+	if count > 0 {
+		return errors.ErrEmailAlreadyExists
 	}
 	return nil
 }
