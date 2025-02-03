@@ -20,7 +20,7 @@ const SignInPage = () => {
     Cookies.remove('token')
   }, [])
 
-  const handleSubmit = async (data: Record<string, string>): Promise<void> => {
+  const handleSubmit = async (data: Record<string, string>, _: File | null): Promise<void> => {
     const { username, password } = data
     if (!username || !password) {
       Swal.fire({

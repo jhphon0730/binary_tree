@@ -10,7 +10,7 @@ import { RequestSignUp } from '@/lib/api/user';
 const SignupPage = () => {
   const router = useRouter()
 
-  const handleSubmit = async (data: Record<string, string>): Promise<void> => {
+  const handleSubmit = async (data: Record<string, string>, profileImageFile: File | null): Promise<void> => {
 		const { username, password, email, name } = data;
 		if (!username || !password || !email || !name) {
 			Swal.fire({
@@ -20,7 +20,7 @@ const SignupPage = () => {
 			})
 			return
 		}
-		const res = await RequestSignUp({ username, password, email, name })
+		const res = await RequestSignUp({ username, password, email, name, profileImageFile })
 		if (res.error) {
 			Swal.fire({
 				icon: 'error',

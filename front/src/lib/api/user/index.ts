@@ -27,6 +27,7 @@ type SignUpRequest = {
   name: string;
   email: string;
   password: string;
+	profileImageFile: File | null;
 }
 type SignUpResponse = {
 	user: User; // But this is not used in the code
@@ -37,6 +38,7 @@ export const RequestSignUp = async (signUpProps: SignUpRequest): Promise<Respons
 	formData.append('name', signUpProps.name)
 	formData.append('email', signUpProps.email)
 	formData.append('password', signUpProps.password)
+	if (signUpProps.profileImageFile) { formData.append('profile_image_file', signUpProps.profileImageFile) }
 	const res = await FetchWithAuthFormData('/users/sign-up', {
 		method: 'POST',
 		body: formData,

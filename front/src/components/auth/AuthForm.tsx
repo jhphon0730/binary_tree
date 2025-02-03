@@ -9,7 +9,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 
 type AuthFormProps = {
   type: 'login' | 'signup'
-  onSubmitAction: (data: Record<string, string>) => void
+  onSubmitAction: (data: Record<string, string>, file: File | null) => void
 }
 
 const formFields = {
@@ -26,15 +26,25 @@ const fieldLabels: Record<string, string> = {
 
 export function AuthForm({ type, onSubmitAction }: AuthFormProps) {
   const [formData, setFormData] = useState<Record<string, string>>({})
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmitAction(formData)
-  }
+	const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+	const handleChangeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { files } = e.target 
+		if (files && files.length > 0) {
+			setProfileImageFile(files[0])
+		} else {
+			setProfileImageFile(null)
+		}
+	}
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    onSubmitAction(formData, profileImageFile)
   }
 
   return (
@@ -84,6 +94,20 @@ export function AuthForm({ type, onSubmitAction }: AuthFormProps) {
                 ))
               )
             }
+						{
+							type === 'signup' && (
+								<div className="space-y-2">
+									<Label htmlFor="profileImage">프로필 이미지</Label>
+									<Input
+										id="profileImage"
+										name="profileImage"
+										type="file"
+										accept="image/*"
+										onChange={handleChangeProfileImage}
+									/>
+								</div>
+							)
+						}
           </div>
           <Button type="submit" className="w-full mt-6">
             {type === 'login' ? '로그인' : '회원가입'}
