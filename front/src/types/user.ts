@@ -4,6 +4,7 @@ export type User = {
   name: string;
   email: string;
   password: string;
+	profile_image_file: string;
   CreatedAt: string;
   UpdatedAt: string;
   DeletedAt: string;

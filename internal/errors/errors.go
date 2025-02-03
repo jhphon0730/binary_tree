@@ -4,7 +4,7 @@ import "errors"
 
 var (
 	// USER
-	ErrAllFieldsRequired = errors.New("모든 항목을 입력해주세요.")
+	ErrAllFieldsRequired = errors.New("모든 항목을 입력해주세요.") 
 	ErrUsernameAlreadyExists = errors.New("이미 존재하는 사용자입니다.")
 
 	//// Login 
@@ -33,4 +33,7 @@ var (
 	ErrFailedToDeleteRedis = errors.New("Redis에서 삭제할 수 없습니다.")
 	ErrFailedToGetRedis = errors.New("Redis에서 가져올 수 없습니다.")
 	ErrSessionNotFound = errors.New("세션이 존재하지 않습니다.")
+
+	// FILE
+	ErrFailedToUploadProfileImage = errors.New("프로필 이미지를 업로드할 수 없습니다.")
 )

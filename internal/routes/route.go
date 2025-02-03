@@ -14,6 +14,9 @@ type Route struct {
 func Init() *Route {
 	r := gin.Default()
 
+	// MEDIA 
+	r.Static("/media", "./media")
+
 	// CORS
 	// 3000 is the frontend port
 	r.Use(cors.New(cors.Config{

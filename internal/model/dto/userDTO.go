@@ -4,8 +4,8 @@ import (
 	"binary_tree/internal/errors"
 
 	"regexp"
-	"errors"
 	"strings"
+	"mime/multipart"
 )
 
 // UserSignUpDTO는 클라이언트로부터 받은 데이터 전송 객체
@@ -14,6 +14,7 @@ type UserSignUpDTO struct {
 	Name     string `form:"name" binding:"required"`
 	Password string `form:"password" binding:"required"`
 	Email    string `form:"email" binding:"required"`
+	ProfileImageFile *multipart.FileHeader `form:"profile_image_file"`
 }
 
 // 유효성 검사 함수
