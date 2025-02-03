@@ -2,11 +2,11 @@ package redis
 
 import (
 	"binary_tree/internal/config"
+	"binary_tree/internal/errors"
 
 	"github.com/go-redis/redis/v8"
 
 	"context"
-	"errors"
 	"log"
 	"strconv"
 	"sync"
@@ -27,7 +27,7 @@ func InitUserRedis(ctx context.Context) error {
 
 	_, err := user_redis_instance.Ping(ctx).Result()
 	if err != nil {
-		return errors.New("Failed to connect to redis")
+		return errors.ErrFailedToConnectRedis
 	}
 	return nil
 }
@@ -80,7 +80,7 @@ func GetUserLoginSession(ctx context.Context, userID int) (string, error) {
 	token, err := user_redis_instance.Get(ctx, key).Result()
 	// token이 없으면 에러 반환 ( 만료로 인한 삭제도 에러로 처리 )
 	if err == redis.Nil {
-		return "", errors.New("Session not found")
+		return "", errors.ErrSessionNotFound
 	}
 	return token, err
 }

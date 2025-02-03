@@ -1,6 +1,8 @@
 package dto 
 
 import (
+	"binary_tree/internal/errors"
+
 	"regexp"
 	"errors"
 	"strings"
@@ -31,11 +33,11 @@ func (dto *UserSignUpDTO) Validate() error {
 // Username 유효성 검사: 최소 3자 이상
 func (dto *UserSignUpDTO) validateUsername() error {
 	if len(dto.Username) < 3 {
-		return errors.New("username must be at least 3 characters")
+		return errors.ErrInvalidUsernameFormat
 	}
 	// 추가 조건: 공백을 허용하지 않음
 	if strings.Contains(dto.Username, " ") {
-		return errors.New("username cannot contain spaces")
+		return errors.ErrContainsSpace
 	}
 	return nil
 }
@@ -44,7 +46,7 @@ func (dto *UserSignUpDTO) validateUsername() error {
 func (dto *UserSignUpDTO) validateEmail() error {
 	re := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	if !re.MatchString(dto.Email) {
-		return errors.New("invalid email format")
+		return errors.ErrInvalidEmailFormat
 	}
 	return nil
 }
@@ -52,7 +54,7 @@ func (dto *UserSignUpDTO) validateEmail() error {
 // Password 유효성 검사: 최소 8자 이상, 대소문자, 숫자 포함
 func (dto *UserSignUpDTO) validatePassword() error {
 	if len(dto.Password) < 8 {
-		return errors.New("password must be at least 8 characters")
+		return errors.ErrInvalidPasswordFormat
 	}
 	// 대소문자, 숫자 포함 체크
 	hasUpper := false
@@ -69,7 +71,7 @@ func (dto *UserSignUpDTO) validatePassword() error {
 		}
 	}
 	if !hasUpper || !hasLower || !hasDigit {
-		return errors.New("password must contain at least one uppercase letter, one lowercase letter, and one number")
+		return errors.ErrInvalidPasswordFormat
 	}
 	return nil
 }
@@ -93,11 +95,11 @@ func (dto *UserSignInDTO) Validate() error {
 // Username 유효성 검사: 최소 3자 이상
 func (dto *UserSignInDTO) validateUsername() error {
 	if len(dto.Username) < 3 {
-		return errors.New("username must be at least 3 characters")
+		return errors.ErrInvalidUsernameFormat
 	}
 	// 추가 조건: 공백을 허용하지 않음
 	if strings.Contains(dto.Username, " ") {
-		return errors.New("username cannot contain spaces")
+		return errors.ErrContainsSpace
 	}
 	return nil
 }
@@ -105,7 +107,7 @@ func (dto *UserSignInDTO) validateUsername() error {
 // Password 유효성 검사: 최소 8자 이상
 func (dto *UserSignInDTO) validatePassword() error {
 	if len(dto.Password) < 8 {
-		return errors.New("password must be at least 8 characters")
+		return errors.ErrInvalidPasswordFormat
 	}
 	// 대소문자, 숫자 포함 체크
 	hasUpper := false
@@ -122,7 +124,7 @@ func (dto *UserSignInDTO) validatePassword() error {
 		}
 	}
 	if !hasUpper || !hasLower || !hasDigit {
-		return errors.New("password must contain at least one uppercase letter, one lowercase letter, and one number")
+		return errors.ErrInvalidPasswordFormat
 	}
 	return nil
 }

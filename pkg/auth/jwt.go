@@ -2,11 +2,11 @@ package auth
 
 import (
 	"binary_tree/internal/config"
+	"binary_tree/internal/errors"
 
 	"github.com/golang-jwt/jwt/v5"
 
 	"time"
-	"errors"
 )
 
 var (
@@ -36,7 +36,7 @@ func ValidateAndParseJWT(tokenString string) (*TokenClaims, error) {
 	// 토큰을 파싱하고 클레임을 추출
 	token, err := jwt.ParseWithClaims(tokenString, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("토큰을 검증할 수 없습니다")
+			return nil, errors.ErrInvalidToken
 		}
 		return jwtSecret, nil
 	})
@@ -48,10 +48,10 @@ func ValidateAndParseJWT(tokenString string) (*TokenClaims, error) {
 	if claims, ok := token.Claims.(*TokenClaims); ok && token.Valid {
 		// 만료 여부 확인
 		if claims.ExpiresAt.Time.Before(time.Now()) {
-			return nil, errors.New("토큰이 만료되었습니다")
+			return nil, errors.ErrExpiredToken
 		}
 		return claims, nil
 	}
 
-	return nil, errors.New("올바르지 않은 토큰입니다")
+	return nil, errors.ErrInvalidToken
 }
