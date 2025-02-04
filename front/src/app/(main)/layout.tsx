@@ -2,7 +2,7 @@ import React from 'react'
 
 import Sidebar from '@/components/Sidebar'
 import Navbar from '@/components/Navbar'
-import WithAuthLayout from '@/components/WithAuthLayout';
+import WithAuthLayout from '@/components/config/WithAuthLayout';
 import { SidebarProvider } from '@/components/ui/sidebar'
 
 type MainLayoutProps = {

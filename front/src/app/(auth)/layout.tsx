@@ -2,7 +2,7 @@ import React from 'react'
 import { Inter } from 'next/font/google'
 import type { Metadata } from 'next'
 
-import WithoutAuthLayout from '@/components/WithoutAuthLayout';
+import WithoutAuthLayout from '@/components/config/WithoutAuthLayout';
 
 const inter = Inter({ subsets: ['latin'] })
 
