@@ -5,7 +5,7 @@ import Swal from 'sweetalert2'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 
-import { AuthForm } from '@/components/auth/AuthForm'
+import AuthForm from '@/components/auth/AuthForm'
 
 import { useAuthStore } from '@/store/authStore'
 import { RequestSignIn } from '@/lib/api/user'
@@ -13,12 +13,6 @@ import { RequestSignIn } from '@/lib/api/user'
 const SignInPage = () => {
   const router = useRouter()
   const authStore = useAuthStore()
-
-  // 로그인 페이지 진입 시 로그인 정보 초기화
-  React.useEffect(() => {
-    authStore.clearUser()
-    Cookies.remove('token')
-  }, [])
 
   const handleSubmit = async (data: Record<string, string>, _: File | null): Promise<void> => {
     const { username, password } = data

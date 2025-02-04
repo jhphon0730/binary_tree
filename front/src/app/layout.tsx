@@ -5,7 +5,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: '커플 다이어리',
+  title: '다이어리',
   description: '커플을 위한 공유 다이어리 앱',
 }
 

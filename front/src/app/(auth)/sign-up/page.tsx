@@ -3,7 +3,7 @@
 import Swal from 'sweetalert2'
 import { useRouter } from 'next/navigation'
 
-import { AuthForm } from '@/components/auth/AuthForm';
+import AuthForm from '@/components/auth/AuthForm';
 
 import { RequestSignUp } from '@/lib/api/user';
 

@@ -24,7 +24,7 @@ const fieldLabels: Record<string, string> = {
   password: '비밀번호'
 }
 
-export function AuthForm({ type, onSubmitAction }: AuthFormProps) {
+const AuthForm =({ type, onSubmitAction }: AuthFormProps) => {
   const [formData, setFormData] = useState<Record<string, string>>({})
 	const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
 
@@ -125,3 +125,4 @@ export function AuthForm({ type, onSubmitAction }: AuthFormProps) {
   )
 }
 
+export default AuthForm
