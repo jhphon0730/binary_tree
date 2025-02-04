@@ -52,8 +52,7 @@ export const RequestSignUp = async (signUpProps: SignUpRequest): Promise<Respons
 }
 
 type SignOutResponse = null
-type SignOutRequest = null
-export const RequestSignOut = async (_: SignOutRequest): Promise<Response<SignOutResponse>> => {
+export const RequestSignOut = async (): Promise<Response<SignOutResponse>> => {
 	const res = await FetchWithAuth('/users/sign-out', {
 		method: 'POST',
 	})

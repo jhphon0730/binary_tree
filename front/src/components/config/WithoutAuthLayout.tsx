@@ -7,6 +7,8 @@ import Cookies from 'js-cookie';
 
 import { useAuthStore } from '@/store/authStore';
 
+import { RequestSignOut } from '@/lib/api/user';
+
 type WithoutAuthLayoutProps = {
 	children: React.ReactNode;
 };
@@ -15,9 +17,16 @@ const WithoutAuthLayout = ({ children }: WithoutAuthLayoutProps) => {
 	const authStore = useAuthStore();
 
 	React.useEffect(() => {
-		authStore.clearUser();
-		Cookies.remove('token');
+		clearSession();
 	}, []);
+
+	const clearSession = async () => {
+		authStore.clearUser();
+		if (Cookies.get('token')) {
+			await RequestSignOut()
+			Cookies.remove('token');
+		}
+	}
 
 	return (
 		<React.Fragment>
