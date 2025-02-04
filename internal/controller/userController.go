@@ -14,6 +14,7 @@ import (
 )
 
 type UserController interface {
+	ValidateToken(c *gin.Context)
 	SignUpUser(c *gin.Context)
 	SignInUser(c *gin.Context)
 	SignOutUser(c *gin.Context)
@@ -26,6 +27,13 @@ type userController struct {
 
 func NewUserController(userService service.UserService) UserController {
 	return &userController{userService: userService}
+}
+
+// 토큰이 유효한지 검증
+func (u *userController) ValidateToken(c *gin.Context) {
+	userID := c.GetInt("userID")
+	response.Success(c, gin.H{"userID": userID})
+	return
 }
 
 // 사용자 회원가입 / 등록

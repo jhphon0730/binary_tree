@@ -18,6 +18,8 @@ var (
 )
 
 func registerUserRoutes(router *gin.RouterGroup) {
+	router.GET("/validate-token", middleware.AuthMiddleware(), userController.ValidateToken)
+
 	router.POST("/sign-up", userController.SignUpUser)
 	router.POST("/sign-in", userController.SignInUser)
 	router.POST("/sign-out", middleware.AuthMiddleware(), userController.SignOutUser)
