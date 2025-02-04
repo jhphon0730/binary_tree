@@ -37,18 +37,12 @@ func NewUserService(DB *gorm.DB) UserService {
 
 // 사용자가 이미 존재하는지 확인
 func (u *userService) CheckUserExists(username, email string) error {
-	var count int64
-	// check username, email
-	if err := u.DB.Model(&model.User{}).Where("username = ?", username).Count(&count).Error; err != nil {
-		return err
-	}
-	if count > 0 {
+	_, err := model.FindUserByUsername(u.DB, username)
+	if err == nil {
 		return errors.ErrUsernameAlreadyExists
 	}
-	if err := u.DB.Model(&model.User{}).Where("email = ?", email).Count(&count).Error; err != nil {
-		return err
-	}
-	if count > 0 {
+	_, err = model.FindUserByEmail(u.DB, email)
+	if err == nil {
 		return errors.ErrEmailAlreadyExists
 	}
 	return nil

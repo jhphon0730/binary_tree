@@ -4,9 +4,11 @@ import "errors"
 
 var (
 	// USER
+	ErrCannotFindUser = errors.New("사용자를 찾을 수 없습니다.")
+	ErrUserAlreadyExists = errors.New("이미 존재하는 사용자입니다.")
 	ErrAllFieldsRequired = errors.New("모든 항목을 입력해주세요.") 
-	ErrUsernameAlreadyExists = errors.New("이미 존재하는 사용자입니다.")
 	ErrEmailAlreadyExists = errors.New("이미 존재하는 이메일입니다.")
+	ErrUsernameAlreadyExists = errors.New("이미 존재하는 아이디입니다.")
 
 	//// Login 
 	ErrUserNotFound = errors.New("사용자를 찾을 수 없습니다.")

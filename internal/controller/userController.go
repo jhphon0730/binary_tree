@@ -50,11 +50,7 @@ func (u *userController) SignUpUser(c *gin.Context) {
 
 	err := u.userService.CheckUserExists(userDTO.Username, userDTO.Email)
 	if err != nil {
-		if err == errors.ErrUsernameAlreadyExists {
-			response.Error(c, http.StatusConflict, err.Error())
-			return
-		}
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		response.Error(c, http.StatusConflict, err.Error())
 		return
 	}
 
