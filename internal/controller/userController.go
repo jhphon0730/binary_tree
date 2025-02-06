@@ -126,9 +126,15 @@ func (u *userController) GenerateInviteCode(c *gin.Context) {
 func (u *userController) AcceptInvitation(c *gin.Context) {
 	userID := c.GetInt("userID")
 	inviteCode := c.Param("inviteCode")
+
+	if inviteCode == "" {
+		response.Error(c, http.StatusBadRequest, errors.ErrInvalidInviteCode.Error())
+		return
+	}
+
 	err := u.userService.AcceptInvitation(inviteCode, uint(userID))
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	response.Success(c, nil)
