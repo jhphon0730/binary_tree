@@ -1,49 +1,29 @@
 import React from 'react';
-import Swal from 'sweetalert2';
-import { useRouter } from 'next/navigation'
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
-import { RequestGenerateInviteCode } from '@/lib/api/invite';
+type CoupleInvitationModalProps = {
+	isOpen: boolean;
+	invitationCode: string;
 
-type CoupleInvitationModalProps = { };
+	handleClose: () => void;
+	handleGenerateCode: () => void;
+	handleSubmitEnterdCode: (code: string) => void;
+};
 
-const CoupleInvitationModal = () => {
-	const [isOpen, setIsOpen] = React.useState<boolean>(false);
+const CoupleInvitationModal = ({isOpen, invitationCode, handleClose, handleGenerateCode, handleSubmitEnterdCode}: CoupleInvitationModalProps) => {
 	const [mode, setMode] = React.useState<'generate' | 'enter'>('generate');
-	const [invitationCode, setInvitationCode] = React.useState<string>('');
 	const [enterdCode, setEnteredCode] = React.useState<string>('');
 
-	const handleClose = () => {
-		setIsOpen(() => false);
-	}
-
-	const handleGenerateCode = async (): Promise<void> => {
-		const res = await RequestGenerateInviteCode({});
-		if (res.error) {
-			Swal.fire({
-				icon: 'error',
-				title: '초대 코드 생성 실패',
-				text: res.message,
-			});
-			return
-		}
-		setInvitationCode(() => res.data.inviteCode);
-	}
-
 	const handleSubmitCode = () => {
-
+		handleSubmitEnterdCode(enterdCode);
+		setEnteredCode('');
 	}
-
-	React.useEffect(() => {
-		setIsOpen(() => true);
-	}, []);
-
 
 	return (
-    <Dialog open={isOpen}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader >
           <DialogTitle>커플 연결</DialogTitle>
@@ -65,9 +45,6 @@ const CoupleInvitationModal = () => {
                 <Button variant="link" onClick={() => setMode("enter")}>
                   초대 코드 입력하기
                 </Button>
-								<Button variant="link">
-									로그아웃
-								</Button>
               </div>
             </div>
           ) : (
@@ -84,9 +61,6 @@ const CoupleInvitationModal = () => {
                 <Button variant="link" onClick={() => setMode("generate")}>
                   초대 코드 생성하기
                 </Button>
-								<Button variant="link">
-									로그아웃
-								</Button>
               </div>
             </div>
           )}

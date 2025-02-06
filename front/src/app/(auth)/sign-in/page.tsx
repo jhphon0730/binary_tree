@@ -33,6 +33,12 @@ const SignInPage = () => {
       })
       return
     }
+		// 만약 커플로 맺어진 상대 사용자가 없다면, 커플로 연결해주는 페이지로 이동
+		if (res.data.user.partner_id === null) {
+			router.push(`/invite?token=${res.data.token}`)
+			return
+		}
+		// 메인 페이지로 이동
     await Swal.fire({
       icon: 'success',
       title: '로그인 성공',
