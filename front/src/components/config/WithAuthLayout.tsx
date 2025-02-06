@@ -8,7 +8,6 @@ import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 
 import { useAuthStore } from '@/store/authStore';
-
 import { CheckIsValidSession } from '@/lib/api/config';
 
 type WithAuthLayoutProps = {
