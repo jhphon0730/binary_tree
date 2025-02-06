@@ -15,6 +15,11 @@ var (
 	ErrGenerateToken = errors.New("토큰을 발급할 수 없습니다.")
 	ErrInternalServer = errors.New("서버 내부 오류가 발생했습니다.")
 
+	//// Invite
+	ErrInvalidInviteCode = errors.New("유효하지 않은 초대 코드입니다.")
+	ErrCannotFindInviteUser = errors.New("초대한 사용자를 찾을 수 없습니다.")
+	ErrAlreadyCouple = errors.New("이미 커플이 되어있는 사용자입니다.")
+
 	// BCRYPT
 	ErrBCRYPT_COSTNotSet = errors.New("BCRYPT의 비용이 설정되지 않았습니다.")
 	ErrInvalidPassword = errors.New("비밀번호가 일치하지 않습니다.")

@@ -25,4 +25,5 @@ func registerUserRoutes(router *gin.RouterGroup) {
 	router.POST("/sign-out", middleware.AuthMiddleware(), userController.SignOutUser)
 
 	router.POST("/invite-generate", middleware.AuthMiddleware(), userController.GenerateInviteCode)
+	router.PATCH("/invite-accept", middleware.AuthMiddleware(), userController.AcceptInvitation)
 }

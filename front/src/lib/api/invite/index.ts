@@ -21,3 +21,24 @@ export const RequestGenerateInviteCode = async ({token}: GenerateInviteCodeReque
     error: res.error,
   }
 }
+
+/** 초대 코드 입력 후 제출 */
+type AcceptInvitationRequest = {
+	token: string;
+	inviteCode: string;
+}
+type AcceptInvitationResponse = { }
+export const RequestAcceptInvitation = async ({token, inviteCode}: AcceptInvitationRequest): Promise<Response<AcceptInvitationResponse>> => {
+	const res = await FetchWithAuth(`/users/invite-accept?inviteCode=${inviteCode}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		method: "PATCH",
+	})
+	return {
+		data: res.data,
+		state: res.state,
+		message: res.message,
+		error: res.error,
+	}
+}

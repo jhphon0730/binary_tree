@@ -17,12 +17,13 @@ import (
 type UserService interface {
 	CheckUserExists(username, email string) error
 
-	// 사용자
+	// 사용자 기능
 	SignUpUser(userDTO dto.UserSignUpDTO) (model.User, error)
 	SignInUser(userDTO dto.UserSignInDTO) (model.User, string, error)
 
-	// 상대 사용자
+	// 상대 사용자와 관련 된 기능
 	GenerateInviteCode(userID uint) (string, error)
+	AcceptInvitation(inviteCode string, userID uint) error
 }
 
 type userService struct {
@@ -112,4 +113,44 @@ func (u *userService) GenerateInviteCode(userID uint) (string, error) {
 	}
 
 	return inviteCode, nil
+}
+
+// 초대 코드 수락
+func (u *userService) AcceptInvitation(inviteCode string, userID uint) error {
+	var invite model.CoupleInvitation
+
+	// 초대 코드가 유효한지 확인
+	if err := u.DB.Where("invite_code = ? AND status = 'pending'", inviteCode).First(&invite).Error; err != nil {
+		return errors.ErrInvalidInviteCode
+	}
+
+	// 상대방 사용자 찾기 및 상대방 사용자가 이미 커플인지 확인
+	sender, err := model.FindUserByID(u.DB, invite.SenderID)
+	if err != nil {
+		return errors.ErrCannotFindInviteUser
+	}
+	if sender.PartnerID != nil {
+		return errors.ErrAlreadyCouple
+	}
+
+	// 요청을 보낸 사용자 찾기 및 요청을 보낸 사용자가 이미 커플인지 확인
+	receiver, err := model.FindUserByID(u.DB, userID)
+	if err != nil {
+		return errors.ErrCannotFindUser
+	}
+	if receiver.PartnerID != nil {
+		return errors.ErrAlreadyCouple
+	}
+
+	// 커플 관계 설정
+	u.DB.Model(&sender).Update("partner_id", receiver.ID)
+	u.DB.Model(&receiver).Update("partner_id", sender.ID)
+
+	// 초대 코드 상태 변경
+	u.DB.Model(&invite).Updates(model.CoupleInvitation{Status: "accepted", ReceiverID: &receiver.ID})
+
+	// reciver가 만든 초대 코드는 모두 삭제
+	u.DB.Where("sender_id = ? AND status = 'pending'", receiver.ID).Delete(&model.CoupleInvitation{})
+
+	return nil
 }

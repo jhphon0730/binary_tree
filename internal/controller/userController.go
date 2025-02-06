@@ -15,10 +15,13 @@ import (
 
 type UserController interface {
 	ValidateToken(c *gin.Context)
+
 	SignUpUser(c *gin.Context)
 	SignInUser(c *gin.Context)
 	SignOutUser(c *gin.Context)
+
 	GenerateInviteCode(c *gin.Context)
+	AcceptInvitation(c *gin.Context)
 }
 
 type userController struct {
@@ -117,4 +120,16 @@ func (u *userController) GenerateInviteCode(c *gin.Context) {
 	}
 	response.Success(c, gin.H{"inviteCode": inviteCode})
 	return
+}
+
+// 초대 코드 수락
+func (u *userController) AcceptInvitation(c *gin.Context) {
+	userID := c.GetInt("userID")
+	inviteCode := c.Param("inviteCode")
+	err := u.userService.AcceptInvitation(inviteCode, uint(userID))
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	response.Success(c, nil)
 }

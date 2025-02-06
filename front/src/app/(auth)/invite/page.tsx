@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import CoupleInvitationModal from '@/components/invite/CoupleInvitationModal';
 
-import { RequestGenerateInviteCode } from '@/lib/api/invite';
+import { RequestGenerateInviteCode, RequestAcceptInvitation } from '@/lib/api/invite';
 
 const CoupleInvitationPage = () => {
 	const router = useRouter();
