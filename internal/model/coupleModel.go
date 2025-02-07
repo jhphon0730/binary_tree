@@ -11,12 +11,17 @@ import (
 type Couple struct {
 	gorm.Model
 
-	User1ID uint `json:"user1_id" gorm:"unique" binding:"required" validate:"required"`
-	User2ID uint `json:"user2_id" gorm:"unique" binding:"required" validate:"required"`
+	User1ID uint `json:"user1_id" gorm:"unique;not null" binding:"required" validate:"required"`
+	User2ID uint `json:"user2_id" gorm:"unique;not null" binding:"required" validate:"required"`
 
-	StartDate string `json:"start_date" gorm:"default:null"`
+	// 외래 키 설정
+	User1 User `gorm:"foreignKey:User1ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	User2 User `gorm:"foreignKey:User2ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+
+	StartDate  string `json:"start_date" gorm:"default:null"`
 	SharedNote string `json:"shared_note" gorm:"default:null"`
 
+	// 커플 고유 인덱스 (두 사용자 조합에 대한 유일성 보장)
 	UniqueIndex string `gorm:"uniqueIndex:idx_partner_pair"`
 }
 
