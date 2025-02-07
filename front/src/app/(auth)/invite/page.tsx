@@ -30,6 +30,18 @@ const CoupleInvitationPage = () => {
 		handleCheckCoupleStatus()
 	}, [])
 
+	const handleLogin = () => {
+		router.push('/sign-in');
+	}
+
+	const handleOpenModal = () => {
+		setIsOpen(true);
+	}
+
+	const handleCloseModal = () => {
+		setIsOpen(false);
+	}
+
 	const handleCheckCoupleStatus = async (): Promise<void> => {
 		const token = searchParams.get('token');
 		if (token === null) { Swal.fire({
@@ -59,14 +71,6 @@ const CoupleInvitationPage = () => {
 			router.push('/sign-in');
 			return
 		}
-	}
-
-	const handleOpenModal = () => {
-		setIsOpen(true);
-	}
-
-	const handleCloseModal = () => {
-		setIsOpen(false);
 	}
 
 	const handleGenerateCode = async (): Promise<void> => {
@@ -134,7 +138,10 @@ const CoupleInvitationPage = () => {
       <p className="mb-4">
         앱을 사용하기 위해서는 상대방과 커플로 연결되어야 합니다. 아래 버튼을 클릭하여 연결을 시작하세요.
       </p>
-      <Button onClick={handleOpenModal}>커플 연결 시작하기</Button>
+			<div className="grid gap-3">
+				<Button onClick={handleOpenModal}>커플 연결 시작하기</Button>
+				<Button onClick={handleLogin} variant="outline">로그인</Button>
+			</div>
       <CoupleInvitationModal
 				isOpen={isOpen}
 				invitationCode={invitationCode}
