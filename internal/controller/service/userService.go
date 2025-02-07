@@ -24,6 +24,8 @@ type UserService interface {
 	// 상대 사용자와 관련 된 기능
 	GenerateInviteCode(userID uint) (string, error)
 	AcceptInvitation(inviteCode string, userID uint) error
+	GetMyCoupleStatus(userID uint) (string, error)
+	GetMyCoupleInfo(userID uint) (model.User, error)
 }
 
 type userService struct {
@@ -153,4 +155,40 @@ func (u *userService) AcceptInvitation(inviteCode string, userID uint) error {
 	u.DB.Where("sender_id = ? AND status = 'pending'", receiver.ID).Delete(&model.CoupleInvitation{})
 
 	return nil
+}
+
+// 현재 내 커플 정보 가져오기 
+func (u *userService) GetMyCoupleStatus(userID uint) (string, error) {
+	user, err := model.FindUserByID(u.DB, userID)
+	if err != nil {
+		return "", errors.ErrCannotFindUser
+	}
+
+	if user.PartnerID == nil {
+		return "single", nil
+	}
+
+	_, err = model.FindUserByID(u.DB, *user.PartnerID)
+	if err != nil {
+		return "", errors.ErrCannotFindPartner
+	}
+	return "coupled", nil
+}
+
+// 현재 내 커플 정보 가져오기 
+func (u *userService) GetMyCoupleInfo(userID uint) (model.User, error) {
+	user, err := model.FindUserByID(u.DB, userID)
+	if err != nil {
+		return model.User{}, errors.ErrCannotFindUser
+	}
+
+	if user.PartnerID == nil {
+		return model.User{}, errors.ErrNotCouple
+	}
+
+	partner, err := model.FindUserByID(u.DB, *user.PartnerID)
+	if err != nil {
+		return model.User{}, errors.ErrCannotFindPartner
+	}
+	return partner, nil
 }

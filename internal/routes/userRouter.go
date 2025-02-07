@@ -26,4 +26,6 @@ func registerUserRoutes(router *gin.RouterGroup) {
 
 	router.POST("/invite-generate", middleware.AuthMiddleware(), userController.GenerateInviteCode)
 	router.PUT("/invite-accept", middleware.AuthMiddleware(), userController.AcceptInvitation)
+	router.GET("/invite-couple-status", middleware.AuthMiddleware(), userController.GetMyCoupleStatus)
+	router.GET("/invite-couple-info", middleware.AuthMiddleware(), userController.GetMyCoupleInfo)
 }

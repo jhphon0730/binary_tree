@@ -22,6 +22,8 @@ type UserController interface {
 
 	GenerateInviteCode(c *gin.Context)
 	AcceptInvitation(c *gin.Context)
+	GetMyCoupleStatus(c *gin.Context)
+	GetMyCoupleInfo(c *gin.Context)
 }
 
 type userController struct {
@@ -138,4 +140,26 @@ func (u *userController) AcceptInvitation(c *gin.Context) {
 		return
 	}
 	response.Success(c, nil)
+}
+
+// 현재 사용자가 커플이 있는 지 확인
+func (u *userController) GetMyCoupleStatus(c *gin.Context) {
+	userID := c.GetInt("userID")
+	status, err := u.userService.GetMyCoupleStatus(uint(userID))
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	response.Success(c, gin.H{"status": status})
+}
+
+// 현재 내 커플 정보 가져오기 
+func (u *userController) GetMyCoupleInfo(c *gin.Context) {
+	userID := c.GetInt("userID")
+	user, err := u.userService.GetMyCoupleInfo(uint(userID))
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	response.Success(c, user)
 }

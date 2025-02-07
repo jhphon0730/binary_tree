@@ -1,5 +1,4 @@
 package model
-
 import (
 	"gorm.io/gorm"
 )
@@ -10,4 +9,12 @@ type CoupleInvitation struct {
 	ReceiverID *uint  `json:"receiver_id,omitempty"`     // 초대받은 유저
 	InviteCode string `json:"invite_code" gorm:"unique;not null"`
 	Status     string `json:"status" gorm:"default:'pending'"` // "pending", "accepted", "rejected"
+}
+
+func FindMyCoupleByUserID(DB *gorm.DB, partnerID uint) (User, error) {
+	partner, err := FindUserByID(DB, partnerID)
+	if err != nil {
+		return User{}, err
+	}
+	return partner, nil
 }
