@@ -7,10 +7,12 @@ import (
 	"binary_tree/internal/errors"
 	"binary_tree/pkg/auth"
 	"binary_tree/pkg/utils"
+	"binary_tree/pkg/redis"
 
 	"gorm.io/gorm"
 
 	"math/rand"
+	"context"
 	"time"
 )
 
@@ -90,10 +92,10 @@ func (u *userService) SignInUser(userDTO dto.UserSignInDTO) (model.User, string,
 
 // 초대 코드 생성
 func (u *userService) GenerateInviteCode(userID uint) (string, error) {
-	var existingInvite model.CoupleInvitation
-	// 사용자가 보낸 초대 코드가 아직 처리되지 않았다면 기존 초대 코드를 반환
-	if err := u.DB.Where("sender_id = ? AND status = 'pending'", userID).First(&existingInvite).Error; err == nil {
-		return existingInvite.InviteCode, nil
+	// 기존에 생성된 초대 코드가 있는지 확인
+	couple_invitation, err := redis.GetCoupleInvitation(context.Background(), int(userID))
+	if err == nil {
+		return couple_invitation.Code, nil
 	}
 
 	rand.Seed(time.Now().UnixNano())
@@ -104,14 +106,13 @@ func (u *userService) GenerateInviteCode(userID uint) (string, error) {
 	}
 	inviteCode := string(code)
 
-	// 초대 코드 저장
-	invitation := model.CoupleInvitation{
-		SenderID:   userID,
-		InviteCode: inviteCode,
-		Status:     "pending",
+	err = redis.SetCoupleInvitation(context.Background(), int(userID), inviteCode)
+	if err != nil {
+		return "", errors.ErrFailedToSetRedis
 	}
-	if err := u.DB.Create(&invitation).Error; err != nil {
-		return "", err
+	err = redis.SetCoupleInvitationWithCode(context.Background(), inviteCode, int(userID))
+	if err != nil {
+		return "", errors.ErrFailedToSetRedis
 	}
 
 	return inviteCode, nil
@@ -119,15 +120,10 @@ func (u *userService) GenerateInviteCode(userID uint) (string, error) {
 
 // 초대 코드 수락
 func (u *userService) AcceptInvitation(inviteCode string, userID uint) (model.User, model.User, error) {
-	var invite model.CoupleInvitation
-
-	// 초대 코드가 유효한지 확인
-	if err := u.DB.Where("invite_code = ? AND status = 'pending'", inviteCode).First(&invite).Error; err != nil {
-		return model.User{}, model.User{}, errors.ErrInvalidInviteCode
-	}
+	senderID, err := redis.GetCoupleInvitationWithCode(context.Background(), inviteCode)
 
 	// 상대방 사용자 찾기 및 상대방 사용자가 이미 커플인지 확인
-	sender, err := model.FindUserByID(u.DB, invite.SenderID)
+	sender, err := model.FindUserByID(u.DB, uint(senderID))
 	if err != nil {
 		return model.User{}, model.User{}, errors.ErrCannotFindInviteUser
 	}
@@ -148,11 +144,10 @@ func (u *userService) AcceptInvitation(inviteCode string, userID uint) (model.Us
 	u.DB.Model(&sender).Update("partner_id", receiver.ID)
 	u.DB.Model(&receiver).Update("partner_id", sender.ID)
 
-	// 초대 코드 상태 변경
-	u.DB.Model(&invite).Updates(model.CoupleInvitation{Status: "accepted", ReceiverID: &receiver.ID})
-
-	// reciver가 만든 초대 코드는 모두 삭제
-	u.DB.Where("sender_id = ? AND status = 'pending'", receiver.ID).Delete(&model.CoupleInvitation{})
+	// 커플 초대 코드 삭제
+	redis.DeleteCoupleInvitation(context.Background(), int(senderID))
+	redis.DeleteCoupleInvitation(context.Background(), int(receiver.ID))
+	redis.DeleteCoupleInvitationWithCode(context.Background(), inviteCode)
 
 	return sender, receiver, nil
 }

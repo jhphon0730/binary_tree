@@ -35,11 +35,18 @@ func main() {
 
 	// redis
 	ctx := context.Background()
+	//// redis - user
 	log.Println("Initializing User redis...")
 	if err := redis.InitUserRedis(ctx); err != nil {
 		log.Fatalf("Error initializing user redis: %s", err)
 	}
 	defer redis.CloseUserRedis()
+	//// redis - couple invitation
+	log.Println("Initializing Couple Inivitation redis...")
+	if err := redis.InitCoupleInvitationRedis(ctx); err != nil {
+		log.Fatalf("Error initializing couple invitation redis: %s", err)
+	}
+	defer redis.CloseCoupleInvitationRedis()
 
 	// Bcrypt
 	log.Println("Initializing Bcrypt...")

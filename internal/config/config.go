@@ -22,6 +22,7 @@ type Redis struct {
 	Password string
 
 	USER_DB int
+	CoupleInvitationDB int
 }
 
 type Config struct {
@@ -70,6 +71,7 @@ func LoadConfig() (*Config, error) {
 			Host:     getEnv("REDIS_HOST", "localhost:6379"),
 			Password: getEnv("REDIS_PASSWORD", ""),
 			USER_DB:  0,
+			CoupleInvitationDB: 1,
 		},
 		JWT_SECRET: getEnv("JWT_SECRET", ""),
 		CHAR_SET:   getEnv("CHAR_SET", "asdqwe123"),
