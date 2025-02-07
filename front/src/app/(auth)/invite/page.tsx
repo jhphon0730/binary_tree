@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import CoupleInvitationModal from '@/components/invite/CoupleInvitationModal';
 
-import { RequestGenerateInviteCode, RequestAcceptInvitation } from '@/lib/api/invite';
+import { RequestGenerateInviteCode, RequestAcceptInvitation, RequestGetMyCoupleStatus } from '@/lib/api/invite';
 
 const CoupleInvitationPage = () => {
 	const router = useRouter();
@@ -27,7 +27,39 @@ const CoupleInvitationPage = () => {
 			router.push('/sign-in');
 			return
 		}
+		handleCheckCoupleStatus()
 	}, [])
+
+	const handleCheckCoupleStatus = async (): Promise<void> => {
+		const token = searchParams.get('token');
+		if (token === null) { Swal.fire({
+				icon: 'error',
+				title: '초대 코드 생성 실패',
+				text: '로그인 정보가 없습니다. 다시 로그인해주세요.',
+			});
+			router.push('/sign-in');
+			return
+		}
+		const res = await RequestGetMyCoupleStatus({token});
+		if (res.error) {
+			Swal.fire({
+				icon: 'error',
+				title: '커플 상태 확인 실패',
+				text: res.error,
+			});
+			router.push('/sign-in');
+			return
+		}
+		if (res.data.status == "coupled") {
+			Swal.fire({
+				icon: 'info',
+				title: '커플 상태 확인 성공',
+				text: '이미 커플로 연결되어 있습니다.',
+			});
+			router.push('/sign-in');
+			return
+		}
+	}
 
 	const handleOpenModal = () => {
 		setIsOpen(true);

@@ -42,3 +42,25 @@ export const RequestAcceptInvitation = async ({token, inviteCode}: AcceptInvitat
 		error: res.error,
 	}
 }
+
+/** 현재 내가 커플이 있는 지 확인 */
+type GetMyCoupleStatusRequest = {
+	token: string;
+}
+type GetMyCoupleStatusResponse = {
+	status: string;
+}
+export const RequestGetMyCoupleStatus = async ({token}: GetMyCoupleStatusRequest): Promise<Response<GetMyCoupleStatusResponse>> => {
+	const res = await FetchWithAuth('/users/invite-couple-status', {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		method: "GET",
+	})
+	return {
+		data: res.data,
+		state: res.state,
+		message: res.message,
+		error: res.error,
+	}
+}
