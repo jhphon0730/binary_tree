@@ -48,6 +48,6 @@ func CloseDB() {
 // MigrateDB migrates the database schema
 func MigrateDB() error {
 	return db_instance.AutoMigrate(
-		&model.User{}, &model.CoupleInvitation{},
+		&model.User{}, &model.CoupleInvitation{}, &model.Couple{},
 	)
 }
