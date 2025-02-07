@@ -125,7 +125,7 @@ func (u *userController) GenerateInviteCode(c *gin.Context) {
 // 초대 코드 수락
 func (u *userController) AcceptInvitation(c *gin.Context) {
 	userID := c.GetInt("userID")
-	inviteCode := c.Param("inviteCode")
+	inviteCode := c.Query("inviteCode")
 
 	if inviteCode == "" {
 		response.Error(c, http.StatusBadRequest, errors.ErrInvalidInviteCode.Error())

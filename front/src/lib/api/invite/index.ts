@@ -33,7 +33,7 @@ export const RequestAcceptInvitation = async ({token, inviteCode}: AcceptInvitat
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
-		method: "PATCH",
+		method: "PUT",
 	})
 	return {
 		data: res.data,

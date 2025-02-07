@@ -10,15 +10,15 @@ type CoupleInvitationModalProps = {
 
 	handleClose: () => void;
 	handleGenerateCode: () => void;
-	handleSubmitEnterdCode: (code: string) => void;
+	handleSubmitEnterdCode: (code: string) => Promise<void>;
 };
 
 const CoupleInvitationModal = ({isOpen, invitationCode, handleClose, handleGenerateCode, handleSubmitEnterdCode}: CoupleInvitationModalProps) => {
 	const [mode, setMode] = React.useState<'generate' | 'enter'>('generate');
 	const [enterdCode, setEnteredCode] = React.useState<string>('');
 
-	const handleSubmitCode = () => {
-		handleSubmitEnterdCode(enterdCode);
+	const handleSubmitCode = async () => {
+		await handleSubmitEnterdCode(enterdCode);
 		setEnteredCode('');
 	}
 

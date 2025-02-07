@@ -16,6 +16,19 @@ const CoupleInvitationPage = () => {
 	const [isOpen, setIsOpen] = React.useState<boolean>(false);
 	const [invitationCode, setInvitationCode] = React.useState<string>('');
 
+	React.useEffect(() => {
+		const token = searchParams.get('token');
+		if (token === null) {
+			Swal.fire({
+				icon: 'error',
+				title: '404',
+				text: '로그인 정보가 없습니다. 다시 로그인해주세요.',
+			});
+			router.push('/sign-in');
+			return
+		}
+	}, [])
+
 	const handleOpenModal = () => {
 		setIsOpen(true);
 	}
@@ -26,12 +39,12 @@ const CoupleInvitationPage = () => {
 
 	const handleGenerateCode = async (): Promise<void> => {
 		const token = searchParams.get('token');
-		if (token === null) {
-			Swal.fire({
+		if (token === null) { Swal.fire({
 				icon: 'error',
 				title: '초대 코드 생성 실패',
 				text: '로그인 정보가 없습니다. 다시 로그인해주세요.',
 			});
+			router.push('/sign-in');
 			return
 		}
 		const res = await RequestGenerateInviteCode({token});
@@ -41,6 +54,7 @@ const CoupleInvitationPage = () => {
 				title: '초대 코드 생성 실패',
 				text: res.error,
 			});
+			router.push('/sign-in');
 			return
 		}
 		setInvitationCode(() => res.data.inviteCode);
@@ -48,7 +62,38 @@ const CoupleInvitationPage = () => {
 
 	// 초대 코드 입력 이후 제출 하기 버튼을 눌렀을 때
 	const handleSubmitEnterdCode = async (code: string): Promise<void> => {
-
+		if (code.trim().length === 0) {
+			Swal.fire({
+				icon: 'error',
+				title: '초대 코드 입력 실패',
+				text: '초대 코드를 입력해주세요.',
+			});
+			return
+		}
+		const token = searchParams.get('token');
+		if (token === null) { Swal.fire({
+				icon: 'error',
+				title: '초대 코드 입력 실패',
+				text: '로그인 정보가 없습니다. 다시 로그인해주세요.',
+			});
+			router.push('/sign-in');
+			return
+		}
+		const res = await RequestAcceptInvitation({token, inviteCode: code});
+		if (res.error) {
+			Swal.fire({
+				icon: 'error',
+				title: '초대 코드 입력 실패',
+				text: res.error,
+			});
+			return
+		}
+		Swal.fire({
+			icon: 'success',
+			title: '초대 코드 입력 성공',
+			text: '커플 연결이 완료되었습니다. 다시 로그인해주세요.',
+		});
+		router.push('/sign-in');
 	}
 
 	return (
