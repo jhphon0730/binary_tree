@@ -28,10 +28,14 @@ type UserController interface {
 
 type userController struct {
 	userService service.UserService
+	coupleService service.CoupleService
 }
 
-func NewUserController(userService service.UserService) UserController {
-	return &userController{userService: userService}
+func NewUserController(userService service.UserService, coupleService service.CoupleService) UserController {
+	return &userController{
+		userService: userService,
+		coupleService: coupleService,
+	}
 }
 
 // 토큰이 유효한지 검증
@@ -134,11 +138,19 @@ func (u *userController) AcceptInvitation(c *gin.Context) {
 		return
 	}
 
-	err := u.userService.AcceptInvitation(inviteCode, uint(userID))
+	sender, receiver, err := u.userService.AcceptInvitation(inviteCode, uint(userID))
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	// 커플 생성
+	err = u.coupleService.CreateCouple(sender.ID, receiver.ID)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	response.Success(c, nil)
 }
 

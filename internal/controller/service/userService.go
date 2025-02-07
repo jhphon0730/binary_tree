@@ -23,7 +23,7 @@ type UserService interface {
 
 	// 상대 사용자와 관련 된 기능
 	GenerateInviteCode(userID uint) (string, error)
-	AcceptInvitation(inviteCode string, userID uint) error
+	AcceptInvitation(inviteCode string, userID uint) (model.User, model.User, error)
 	GetMyCoupleStatus(userID uint) (string, error)
 	GetMyCoupleInfo(userID uint) (model.User, error)
 }
@@ -118,30 +118,30 @@ func (u *userService) GenerateInviteCode(userID uint) (string, error) {
 }
 
 // 초대 코드 수락
-func (u *userService) AcceptInvitation(inviteCode string, userID uint) error {
+func (u *userService) AcceptInvitation(inviteCode string, userID uint) (model.User, model.User, error) {
 	var invite model.CoupleInvitation
 
 	// 초대 코드가 유효한지 확인
 	if err := u.DB.Where("invite_code = ? AND status = 'pending'", inviteCode).First(&invite).Error; err != nil {
-		return errors.ErrInvalidInviteCode
+		return model.User{}, model.User{}, errors.ErrInvalidInviteCode
 	}
 
 	// 상대방 사용자 찾기 및 상대방 사용자가 이미 커플인지 확인
 	sender, err := model.FindUserByID(u.DB, invite.SenderID)
 	if err != nil {
-		return errors.ErrCannotFindInviteUser
+		return model.User{}, model.User{}, errors.ErrCannotFindInviteUser
 	}
 	if sender.PartnerID != nil {
-		return errors.ErrAlreadyCouple
+		return model.User{}, model.User{}, errors.ErrAlreadyCouple
 	}
 
 	// 요청을 보낸 사용자 찾기 및 요청을 보낸 사용자가 이미 커플인지 확인
 	receiver, err := model.FindUserByID(u.DB, userID)
 	if err != nil {
-		return errors.ErrCannotFindUser
+		return model.User{}, model.User{}, errors.ErrCannotFindUser
 	}
 	if receiver.PartnerID != nil {
-		return errors.ErrAlreadyCouple
+		return model.User{}, model.User{}, errors.ErrAlreadyCouple
 	}
 
 	// 커플 관계 설정
@@ -154,7 +154,7 @@ func (u *userService) AcceptInvitation(inviteCode string, userID uint) error {
 	// reciver가 만든 초대 코드는 모두 삭제
 	u.DB.Where("sender_id = ? AND status = 'pending'", receiver.ID).Delete(&model.CoupleInvitation{})
 
-	return nil
+	return sender, receiver, nil
 }
 
 // 현재 내 커플 정보 가져오기 

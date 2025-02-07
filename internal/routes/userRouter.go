@@ -13,8 +13,10 @@ import (
 var (
 	DB *gorm.DB = database.GetDB()
 
+	coupleService service.CoupleService			 = service.NewCoupleService(DB)
 	userService    service.UserService       = service.NewUserService(DB)
-	userController controller.UserController = controller.NewUserController(userService)
+
+	userController controller.UserController = controller.NewUserController(userService, coupleService)
 )
 
 func registerUserRoutes(router *gin.RouterGroup) {
