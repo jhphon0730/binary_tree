@@ -1,10 +1,10 @@
-package routes 
+package routes
 
 import (
 	"binary_tree/internal/middleware"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 type Route struct {
@@ -14,7 +14,7 @@ type Route struct {
 func Init() *Route {
 	r := gin.Default()
 
-	// MEDIA 
+	// MEDIA
 	r.Static("/media", "./media")
 
 	// CORS
@@ -30,7 +30,7 @@ func Init() *Route {
 
 // Register the routes
 func (route *Route) RegisterRoutes() {
-	// ping 
+	// ping
 	route.r.GET("/ping", middleware.AuthMiddleware(), func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
@@ -40,9 +40,14 @@ func (route *Route) RegisterRoutes() {
 	{
 		registerUserRoutes(user_router)
 	}
+	couple_router := route.r.Group("/couples/")
+	{
+		couple_router.Use(middleware.AuthMiddleware())
+		registerCoupleRoutes(couple_router)
+	}
 }
 
-// Run Server 
+// Run Server
 func (route *Route) RunServer(port string, serverType string) {
 	if serverType == "product" {
 		gin.SetMode(gin.ReleaseMode)

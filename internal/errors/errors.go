@@ -48,6 +48,8 @@ var (
 	ErrFailedToUploadProfileImage = errors.New("프로필 이미지를 업로드할 수 없습니다.")
 
 	// COUPLE
-	ERRCannotCreateCouple = errors.New("커플로 등록할 수 없습니다.")
-	ErrCannotInviteSelf   = errors.New("자기 자신을 초대할 수 없습니다.")
+	ERRCannotCreateCouple      = errors.New("커플로 등록할 수 없습니다.")
+	ErrCannotInviteSelf        = errors.New("자기 자신을 초대할 수 없습니다.")
+	ErrCannotFindCouple        = errors.New("커플을 찾을 수 없습니다.")
+	ErrInvalidSharedNoteFormat = errors.New("공유 메모 형식이 올바르지 않습니다.")
 )
