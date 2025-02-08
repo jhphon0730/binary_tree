@@ -41,14 +41,15 @@ func (c *coupleService) CreateCouple(userID1, userID2 uint) error {
 
 // 커플끼리의 메모를 수정
 func (c *coupleService) UpdateSharedNote(userID uint, sharedNoteDTO dto.UpdateSharedNoteDTO) error {
-	couple := model.Couple{}
-	if err := c.DB.Where("user1_id = ? OR user2_id = ?", userID, userID).First(&couple).Error; err != nil {
+	result := c.DB.Model(&model.Couple{}).
+		Where("user1_id = ? OR user2_id = ?", userID, userID).
+		Update("shared_note", sharedNoteDTO.SharedNote)
+
+	if result.Error != nil {
 		return errors.ErrCannotFindCouple
 	}
-	couple.SharedNote = sharedNoteDTO.SharedNote
-
-	if err := c.DB.Save(&couple).Error; err != nil {
-		return errors.ERRCannotCreateCouple
+	if result.RowsAffected == 0 {
+		return errors.ErrCannotFindCouple
 	}
 
 	return nil
