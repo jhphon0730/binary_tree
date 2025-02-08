@@ -1,9 +1,10 @@
 package controller
 
 import (
-	"binary_tree/internal/model/dto"
-	"binary_tree/internal/errors"
 	"binary_tree/internal/controller/service"
+	"binary_tree/internal/errors"
+	"binary_tree/internal/model"
+	"binary_tree/internal/model/dto"
 	"binary_tree/pkg/redis"
 	"binary_tree/pkg/response"
 	"binary_tree/pkg/utils"
@@ -27,13 +28,13 @@ type UserController interface {
 }
 
 type userController struct {
-	userService service.UserService
+	userService   service.UserService
 	coupleService service.CoupleService
 }
 
 func NewUserController(userService service.UserService, coupleService service.CoupleService) UserController {
 	return &userController{
-		userService: userService,
+		userService:   userService,
 		coupleService: coupleService,
 	}
 }
@@ -101,7 +102,17 @@ func (u *userController) SignInUser(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, gin.H{"user": user, "token": token})
+	// 로그인 시에 커플 정보가 있다면 함께 가져옴
+	partner := model.User{}
+	if user.PartnerID != nil {
+		partner, err = u.userService.GetMyCoupleInfo(user.ID)
+		if err != nil {
+			response.Error(c, http.StatusBadRequest, err.Error())
+			return
+		}
+	}
+
+	response.Success(c, gin.H{"user": user, "partner": partner, "token": token})
 	return
 }
 
@@ -165,7 +176,7 @@ func (u *userController) GetMyCoupleStatus(c *gin.Context) {
 	response.Success(c, gin.H{"status": status})
 }
 
-// 현재 내 커플 정보 가져오기 
+// 현재 내 커플 정보 가져오기
 func (u *userController) GetMyCoupleInfo(c *gin.Context) {
 	userID := c.GetInt("userID")
 	user, err := u.userService.GetMyCoupleInfo(uint(userID))

@@ -8,11 +8,13 @@ import { useRouter } from 'next/navigation'
 import AuthForm from '@/components/auth/AuthForm'
 
 import { useAuthStore } from '@/store/authStore'
+import { usePartnerStore } from '@/store/partnerStore'
 import { RequestSignIn } from '@/lib/api/user'
 
 const SignInPage = () => {
   const router = useRouter()
   const authStore = useAuthStore()
+  const partnerStore = usePartnerStore()
 
   const handleSubmit = async (data: Record<string, string>, _: File | null): Promise<void> => {
     const { username, password } = data
@@ -44,6 +46,8 @@ const SignInPage = () => {
       title: '로그인 성공',
       text: '로그인에 성공했습니다.',
     }).then(async () => {
+      // 로그인 시에 파트너 커플 정보, 현재 내 정보, 로그인 토큰 정보 저장
+      partnerStore.setPartner(res.data.partner)
       authStore.setUser(res.data.user)
 			Cookies.set('token', res.data.token, {
         expires: 1 / 24,

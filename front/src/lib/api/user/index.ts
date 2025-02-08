@@ -8,6 +8,7 @@ type SignInRequest = {
 type SignInResponse = {
   token: string;
   user: User;
+	partner: User;
 }
 export const RequestSignIn = async (signInProps: SignInRequest): Promise<Response<SignInResponse>> => {
   const res = await FetchWithOutAuth('/users/sign-in', {
