@@ -1,22 +1,9 @@
 package routes
 
 import (
-	"binary_tree/internal/controller"
-	"binary_tree/internal/controller/service"
-	"binary_tree/internal/database"
 	"binary_tree/internal/middleware"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-)
-
-var (
-	DB *gorm.DB = database.GetDB()
-
-	coupleService service.CoupleService = service.NewCoupleService(DB)
-	userService   service.UserService   = service.NewUserService(DB)
-
-	userController controller.UserController = controller.NewUserController(userService, coupleService)
 )
 
 func registerUserRoutes(router *gin.RouterGroup) {
