@@ -2,17 +2,17 @@ package service
 
 import (
 	"binary_tree/internal/config"
+	"binary_tree/internal/errors"
 	"binary_tree/internal/model"
 	"binary_tree/internal/model/dto"
-	"binary_tree/internal/errors"
 	"binary_tree/pkg/auth"
-	"binary_tree/pkg/utils"
 	"binary_tree/pkg/redis"
+	"binary_tree/pkg/utils"
 
 	"gorm.io/gorm"
 
-	"math/rand"
 	"context"
+	"math/rand"
 	"time"
 )
 
@@ -121,6 +121,14 @@ func (u *userService) GenerateInviteCode(userID uint) (string, error) {
 // 초대 코드 수락
 func (u *userService) AcceptInvitation(inviteCode string, userID uint) (model.User, model.User, error) {
 	senderID, err := redis.GetCoupleInvitationWithCode(context.Background(), inviteCode)
+	if senderID == 0 || err != nil {
+		return model.User{}, model.User{}, errors.ErrInvalidInviteCode
+	}
+
+	// 초대코드를 입력한 사용자가 자기 자신의 초대 코드를 입력한 경우
+	if senderID == int(userID) {
+		return model.User{}, model.User{}, errors.ErrCannotInviteSelf
+	}
 
 	// 상대방 사용자 찾기 및 상대방 사용자가 이미 커플인지 확인
 	sender, err := model.FindUserByID(u.DB, uint(senderID))
@@ -152,7 +160,7 @@ func (u *userService) AcceptInvitation(inviteCode string, userID uint) (model.Us
 	return sender, receiver, nil
 }
 
-// 현재 내 커플 정보 가져오기 
+// 현재 내 커플 정보 가져오기
 func (u *userService) GetMyCoupleStatus(userID uint) (string, error) {
 	user, err := model.FindUserByID(u.DB, userID)
 	if err != nil {
@@ -170,7 +178,7 @@ func (u *userService) GetMyCoupleStatus(userID uint) (string, error) {
 	return "coupled", nil
 }
 
-// 현재 내 커플 정보 가져오기 
+// 현재 내 커플 정보 가져오기
 func (u *userService) GetMyCoupleInfo(userID uint) (model.User, error) {
 	user, err := model.FindUserByID(u.DB, userID)
 	if err != nil {
