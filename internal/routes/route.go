@@ -41,8 +41,8 @@ func (route *Route) RegisterRoutes() {
 		registerUserRoutes(user_router)
 	}
 	couple_router := route.r.Group("/couples/")
+	couple_router.Use(middleware.AuthMiddleware())
 	{
-		couple_router.Use(middleware.AuthMiddleware())
 		registerCoupleRoutes(couple_router)
 	}
 }

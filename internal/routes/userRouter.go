@@ -10,14 +10,16 @@ import (
 	"gorm.io/gorm"
 )
 
+var (
+	DB *gorm.DB = database.GetDB()
+
+	coupleService service.CoupleService = service.NewCoupleService(DB)
+	userService   service.UserService   = service.NewUserService(DB)
+
+	userController controller.UserController = controller.NewUserController(userService, coupleService)
+)
+
 func registerUserRoutes(router *gin.RouterGroup) {
-	var DB *gorm.DB = database.GetDB()
-
-	var coupleService service.CoupleService = service.NewCoupleService(DB)
-	var userService service.UserService = service.NewUserService(DB)
-
-	var userController controller.UserController = controller.NewUserController(userService, coupleService)
-
 	router.GET("/validate-token", middleware.AuthMiddleware(), userController.ValidateToken)
 
 	router.POST("/sign-up", userController.SignUpUser)
