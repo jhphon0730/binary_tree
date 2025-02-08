@@ -1,19 +1,19 @@
-package dto 
+package dto
 
 import (
 	"binary_tree/internal/errors"
 
+	"mime/multipart"
 	"regexp"
 	"strings"
-	"mime/multipart"
 )
 
 // UserSignUpDTO는 클라이언트로부터 받은 데이터 전송 객체
 type UserSignUpDTO struct {
-	Username string `form:"username" binding:"required"`
-	Name     string `form:"name" binding:"required"`
-	Password string `form:"password" binding:"required"`
-	Email    string `form:"email" binding:"required"`
+	Username         string                `form:"username" binding:"required"`
+	Name             string                `form:"name" binding:"required"`
+	Password         string                `form:"password" binding:"required"`
+	Email            string                `form:"email" binding:"required"`
 	ProfileImageFile *multipart.FileHeader `form:"profile_image_file"`
 }
 
@@ -78,8 +78,8 @@ func (dto *UserSignUpDTO) validatePassword() error {
 }
 
 type UserSignInDTO struct {
-	Username string `form:"username" binding:"required"`
-	Password string `form:"password" binding:"required"`
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 // 유효성 검사 함수
