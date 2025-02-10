@@ -3,15 +3,17 @@ import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import CoupleInfoCard from '@/components/dashboard/CoupleInfoCard';
 import SharedMemoCard from '@/components/dashboard/SharedMemoCard';
-import Error from '@/components/Error';
+import SSRError from '@/components/SSRError';
 
 import { GetCoupleInfo } from '@/lib/api/couple';
 
 const DashboardMainPage = async () => {
 	const coupleInfo = await GetCoupleInfo();
 
+	console.log(coupleInfo);
+
 	if (coupleInfo.error || !coupleInfo.data) {
-		return (<Error error={coupleInfo.error || coupleInfo.message} />);
+		return (<SSRError error={coupleInfo.error || coupleInfo.message} />);
 	}
 
   return (

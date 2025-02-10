@@ -17,3 +17,21 @@ export const GetCoupleInfo = async (): Promise<Response<GetCoupleInfoResponse>> 
     error: res.error,
   }
 }
+
+// 커플 공유 노트 수정 함수
+type UpdateSharedNoteRequest = {
+	shared_note: string;
+}
+type UpdateSharedNoteResponse = { }
+export const UpdateSharedNote = async (updateProps: UpdateSharedNoteRequest): Promise<Response<UpdateSharedNoteResponse>> => {
+	const res = await FetchWithAuth("/couples/info", {
+		method: "PATCH",
+		body: JSON.stringify(updateProps),
+	})
+  return {
+    data: res.data,
+    state: res.state,
+    message: res.message,
+    error: res.error,
+  }
+}
