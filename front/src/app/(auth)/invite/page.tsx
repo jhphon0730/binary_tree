@@ -9,7 +9,7 @@ import CoupleInvitationModal from '@/components/invite/CoupleInvitationModal';
 
 import { RequestGenerateInviteCode, RequestAcceptInvitation, RequestGetMyCoupleStatus } from '@/lib/api/invite';
 
-const CoupleInvitationPage = () => {
+const CoupleInvitationContent = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
@@ -152,5 +152,13 @@ const CoupleInvitationPage = () => {
     </div>
 	);
 };
+
+const CoupleInvitationPage = () => {
+	return (
+		<React.Suspense fallback={<div>...</div>}>
+			<CoupleInvitationContent />
+		</React.Suspense>
+	);
+}
 
 export default CoupleInvitationPage;

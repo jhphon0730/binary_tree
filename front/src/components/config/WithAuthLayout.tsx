@@ -19,8 +19,9 @@ const WithAuthLayout = ({ children }: WithAuthLayoutProps) => {
 	const authStorage = useAuthStore();
 
 	React.useEffect(() => {
+		console.log('%c[AuthLayout]', 'color: red');
 		handleSession();
-	}, [authStorage.user, window.location.pathname]);
+	}, [authStorage.user]);
 
 	const clearSession = () => {
 		// 세션 만료

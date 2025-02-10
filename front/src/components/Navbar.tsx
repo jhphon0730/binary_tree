@@ -24,7 +24,7 @@ const Navbar = () => {
   const authStore = useAuthStore()
 
 	const signOutHandler = async () => {
-		const res = await RequestSignOut(null)
+		const res = await RequestSignOut()
 		if (res.error) {
 			router.push('/sign-in')
 			return
