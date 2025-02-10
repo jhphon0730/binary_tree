@@ -1,34 +1,35 @@
-"use client"
-
 import React from 'react';
 
-import CoupleInfoCard from '@/app/(main)/dashboard/components/CoupleInfoCard';
-import SharedMemoCard from '@/app/(main)/dashboard/components/SharedMemoCard';
+import { Skeleton } from '@/components/ui/skeleton';
+import CoupleInfoCard from '@/components/dashboard/CoupleInfoCard';
+import SharedMemoCard from '@/components/dashboard/SharedMemoCard';
 
-export default function DashboardMainPage() {
+import { GetCoupleInfo } from '@/lib/api/couple';
 
-	// TODO : 백엔드 연결 ( 가져오기 및 업데이트 )
-	const handleUpdateCoupleInfo = async () => { }
+const DashboardMainPage = async () => {
+	const coupleInfo = await GetCoupleInfo();
 
-	// TODO : 백엔드 연결 ( 가져오기 및 업데이트 )
-	const handleUpdateMemo = async (message: string) => { }
+	if (coupleInfo.error || !coupleInfo.data) {
+		return
+	}
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">대시보드</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-				<CoupleInfoCard
-					startDate={null}
-					handleUpdateCoupleInfo={handleUpdateCoupleInfo}
-				/>
+				{/* 상대 커플의 정보 및 연애 시작일 */}
+				{coupleInfo.data.coupleInfo ? <CoupleInfoCard
+					startDate={coupleInfo.data.coupleInfo.start_date}
+				/> : <Skeleton /> }
 
-				<SharedMemoCard
-					sharedMessage="안녕하세요"
-					handleUpdateMemo={handleUpdateMemo}
-				/>
+				{/* 상대 커플과 공유하는 메모 하나 */}
+				{ coupleInfo ? <SharedMemoCard
+					sharedMessage={coupleInfo.data.coupleInfo.shared_note}
+				/> : <Skeleton /> }
       </div>
     </div>
   )
 }
 
+export default DashboardMainPage;

@@ -10,6 +10,7 @@ import (
 
 type CoupleService interface {
 	CreateCouple(userID1, userID2 uint) error
+	GetCoupleInfo(userID uint) (*model.Couple, error)
 	UpdateSharedNote(userID uint, sharedNoteDTO dto.UpdateSharedNoteDTO) error
 }
 
@@ -37,6 +38,17 @@ func (c *coupleService) CreateCouple(userID1, userID2 uint) error {
 	}
 
 	return nil
+}
+
+// 커플 정보를 가져옴
+func (c *coupleService) GetCoupleInfo(userID uint) (*model.Couple, error) {
+	var couple model.Couple
+	result := c.DB.Where("user1_id = ? OR user2_id = ?", userID, userID).First(&couple)
+	if result.Error != nil {
+		return nil, errors.ErrCannotFindCouple
+	}
+
+	return &couple, nil
 }
 
 // 커플끼리의 메모를 수정

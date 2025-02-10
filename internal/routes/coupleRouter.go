@@ -5,5 +5,6 @@ import (
 )
 
 func registerCoupleRoutes(router *gin.RouterGroup) {
-	router.PUT("/", coupleController.UpdateSharedNote)
+	router.GET("/info", coupleController.GetCoupleInfo)
+	router.PUT("/info", coupleController.UpdateSharedNote)
 }

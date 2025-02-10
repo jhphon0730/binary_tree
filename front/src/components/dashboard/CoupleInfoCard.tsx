@@ -21,10 +21,9 @@ import { usePartnerStore } from '@/store/partnerStore'
 
 type CoupleInfoCardProps = {
   startDate: string | null
-  handleUpdateCoupleInfo: (data: { startDate: string | null }) => Promise<void>
 }
 
-const CoupleInfoCard = ({ startDate, handleUpdateCoupleInfo }: CoupleInfoCardProps) => {
+const CoupleInfoCard = ({ startDate }: CoupleInfoCardProps) => {
 	const { partner } = usePartnerStore()
 
   const [isEditing, setIsEditing] = useState(false)

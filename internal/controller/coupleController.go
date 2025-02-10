@@ -12,6 +12,7 @@ import (
 )
 
 type CoupleController interface {
+	GetCoupleInfo(c *gin.Context)
 	UpdateSharedNote(c *gin.Context)
 }
 
@@ -23,6 +24,16 @@ func NewCoupleController(coupleService service.CoupleService) CoupleController {
 	return &coupleController{
 		coupleService: coupleService,
 	}
+}
+
+func (cc *coupleController) GetCoupleInfo(c *gin.Context) {
+	userID := c.GetInt("userID")
+	coupleInfo, err := cc.coupleService.GetCoupleInfo(uint(userID))
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	response.Success(c, gin.H{ "coupleInfo": coupleInfo })
 }
 
 func (cc *coupleController) UpdateSharedNote(c *gin.Context) {

@@ -16,7 +16,7 @@ export const getJWT = async () => {
   } else {
     // 서버 사이드
     const { cookies } = await import("next/headers")
-    token = (await cookies()).get("token")
+    token = (await cookies()).get("token")?.value
   }
   return token
 }
@@ -25,6 +25,7 @@ export interface fetchOptions {
 	headers?: {[key: string]: any};
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	body?: string | FormData;
+	cache?: 'no-cache' | 'default' | 'reload' | 'force-cache' | 'only-if-cached';
 }
 
 const defaultHeaders = {

@@ -7,10 +7,9 @@ import { Textarea } from "@/components/ui/textarea"
 
 type SharedMessageCardProps = {
   sharedMessage: string | null
-  handleUpdateMemo: (message: string) => Promise<void>
 }
 
-const SharedMessageCard = ({ sharedMessage, handleUpdateMemo }: SharedMessageCardProps) => {
+const SharedMessageCard = ({ sharedMessage }: SharedMessageCardProps) => {
   const [editedMemo, setEditedMemo] = useState<string>(sharedMessage || "")
 
 	const handleChangeMemo = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -18,7 +17,6 @@ const SharedMessageCard = ({ sharedMessage, handleUpdateMemo }: SharedMessageCar
 	}
 
   const handleSave = async () => {
-		await handleUpdateMemo(editedMemo)
   }
 
   return (
