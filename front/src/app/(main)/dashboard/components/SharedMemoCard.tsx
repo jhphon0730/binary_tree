@@ -24,9 +24,11 @@ const SharedMessageCard = ({ sharedMessage, handleUpdateMemo }: SharedMessageCar
   return (
     <Card>
       <CardHeader>
-        <CardTitle>공유 메시지</CardTitle>
+        <CardTitle>
+					<p className="text-xl">공유 메시지</p>
+				</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="text-sm">
         <Textarea
           value={editedMemo}
           onChange={handleChangeMemo}

@@ -19,7 +19,7 @@ export default function DashboardMainPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<CoupleInfoCard
-					relationshipStartDate="2021-01-01"
+					startDate={null}
 					handleUpdateCoupleInfo={handleUpdateCoupleInfo}
 				/>
 

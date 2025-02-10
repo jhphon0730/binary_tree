@@ -4,6 +4,7 @@ import { useState } from "react"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { Pencil } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,18 +16,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+
+import { usePartnerStore } from '@/store/partnerStore'
 
 type CoupleInfoCardProps = {
-  relationshipStartDate: string | null
-  handleUpdateCoupleInfo: (data: { relationshipStartDate: string | null }) => Promise<void>
+  startDate: string | null
+  handleUpdateCoupleInfo: (data: { startDate: string | null }) => Promise<void>
 }
 
-const CoupleInfoCard = ({ relationshipStartDate, handleUpdateCoupleInfo }: CoupleInfoCardProps) => {
+const CoupleInfoCard = ({ startDate, handleUpdateCoupleInfo }: CoupleInfoCardProps) => {
+	const { partner } = usePartnerStore()
+
   const [isEditing, setIsEditing] = useState(false)
   const [editedStartDate, setEditedStartDate] = useState<Date | undefined>(
-    relationshipStartDate ? new Date(relationshipStartDate) : undefined,
+    startDate ? new Date(startDate) : undefined,
   )
 
 	const handleEdit = async () => {
@@ -37,21 +40,33 @@ const CoupleInfoCard = ({ relationshipStartDate, handleUpdateCoupleInfo }: Coupl
     setIsEditing(() => false)
   }
 
+	if (!partner) {
+		return null
+	}
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
-          커플 정보
+					<p className="text-xl">상대 커플 정보</p>
           <Button variant="outline" size="icon" onClick={handleEdit}>
             <Pencil className="h-4 w-4" />
           </Button>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div>
-					<span>연애 시작일: </span>
-          <span>{relationshipStartDate ? format(new Date(relationshipStartDate), "PPP", { locale: ko }) : "설정되지 않음"}</span>
+      <CardContent className="text-sm grid grid-cols-1 gap-2">
+        <div className="mb-3">
+					<span className="font-bold">연애 시작일: </span>
+          <span>{startDate ? format(new Date(startDate), "PPP", { locale: ko }) : "설정되지 않음"}</span>
         </div>
+				<div>
+					<span className="font-bold">커플 이름: </span>
+					<span>{partner?.name}</span>
+				</div>
+				<div>
+					<span className="font-bold">커플 이메일: </span>
+					<span>{partner?.email}</span>
+				</div>
       </CardContent>
 
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
@@ -61,18 +76,12 @@ const CoupleInfoCard = ({ relationshipStartDate, handleUpdateCoupleInfo }: Coupl
             <DialogDescription>연애 시작일을 수정할 수 있습니다.</DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-1 gap-2">
-            <div className="grid grid-cols-5 items-center justify-center">
-							<div className="col-span-1" />
-              <div className="col-span-3">
-                <Calendar
-                  mode="single"
-                  selected={editedStartDate}
-                  onSelect={setEditedStartDate}
-                  className="rounded-md border"
-                />
-              </div>
-							<div className="col-span-1" />
-            </div>
+						<Calendar
+							mode="single"
+							selected={editedStartDate}
+							onSelect={setEditedStartDate}
+							className="rounded-md border"
+						/>
           </div>
           <DialogFooter>
             <Button onClick={handleSave}>저장</Button>
