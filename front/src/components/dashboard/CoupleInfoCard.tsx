@@ -60,11 +60,11 @@ const CoupleInfoCard = ({ startDate }: CoupleInfoCardProps) => {
         </div>
 				<div>
 					<span className="font-bold">커플 이름: </span>
-					<span>{partner?.name}</span>
+					<span>{partner.name}</span>
 				</div>
 				<div>
 					<span className="font-bold">커플 이메일: </span>
-					<span>{partner?.email}</span>
+					<span>{partner.email}</span>
 				</div>
       </CardContent>
 

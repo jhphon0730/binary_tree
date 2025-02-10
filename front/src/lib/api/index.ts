@@ -26,6 +26,8 @@ export interface fetchOptions {
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	body?: string | FormData;
 	cache?: 'no-cache' | 'default' | 'reload' | 'force-cache' | 'only-if-cached';
+	revalidate?: number;
+	dynamic?: string;
 }
 
 const defaultHeaders = {

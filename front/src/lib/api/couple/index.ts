@@ -8,7 +8,7 @@ type GetCoupleInfoResponse = {
 export const GetCoupleInfo = async (): Promise<Response<GetCoupleInfoResponse>> => {
 	const res = await FetchWithAuth("/couples/info", {
 		method: "GET",
-		cache: 'no-cache'
+		cache: "no-cache",
 	})
   return {
     data: res.data,
