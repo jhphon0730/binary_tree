@@ -24,7 +24,25 @@ type UpdateSharedNoteRequest = {
 }
 type UpdateSharedNoteResponse = { }
 export const UpdateSharedNote = async (updateProps: UpdateSharedNoteRequest): Promise<Response<UpdateSharedNoteResponse>> => {
-	const res = await FetchWithAuth("/couples/info", {
+	const res = await FetchWithAuth("/couples/info/shared-note", {
+		method: "PATCH",
+		body: JSON.stringify(updateProps),
+	})
+  return {
+    data: res.data,
+    state: res.state,
+    message: res.message,
+    error: res.error,
+  }
+}
+
+// 커플 연애 시작일 수정 함수
+type UpdateStartDateRequest = {
+	start_date: string;
+}
+type UpdateStartDateResponse = { }
+export const UpdateStartDate = async (updateProps: UpdateStartDateRequest): Promise<Response<UpdateStartDateResponse>> => {
+	const res = await FetchWithAuth("/couples/info/start-date", {
 		method: "PATCH",
 		body: JSON.stringify(updateProps),
 	})

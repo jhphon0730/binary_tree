@@ -12,6 +12,7 @@ type CoupleService interface {
 	CreateCouple(userID1, userID2 uint) error
 	GetCoupleInfo(userID uint) (*model.Couple, error)
 	UpdateSharedNote(userID uint, sharedNoteDTO dto.UpdateSharedNoteDTO) error
+	UpdateStartDate(userID uint, startDateDTO dto.UpdateStartDateDTO) error
 }
 
 type coupleService struct {
@@ -56,6 +57,22 @@ func (c *coupleService) UpdateSharedNote(userID uint, sharedNoteDTO dto.UpdateSh
 	result := c.DB.Model(&model.Couple{}).
 		Where("user1_id = ? OR user2_id = ?", userID, userID).
 		Update("shared_note", sharedNoteDTO.SharedNote)
+
+	if result.Error != nil {
+		return errors.ErrCannotFindCouple
+	}
+	if result.RowsAffected == 0 {
+		return errors.ErrCannotFindCouple
+	}
+
+	return nil
+}
+
+// 커플끼리의 연애 시작일을 수정
+func (c *coupleService) UpdateStartDate(userID uint, startDateDTO dto.UpdateStartDateDTO) error {
+	result := c.DB.Model(&model.Couple{}).
+		Where("user1_id = ? OR user2_id = ?", userID, userID).
+		Update("start_date", startDateDTO.StartDate)
 
 	if result.Error != nil {
 		return errors.ErrCannotFindCouple

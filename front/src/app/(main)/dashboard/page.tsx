@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { Skeleton } from '@/components/ui/skeleton';
 import CoupleInfoCard from '@/components/dashboard/CoupleInfoCard';
 import SharedMemoCard from '@/components/dashboard/SharedMemoCard';
 import SSRError from '@/components/SSRError';

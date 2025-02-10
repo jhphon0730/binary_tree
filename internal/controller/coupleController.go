@@ -14,6 +14,7 @@ import (
 type CoupleController interface {
 	GetCoupleInfo(c *gin.Context)
 	UpdateSharedNote(c *gin.Context)
+	UpdateStartDate(c *gin.Context)
 }
 
 type coupleController struct {
@@ -45,6 +46,21 @@ func (cc *coupleController) UpdateSharedNote(c *gin.Context) {
 
 	userID := c.GetInt("userID")
 	if err := cc.coupleService.UpdateSharedNote(uint(userID), sharedNoteDTO); err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	response.Success(c, nil)
+}
+
+func (cc *coupleController) UpdateStartDate(c *gin.Context) {
+	var startDateDTO dto.UpdateStartDateDTO
+	if err := c.ShouldBindJSON(&startDateDTO); err != nil {
+		response.Error(c, http.StatusBadRequest, errors.ErrAllFieldsRequired.Error())
+		return
+	}
+
+	userID := c.GetInt("userID")
+	if err := cc.coupleService.UpdateStartDate(uint(userID), startDateDTO); err != nil {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}

@@ -1,9 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import React from "react"
+import Swal from 'sweetalert2'
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { Pencil } from "lucide-react"
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -16,7 +18,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import SkeletonCard from '@/components/SkeletonCard';
 
+import { UpdateStartDate } from '@/lib/api/couple';
 import { usePartnerStore } from '@/store/partnerStore'
 
 type CoupleInfoCardProps = {
@@ -24,23 +28,47 @@ type CoupleInfoCardProps = {
 }
 
 const CoupleInfoCard = ({ startDate }: CoupleInfoCardProps) => {
+	const router = useRouter()
 	const { partner } = usePartnerStore()
 
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedStartDate, setEditedStartDate] = useState<Date | undefined>(
-    startDate ? new Date(startDate) : undefined,
-  )
+  const [isEditing, setIsEditing] = React.useState(false)
+  const [editedStartDate, setEditedStartDate] = React.useState<Date | undefined>( startDate ? new Date(startDate) : undefined,)
 
 	const handleEdit = async () => {
 		setIsEditing(() => true)
 	}
 
   const handleSave = async () => {
+		if (!editedStartDate) {
+			Swal.fire({
+				icon: 'error',
+				title: '연애 시작일을 선택해주세요.',
+			})
+			return
+		}
+
+		const res = await UpdateStartDate({ start_date: editedStartDate.toString() })
+		if (res.error) {
+			Swal.fire({
+				icon: 'error',
+				title: '연애 시작일을 수정하는 중 오류가 발생했습니다.',
+				text: res.error,
+			})
+			return
+		}
+
+		Swal.fire({
+			icon: 'success',
+			title: '연애 시작일이 수정되었습니다.',
+		})
     setIsEditing(() => false)
+		router.refresh()
   }
 
 	if (!partner) {
-		return null
+		return (
+			<SkeletonCard />
+		)
 	}
 
   return (

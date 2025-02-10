@@ -37,7 +37,7 @@ const SharedMessageCard = ({ sharedMessage }: SharedMessageCardProps) => {
 			icon: 'success',
 			title: '공유 메시지 수정 성공',
 		})
-		router.push('/dashboard')
+		router.refresh()
   }
 
   return (
