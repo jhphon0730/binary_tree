@@ -19,7 +19,7 @@ type Diary struct {
 	Emotion   string    `json:"emotion" gorm:"type:varchar(50)"`                              // 감정 상태 (선택 사항)
 	DiaryDate time.Time `json:"diary_date" gorm:"not null" binding:"required"`                // 일기 날짜 (작성일과 다를 수 있음)
 
-	Images []DiaryImage `json:"images" gorm:"foreignKey:DiaryID"`  // 다이어리 이미지 연결
+	Images []DiaryImage `gorm:"foreignKey:DiaryID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`  // 다이어리 이미지들
 }
 
 type DiaryImage struct {
