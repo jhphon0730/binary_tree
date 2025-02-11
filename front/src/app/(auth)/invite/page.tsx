@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
-import CoupleInvitationModal from '@/components/invite/CoupleInvitationModal';
+import CoupleInvitationModal from '@/app/(auth)/components/invite/CoupleInvitationModal'
 
 import { RequestGenerateInviteCode, RequestAcceptInvitation, RequestGetMyCoupleStatus } from '@/lib/api/invite';
 

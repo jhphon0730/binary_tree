@@ -3,7 +3,6 @@
 import React from 'react'
 import Swal from 'sweetalert2'
 import Cookies from 'js-cookie'
-import { User } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
@@ -14,7 +13,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SidebarTrigger } from '@/components/ui/sidebar'
-import { Button } from '@/components/ui/button';
 
 import { RequestSignOut } from '@/lib/api/user';
 import { useAuthStore } from '@/store/authStore'
@@ -22,6 +20,10 @@ import { useAuthStore } from '@/store/authStore'
 const Navbar = () => {
 	const router = useRouter();
   const authStore = useAuthStore()
+
+	const pageMoveHandler = (path: string) => {
+		router.push(path)
+	}
 
 	const signOutHandler = async () => {
 		const res = await RequestSignOut()
@@ -42,12 +44,16 @@ const Navbar = () => {
 		router.push('/sign-in')
 	}
 
+	if (!authStore.user) {
+		return null
+	}
+
 	return (
     <nav className="flex items-center justify-between md:justify-end p-4 bg-white border-b">
       <SidebarTrigger className="md:hidden" />
       <h1 className="text-xl font-semibold md:hidden">커플 다이어리</h1>
       <div className='flex items-center'>
-				{authStore.user && <DropdownMenu>
+				<DropdownMenu>
           <DropdownMenuTrigger asChild className='cursor-pointer'>
 						<div className="w-10 h-10 rounded-full border overflow-hidden">
 							<Image 
@@ -62,11 +68,11 @@ const Navbar = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
 						{/*title*/}
-						<DropdownMenuItem className="font-bold">{authStore.user.name}</DropdownMenuItem>
+						<DropdownMenuItem className="font-bold" onClick={() => { pageMoveHandler('/profile/my'); }}>{authStore.user.name}</DropdownMenuItem>
             <DropdownMenuItem>설정</DropdownMenuItem>
             <DropdownMenuItem onClick={signOutHandler}>로그아웃</DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu> }
+        </DropdownMenu>
       </div>
     </nav>
 	)

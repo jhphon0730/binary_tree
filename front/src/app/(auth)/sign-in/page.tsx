@@ -5,7 +5,7 @@ import Swal from 'sweetalert2'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 
-import AuthForm from '@/components/auth/AuthForm'
+import AuthForm from '@/app/(auth)/components/auth/AuthForm'
 
 import { useAuthStore } from '@/store/authStore'
 import { usePartnerStore } from '@/store/partnerStore'

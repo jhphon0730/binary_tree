@@ -1,7 +1,7 @@
 import React from 'react';
 
-import CoupleInfoCard from '@/components/dashboard/CoupleInfoCard';
-import SharedMemoCard from '@/components/dashboard/SharedMemoCard';
+import CoupleInfoCard from '@/app/(main)/dashboard/components/CoupleInfoCard';
+import SharedMemoCard from '@/app/(main)/dashboard/components/SharedMemoCard';
 import SSRError from '@/components/SSRError';
 
 import { GetCoupleInfo } from '@/lib/api/couple';
