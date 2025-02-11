@@ -14,11 +14,14 @@ import (
 var (
 	DB *gorm.DB = database.GetDB()
 
-	coupleService service.CoupleService = service.NewCoupleService(DB)
 	userService   service.UserService   = service.NewUserService(DB)
+	coupleService service.CoupleService = service.NewCoupleService(DB)
+	diaryService service.DiaryService   = service.NewDiaryService(DB)
+	
 
 	userController   controller.UserController   = controller.NewUserController(userService, coupleService)
 	coupleController controller.CoupleController = controller.NewCoupleController(coupleService)
+	diaryController controller.DiaryController = controller.NewDiaryController(diaryService)
 )
 
 type Route struct {
@@ -44,20 +47,21 @@ func Init() *Route {
 
 // Register the routes
 func (route *Route) RegisterRoutes() {
-	// ping
-	route.r.GET("/ping", middleware.AuthMiddleware(), func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
 	user_router := route.r.Group("/users/")
 	{
 		registerUserRoutes(user_router)
 	}
+
 	couple_router := route.r.Group("/couples/")
 	couple_router.Use(middleware.AuthMiddleware())
 	{
 		registerCoupleRoutes(couple_router)
+	}
+
+	diary_router := route.r.Group("/diaries/")
+	diary_router.Use(middleware.AuthMiddleware())
+	{
+		registerDiaryRoutes(diary_router)
 	}
 }
 
