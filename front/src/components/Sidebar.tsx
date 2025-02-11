@@ -25,7 +25,7 @@ const Sidebar = () => {
   return (
     <ShadcnSidebar>
       <SidebarHeader className="p-4">
-        <h1 className="text-2xl font-bold text-center">커플 다이어리</h1>
+        <h1 className="text-2xl font-bold text-center">다이어리</h1>
       </SidebarHeader>
       <SidebarContent>
         <nav className="space-y-2">

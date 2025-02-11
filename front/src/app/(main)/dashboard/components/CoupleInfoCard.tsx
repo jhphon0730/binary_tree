@@ -81,7 +81,7 @@ const CoupleInfoCard = ({ startDate }: CoupleInfoCardProps) => {
           </Button>
         </CardTitle>
       </CardHeader>
-      <CardContent className="text-sm grid grid-cols-1 gap-2">
+      <CardContent className="text-sm grid grid-cols-1 gap-3">
         <div className="mb-3">
 					<span className="font-bold">연애 시작일: </span>
           <span>{startDate ? format(new Date(startDate), "PPP", { locale: ko }) : "설정되지 않음"}</span>
