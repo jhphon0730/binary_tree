@@ -68,7 +68,7 @@ const Navbar = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
 						{/*title*/}
-						<DropdownMenuItem className="font-bold" onClick={() => { pageMoveHandler('/profile/my'); }}>{authStore.user.name}</DropdownMenuItem>
+						<DropdownMenuItem className="font-bold" onClick={() => { pageMoveHandler('/profile'); }}>{authStore.user.name}</DropdownMenuItem>
             <DropdownMenuItem>설정</DropdownMenuItem>
             <DropdownMenuItem onClick={signOutHandler}>로그아웃</DropdownMenuItem>
           </DropdownMenuContent>
