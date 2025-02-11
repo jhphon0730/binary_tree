@@ -5,4 +5,5 @@ import (
 )
 
 func registerDiaryRoutes(router *gin.RouterGroup) {
+	router.POST("/new", diaryController.CreateDiary)
 }

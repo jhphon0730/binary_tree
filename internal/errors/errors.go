@@ -52,4 +52,12 @@ var (
 	ErrCannotInviteSelf        = errors.New("자기 자신을 초대할 수 없습니다.")
 	ErrCannotFindCouple        = errors.New("커플을 찾을 수 없습니다.")
 	ErrInvalidSharedNoteFormat = errors.New("공유 메모 형식이 올바르지 않습니다.")
+
+	// DIARY
+	ErrDiaryTitleIsRequired     = errors.New("제목을 입력해주세요.")
+	ErrDiaryContentIsRequired   = errors.New("내용을 입력해주세요.")
+	ErrInvalidImageType				  = errors.New("jpg, jpeg, png 파일만 허용됩니다.")
+	ErrFailedToUploadDiaryImage = errors.New("다이어리 이미지를 업로드할 수 없습니다.")
+	ErrCannotFindCoupleID			  = errors.New("커플을 찾을 수 없습니다.")
+	ErrInvalidCoupleID					= errors.New("유효하지 않은 커플 ID입니다.")
 )
