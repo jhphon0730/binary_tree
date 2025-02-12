@@ -32,3 +32,5 @@ export type DiaryImages = {
   UpdatedAt: string;
   DeletedAt: string;
 }
+
+export type DiaryViewType = "MY" | "COUPLE" | "ALL"

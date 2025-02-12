@@ -3,6 +3,7 @@
 import React from 'react';
 
 import ProfileCard from "@/app/(main)/profile/components/ProfileCard";
+import Container from "@/components/Container";
 
 import { useAuthStore } from "@/store/authStore";
 import { usePartnerStore } from "@/store/partnerStore";
@@ -16,7 +17,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <Container>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <h2 className="text-2xl font-semibold mb-4">내 프로필</h2>
@@ -29,7 +30,7 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
-    </div>
+    </Container>
   )
 }
 
