@@ -45,7 +45,7 @@ func (d *diaryService) CreateDiary(userID uint, coupleID uint, createDTO dto.Cre
 
 		if createDTO.Images != nil {
 			for _, image := range createDTO.Images {
-				imagePath, err := utils.UploadProfileImage(image)
+				imagePath, err := utils.UploadDiaryImage(image)
 				if err != nil {
 					return err // 이미지 업로드 실패 시 롤백
 				}

@@ -58,11 +58,11 @@ func CloseDiaryRedis() {
 	* 해당 커플이 마지막에 생성한 다이어리를 저장하기 위함
 	* 다이어리를 생성할 때마다 해당 커플의 최근 생성 다이어리를 갱신
 */
-func SetLatestDiary(ctx context.Context, coupleID uint, diary model.Diary) error {
+func SetLatestDiary(ctx context.Context, diary model.Diary) error {
 	// 기존에 저장한 다이어리가 있으면 삭제
-	_ = DeleteLatestDiary(ctx, coupleID)
+	_ = DeleteLatestDiary(ctx, diary.CoupleID)
 
-	key := "diary_latest:" + strconv.Itoa(int(coupleID))
+	key := "diary_latest:" + strconv.Itoa(int(diary.CoupleID))
 
 	data, err := json.Marshal(diary)
 	if err != nil {

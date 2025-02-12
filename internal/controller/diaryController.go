@@ -4,6 +4,7 @@ import (
 	"binary_tree/internal/errors"
 	"binary_tree/internal/model/dto"
 	"binary_tree/internal/controller/service"
+	"binary_tree/pkg/redis"
 	"binary_tree/pkg/response"
 
 	"github.com/gin-gonic/gin"
@@ -55,6 +56,8 @@ func (d *diaryController) CreateDiary(c *gin.Context) {
 		response.Error(c, status, err.Error())
 		return
 	}
+
+	_ = redis.SetLatestDiary(c, created_diary)
 	
 	response.Created(c, gin.H{"created_diary": created_diary})
 }
