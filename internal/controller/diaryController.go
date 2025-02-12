@@ -15,6 +15,7 @@ import (
 
 type DiaryController interface {
 	CreateDiary(c *gin.Context)
+	GetLatestDiary(c *gin.Context)
 }
 
 type diaryController struct {
@@ -60,4 +61,24 @@ func (d *diaryController) CreateDiary(c *gin.Context) {
 	_ = redis.SetLatestDiary(c, created_diary)
 	
 	response.Created(c, gin.H{"created_diary": created_diary})
+}
+
+// 최근 생성 된 다이어리 조회
+func (d *diaryController) GetLatestDiary(c *gin.Context) {
+	coupleID_str, isValidCoupleID := c.GetQuery("coupleID")
+	if !isValidCoupleID || coupleID_str == "" {
+		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindCoupleID.Error())
+		return
+	}
+	coupleID, err := strconv.Atoi(coupleID_str)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, errors.ErrInvalidCoupleID.Error())
+		return
+	}
+	diary, err := redis.GetLatestDiary(c, uint(coupleID))
+	if err != nil && err != errors.ErrDiaryNotFound {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return 
+	}
+	response.Success(c, gin.H{"latest_diary": diary})
 }
