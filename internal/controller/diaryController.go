@@ -14,6 +14,7 @@ import (
 )
 
 type DiaryController interface {
+	GetAllDiaries(c *gin.Context)
 	CreateDiary(c *gin.Context)
 	GetLatestDiary(c *gin.Context)
 }
@@ -26,6 +27,48 @@ func NewDiaryController(diaryService service.DiaryService) DiaryController {
 	return &diaryController{
 		diaryService: diaryService,
 	}
+}
+
+func (d *diaryController) GetAllDiaries(c *gin.Context) {
+	userID := c.GetInt("userID")
+	category, isValidCategory := c.GetQuery("category")
+	if !isValidCategory || category == "" {
+		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindCategory.Error())
+		return
+	}
+
+	// 커플 아이디를 통해 다이어리 리스트 조회 "couple"
+	// 내가 작성한 다이어리 리스트 조회 "my"
+	// 커플이 서로 작성한 다이어리 리스트 조회 "all"
+	switch category {
+		case "my":
+			diaries, status, err := d.diaryService.GetMyDiary(uint(userID))
+			if err != nil {
+				response.Error(c, status, err.Error())
+				return
+			}
+			response.Success(c, gin.H{"diaries": diaries})
+			return
+		case "couple":
+			diaries, status, err := d.diaryService.GetMyCoupleDiary(uint(userID))
+			if err != nil {
+				response.Error(c, status, err.Error())
+			}
+			response.Success(c, gin.H{"diaries": diaries})
+			return
+
+		case "all":
+			diaries, status, err := d.diaryService.GetCoupleDiary(uint(userID))
+			if err != nil {
+				response.Error(c, status, err.Error())
+				return
+			}
+			response.Success(c, gin.H{"diaries": diaries})
+			return
+	}
+
+	response.Error(c, http.StatusBadRequest, errors.ErrInvalidCategory.Error())
+	return
 }
 
 func (d *diaryController) CreateDiary(c *gin.Context) {

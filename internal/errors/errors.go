@@ -63,4 +63,7 @@ var (
 	ErrCannotSaveLatestDiary		= errors.New("최신 다이어리를 저장할 수 없습니다.")
 	ErrDiaryNotFound						= errors.New("다이어리를 찾을 수 없습니다.")
 	ErrCannotGetLatestDiary			= errors.New("최신 다이어리를 가져올 수 없습니다.")
+	ErrCannotFindCategory				= errors.New("카테고리를 찾을 수 없습니다.")
+	ErrInvalidCategory					= errors.New("유효하지 않은 카테고리입니다.")
+	ErrCannotFindDiares					= errors.New("다이어리를 찾을 수 없습니다.")
 )

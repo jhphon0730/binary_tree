@@ -1,6 +1,7 @@
 package service
 
 import (
+	"binary_tree/internal/errors"
 	"binary_tree/internal/model"
 	"binary_tree/internal/model/dto"
 
@@ -11,6 +12,9 @@ import (
 )
 
 type DiaryService interface {
+	GetMyDiary(userID uint) ([]model.Diary, int, error)
+	GetCoupleDiary(userID uint) ([]model.Diary, int, error)
+	GetMyCoupleDiary(userID uint) ([]model.Diary, int, error)
 	CreateDiary(userID uint, coupleID uint, createDTO dto.CreateDiaryDTO) (model.Diary, int, error)
 }
 
@@ -22,6 +26,48 @@ func NewDiaryService(db *gorm.DB) DiaryService {
 	return &diaryService{
 		DB: db,
 	}
+}
+
+// 사용자가 작성한 다이어리를 조회
+func (d *diaryService) GetMyDiary(userID uint) ([]model.Diary, int, error) {
+	var diaries []model.Diary
+
+	if err := d.DB.Where("author_id = ?", userID).Find(&diaries).Error; err != nil {
+		return nil, http.StatusInternalServerError, errors.ErrCannotFindDiares
+	}
+
+	return diaries, http.StatusOK, nil
+}
+
+// 커플 서로가 작성한 다이어리를 조회
+func (d *diaryService) GetCoupleDiary(userID uint) ([]model.Diary, int, error) {
+	var couple model.Couple
+	if err := d.DB.Where("user1_id = ? OR user2_id = ?", userID, userID).First(&couple).Error; err != nil {
+		return nil, http.StatusInternalServerError, errors.ErrCannotFindCouple
+	}
+
+	var diaries []model.Diary
+	if err := d.DB.Where("couple_id = ?", couple.ID).Find(&diaries).Error; err != nil {
+		return nil, http.StatusInternalServerError, errors.ErrCannotFindDiares
+	}
+
+	return diaries, http.StatusOK, nil
+}
+
+// 사용자의 커플이 작성한 다이러리를 조회
+func (d *diaryService) GetMyCoupleDiary(userID uint) ([]model.Diary, int, error) {
+	var diaries []model.Diary
+
+	user, err := model.FindUserByID(d.DB, userID)
+	if err != nil {
+		return nil, http.StatusInternalServerError, errors.ErrCannotFindUser
+	}
+
+	if err := d.DB.Where("author_id = ?", user.PartnerID).Find(&diaries).Error; err != nil {
+		return nil, http.StatusInternalServerError, errors.ErrCannotFindDiares
+	}
+
+	return diaries, http.StatusOK, nil
 }
 
 // 새로운 다이어리를 생성
