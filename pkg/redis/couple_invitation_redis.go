@@ -3,6 +3,9 @@ package redis
 import (
 	"binary_tree/internal/config"
 	"binary_tree/internal/errors"
+
+	"github.com/go-redis/redis/v8"
+
 	"context"
 	"encoding/json"
 	"log"
@@ -10,7 +13,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-redis/redis/v8"
 )
 
 var (

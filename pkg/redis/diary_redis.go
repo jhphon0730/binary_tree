@@ -1,13 +1,17 @@
 package redis
 
 import (
+	"binary_tree/internal/model"
 	"binary_tree/internal/config"
 	"binary_tree/internal/errors"
-	"context"
-	"log"
-	"sync"
 
 	"github.com/go-redis/redis/v8"
+
+	"log"
+	"sync"
+	"strconv"
+	"context"
+	"encoding/json"
 )
 
 var (
@@ -50,3 +54,46 @@ func CloseDiaryRedis() {
 	log.Println("Redis connection closed!")
 }
 
+/* 다이어리를 생성하면 coupleID : Diary 형식으로 Redis에 저장
+	* 해당 커플이 마지막에 생성한 다이어리를 저장하기 위함
+	* 다이어리를 생성할 때마다 해당 커플의 최근 생성 다이어리를 갱신
+*/
+func SetLatestDiary(ctx context.Context, coupleID uint, diary model.Diary) error {
+	// 기존에 저장한 다이어리가 있으면 삭제
+	_ = DeleteLatestDiary(ctx, coupleID)
+
+	key := "diary_latest:" + strconv.Itoa(int(coupleID))
+
+	data, err := json.Marshal(diary)
+	if err != nil {
+		return errors.ErrCannotSaveLatestDiary
+	}
+
+	return diaryRedisInstance.Set(ctx, key, data, 0).Err()
+}
+
+/* coupleID를 통해 해당 커플의 최근 생성 다이어리를 가져옴 */
+func GetLatestDiary(ctx context.Context, coupleID uint) (model.Diary, error) {
+	key := "diary_latest:" + strconv.Itoa(int(coupleID))
+
+	data, err := diaryRedisInstance.Get(ctx, key).Result()
+	if err != nil {
+		return model.Diary{}, errors.ErrDiaryNotFound
+	}
+
+	var diary model.Diary
+	err = json.Unmarshal([]byte(data), &diary)
+	if err != nil {
+		return model.Diary{}, errors.ErrCannotGetLatestDiary
+	}
+
+	return diary, nil
+}
+
+/* 다이어리를 삭제하면 해당 커플의 최근 생성 다이어리를 삭제 
+	* 다이어리를 삭제할 때마다 해당 커플의 최근 생성 다이어리를 갱신
+*/
+func DeleteLatestDiary(ctx context.Context, coupleID uint) error {
+	key := "diary_latest:" + strconv.Itoa(int(coupleID))
+	return diaryRedisInstance.Del(ctx, key).Err()
+}

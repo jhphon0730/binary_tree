@@ -60,4 +60,7 @@ var (
 	ErrFailedToUploadDiaryImage = errors.New("다이어리 이미지를 업로드할 수 없습니다.")
 	ErrCannotFindCoupleID			  = errors.New("커플을 찾을 수 없습니다.")
 	ErrInvalidCoupleID					= errors.New("유효하지 않은 커플 ID입니다.")
+	ErrCannotSaveLatestDiary		= errors.New("최신 다이어리를 저장할 수 없습니다.")
+	ErrDiaryNotFound						= errors.New("다이어리를 찾을 수 없습니다.")
+	ErrCannotGetLatestDiary			= errors.New("최신 다이어리를 가져올 수 없습니다.")
 )
