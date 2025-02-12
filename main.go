@@ -47,6 +47,12 @@ func main() {
 		log.Fatalf("Error initializing couple invitation redis: %s", err)
 	}
 	defer redis.CloseCoupleInvitationRedis()
+	//// redis - diary
+	log.Println("Initializing Diary redis...")
+	if err := redis.InitDiaryRedisInstance(ctx); err != nil {
+		log.Fatalf("Error initializing diary redis: %s", err)
+	}
+	defer redis.CloseDiaryRedis()
 
 	// Bcrypt
 	log.Println("Initializing Bcrypt...")
