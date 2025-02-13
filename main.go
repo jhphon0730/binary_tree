@@ -19,9 +19,6 @@ func main() {
 		log.Fatalf("Error loading config: %s", err)
 	}
 
-	// Server
-	r := routes.Init()
-
 	// database
 	log.Println("Initializing database...")
 	if err := database.InitDatabase(); err != nil {
@@ -32,6 +29,9 @@ func main() {
 		log.Fatalf("Error migrating database: %s", err)
 	}
 	defer database.CloseDB() // close database connection
+
+	// Server
+	r := routes.Init()
 
 	// redis
 	ctx := context.Background()
