@@ -14,9 +14,10 @@ import {
 
 const sidebarItems = [
   { icon: Home, label: '홈', href: '/dashboard' },
-  { icon: Calendar, label: '캘린더', href: '/calendar' },
-  { icon: MessageSquare, label: '메시지', href: '/messages' },
-  { icon: Settings, label: '설정', href: '/settings' },
+  { icon: Home, label: '다이러리', href: '/dashboard/diary' },
+  // { icon: Calendar, label: '캘린더', href: '/calendar' },
+  // { icon: MessageSquare, label: '메시지', href: '/messages' },
+  // { icon: Settings, label: '설정', href: '/settings' },
 ]
 
 const Sidebar = () => {

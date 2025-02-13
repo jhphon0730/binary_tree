@@ -10,8 +10,6 @@ import { GetCoupleInfo } from '@/lib/api/couple';
 const DashboardMainPage = async () => {
 	const coupleInfo = await GetCoupleInfo();
 
-	console.log(coupleInfo);
-
 	if (coupleInfo.error || !coupleInfo.data) {
 		return (<SSRError error={coupleInfo.error || coupleInfo.message} />);
 	}
