@@ -15,7 +15,7 @@ type DiaryService interface {
 	GetMyDiary(userID uint) ([]model.Diary, int, error)
 	GetCoupleDiary(userID uint) ([]model.Diary, int, error)
 	GetMyCoupleDiary(userID uint) ([]model.Diary, int, error)
-	CreateDiary(userID uint, coupleID uint, createDTO dto.CreateDiaryDTO) (model.Diary, int, error)
+	CreateDiary(userID uint, createDTO dto.CreateDiaryDTO) (model.Diary, int, error)
 }
 
 type diaryService struct {
@@ -71,13 +71,18 @@ func (d *diaryService) GetMyCoupleDiary(userID uint) ([]model.Diary, int, error)
 }
 
 // 새로운 다이어리를 생성
-func (d *diaryService) CreateDiary(userID uint, coupleID uint, createDTO dto.CreateDiaryDTO) (model.Diary, int, error) {
+func (d *diaryService) CreateDiary(userID uint, createDTO dto.CreateDiaryDTO) (model.Diary, int, error) {
+	var couple model.Couple
+	if err := d.DB.Where("user1_id = ? OR user2_id = ?", userID, userID).First(&couple).Error; err != nil {
+		return model.Diary{}, http.StatusInternalServerError, errors.ErrCannotFindCouple
+	}
+
 	var created model.Diary
 
 	// 트랜잭션 처리
 	err := d.DB.Transaction(func(tx *gorm.DB) error {
 		created = model.Diary{
-			CoupleID:  coupleID,
+			CoupleID:  couple.ID,
 			AuthorID:  userID,
 			Title:     createDTO.Title,
 			Content:   createDTO.Content,

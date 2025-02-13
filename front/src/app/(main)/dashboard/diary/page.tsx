@@ -49,7 +49,7 @@ const DiaryMainPage = () => {
     <div className="container mx-auto p-4 space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-3xl font-bold">다이어리</h1>
-        <Button onClick={() => router.push("/diary/new")}>
+        <Button onClick={() => router.push("/dashboard/diary/new")}>
           <PenLine className="mr-2 h-4 w-4" />새 다이어리 작성
         </Button>
       </div>

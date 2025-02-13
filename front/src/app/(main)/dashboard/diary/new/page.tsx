@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import React from "react"
+import Swal from "sweetalert2"
 import { useRouter } from "next/navigation"
 import * as z from "zod"
 import { format } from "date-fns"
@@ -18,6 +19,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 import { cn } from "@/lib/utils"
 import type { Emotion } from "@/types/diary"
+import { CreateDiary } from "@/lib/api/diary";
+import { usePartnerStore } from '@/store/partnerStore';
 
 const formSchema = z.object({
   title: z.string().min(1, "제목을 입력해주세요."),
@@ -39,7 +42,9 @@ const emotionOptions: { value: Emotion; label: string }[] = [
 
 const NewDiaryPage = () => {
   const router = useRouter()
-  const [isSubmitting, setIsSubmitting] = useState(false)
+	const { partner } = usePartnerStore()
+
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,14 +55,14 @@ const NewDiaryPage = () => {
     },
   })
 
-  const handleChangeInput = useCallback(
+  const handleChangeInput = React.useCallback(
     (name: "title" | "content") => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       form.setValue(name, e.target.value)
     },
     [form],
   )
 
-  const handleChangeImage = useCallback(
+  const handleChangeImage = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files
       if (files) {
@@ -69,29 +74,24 @@ const NewDiaryPage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true)
-		const formData = new FormData()
-		formData.append("title", values.title)
-		formData.append("content", values.content)
-		formData.append("diary_date", values.diary_date.toISOString())
-		if (values.emotion) {
-			formData.append("emotion", values.emotion)
-		}
-		if (values.images) {
-			values.images.forEach((image, index) => {
-				formData.append("images", image)
+
+		const { title, content, emotion, diary_date, images } = values
+		const res = await CreateDiary({title, content, emotion, diary_date, images})
+		if (res.error) {
+			Swal.fire({
+				icon: "error",
+				title: "다이어리 작성에 실패했습니다.",
+				text: res.error || "알 수 없는 오류가 발생했습니다.",
 			})
+			return
 		}
-
-		const response = await fetch("http://your-backend-url.com/api/diaries", {
-			method: "POST",
-			body: formData,
+		await Swal.fire({
+			icon: "success",
+			title: "다이어리가 성공적으로 작성되었습니다.",
+			showConfirmButton: false,
+			timer: 1500,
 		})
-
-		if (!response.ok) {
-			throw new Error("Failed to create diary")
-		}
-
-		router.push("/diary")
+		router.push("/dashboard/diary")
   }
 
   return (

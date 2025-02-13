@@ -29,7 +29,7 @@ const LatestDiaryCard = ({ latestDiary }: RecentDiariesCardProps) => {
 						<div>
 							<p className="text-sm text-gray-500 mb-3">최근에 작성한 일기입니다.</p>
 							<p className="font-semibold">{latestDiary.title}</p>
-							<p className="text-sm text-gray-500">{format(new Date(latestDiary.CreatedAt), "PPP", { locale: ko })}</p>
+							<p className="text-sm text-gray-500">작성일: {format(new Date(latestDiary.CreatedAt), "PPP", { locale: ko })}</p>
 						</div>
 					)
 				}

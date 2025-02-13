@@ -73,16 +73,6 @@ func (d *diaryController) GetAllDiaries(c *gin.Context) {
 
 func (d *diaryController) CreateDiary(c *gin.Context) {
 	userID := c.GetInt("userID")
-	coupleID_str, isValidCoupleID := c.GetQuery("coupleID")
-	if !isValidCoupleID || coupleID_str == "" {
-		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindCoupleID.Error())
-		return
-	}
-	coupleID, err := strconv.Atoi(coupleID_str)
-	if err != nil {
-		response.Error(c, http.StatusInternalServerError, errors.ErrInvalidCoupleID.Error())
-		return
-	}
 
 	var createDiaryDTO dto.CreateDiaryDTO
 	if err := c.ShouldBind(&createDiaryDTO); err != nil {
@@ -95,7 +85,7 @@ func (d *diaryController) CreateDiary(c *gin.Context) {
 		return
 	}
 
-	created_diary, status, err := d.diaryService.CreateDiary(uint(userID), uint(coupleID), createDiaryDTO)
+	created_diary, status, err := d.diaryService.CreateDiary(uint(userID), createDiaryDTO)
 	if err != nil {
 		response.Error(c, status, err.Error())
 		return
