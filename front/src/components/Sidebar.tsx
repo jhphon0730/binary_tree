@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Home, Calendar, MessageSquare, Settings } from 'lucide-react'
+import { Home, Book, Calendar, MessageSquare, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
@@ -14,9 +14,10 @@ import {
 
 const sidebarItems = [
   { icon: Home, label: '홈', href: '/dashboard' },
-  { icon: Calendar, label: '캘린더', href: '/calendar' },
-  { icon: MessageSquare, label: '메시지', href: '/messages' },
-  { icon: Settings, label: '설정', href: '/settings' },
+  { icon: Book, label: '다이어리', href: '/dashboard/diary' },
+  // { icon: Calendar, label: '캘린더', href: '/calendar' },
+  // { icon: MessageSquare, label: '메시지', href: '/messages' },
+  // { icon: Settings, label: '설정', href: '/settings' },
 ]
 
 const Sidebar = () => {

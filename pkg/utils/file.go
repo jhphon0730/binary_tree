@@ -38,3 +38,10 @@ func UploadProfileImage(profileImageFile *multipart.FileHeader) (string, error) 
 	return parentPath, nil
 }
 
+func UploadDiaryImage(diaryImageFile *multipart.FileHeader) (string, error) {
+	parentPath := "media/diary_images/" + diaryImageFile.Filename
+	if err := SaveUploadedFile(diaryImageFile, parentPath); err != nil {
+		return "", errors.ErrFailedToUploadDiaryImage
+	}
+	return parentPath, nil
+}
