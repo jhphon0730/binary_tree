@@ -14,26 +14,26 @@ type DiaryTableProps = {
 
 const DiaryTable = ({ diaries, onDiaryClick }: DiaryTableProps) => {
   return (
-    <div className="border rounded-lg">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[200px]">작성일</TableHead>
-            <TableHead>제목</TableHead>
-            <TableHead className="w-[200px]">최종 수정일</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {diaries.map((diary) => (
-            <TableRow key={diary.ID} className="cursor-pointer hover:bg-muted/50" onClick={() => onDiaryClick(diary)}>
-              <TableCell className="font-medium">{format(new Date(diary.CreatedAt), "PPP", { locale: ko })}</TableCell>
-              <TableCell>{diary.title}</TableCell>
-              <TableCell>{format(new Date(diary.UpdatedAt), "PPP", { locale: ko })}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+		<Table className="whitespace-nowrap">
+			<TableHeader>
+				<TableRow>
+					<TableHead className="w-[200px]">작성일</TableHead>
+					<TableHead>제목</TableHead>
+					<TableHead className="w-[200px]">작성일 기준</TableHead>
+					<TableHead className="w-[200px]">최종 수정일</TableHead>
+				</TableRow>
+			</TableHeader>
+			<TableBody>
+				{diaries.map((diary) => (
+					<TableRow key={diary.ID} className="cursor-pointer hover:bg-muted/50" onClick={() => onDiaryClick(diary)}>
+						<TableCell className="font-medium">{format(new Date(diary.CreatedAt), "PPP", { locale: ko })}</TableCell>
+						<TableCell>{diary.title}</TableCell>
+						<TableCell>{format(new Date(diary.diary_date), "PPP", { locale: ko })}</TableCell>
+						<TableCell>{format(new Date(diary.UpdatedAt), "PPP", { locale: ko })}</TableCell>
+					</TableRow>
+				))}
+			</TableBody>
+		</Table>
   )
 }
 

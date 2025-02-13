@@ -31,7 +31,7 @@ type GetDiariesResponse = {
 	diaries: Diary[]
 }
 export const GetDiaries = async ({DiaryViewType}: GetDiariesRequest): Promise<Response<GetDiariesResponse>> => {
-	const res = await FetchWithAuth(`/diaries/all?category=${DiaryViewType}`, {
+	const res = await FetchWithAuth(`/diaries/all?category=${DiaryViewType.toLowerCase()}`, {
 		method: "GET",
 	})
 	return {
