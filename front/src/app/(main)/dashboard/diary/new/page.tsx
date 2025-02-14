@@ -33,6 +33,7 @@ const formSchema = z.object({
 })
 
 const emotionOptions: { value: Emotion; label: string }[] = [
+	{ value: "", label: "없음" },
   { value: "HAPPY", label: "행복" },
   { value: "SAD", label: "슬픔" },
   { value: "ANGRY", label: "화남" },
