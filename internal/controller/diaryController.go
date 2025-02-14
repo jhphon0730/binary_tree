@@ -11,6 +11,7 @@ import (
 
 	"strconv"
 	"net/http"
+	"encoding/json"
 )
 
 type DiaryController interface {
@@ -142,9 +143,18 @@ func (d *diaryController) GetDiaryWithImages(c *gin.Context) {
 func (d *diaryController) UpdateDiary(c *gin.Context) {
 	var updateDiaryDTO dto.UpdateDiaryDTO
 	if err := c.ShouldBind(&updateDiaryDTO); err != nil {
-		response.Error(c, http.StatusBadRequest, errors.ErrAllFieldsRequired.Error())
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	delete_images_str := c.PostForm("delete_images")
+	if delete_images_str != "" {
+		if err := json.Unmarshal([]byte(delete_images_str), &updateDiaryDTO.DeleteImages); err != nil {
+			response.Error(c, http.StatusInternalServerError, errors.ErrInvalidDeleteImages.Error())
+			return
+		}
+	}
+
 	diaryID_str, isValidDiaryID := c.GetQuery("diaryID")
 	if !isValidDiaryID || diaryID_str == "" {
 		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindDiaryID.Error())

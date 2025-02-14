@@ -127,9 +127,7 @@ export const UpdateDiary = async (updateDiaryProps: UpdateDiaryRequest): Promise
 		})
 	}
 	if (updateDiaryProps.deleteImages) {
-		updateDiaryProps.deleteImages.forEach((id) => {
-			formData.append("delete_images", id.toString())
-		})
+		formData.append("delete_images", JSON.stringify(updateDiaryProps.deleteImages))
 	}
 	const res = await FetchWithAuthFormData(`/diaries/update?diaryID=${updateDiaryProps.diaryID}`, {
 		method: "PUT",

@@ -172,7 +172,7 @@ func (d *diaryService) UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryD
 
 			// 반환용 이미지 제거 변수에서 이미지 제거
 			for i, img := range diary.Images {
-				if img.ID == imageID {
+				if img.ID == uint(imageID) {
 					diary.Images = append(diary.Images[:i], diary.Images[i+1:]...)
 					break
 				}
@@ -186,16 +186,13 @@ func (d *diaryService) UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryD
 				if err != nil {
 					return err // 이미지 업로드 실패 시 롤백
 				}
-
 				diaryImage := model.DiaryImage{
 					DiaryID:  diaryID,
 					ImageURL: imagePath,
 				}
-
 				if err := tx.Create(&diaryImage).Error; err != nil {
 					return err // 이미지 DB 저장 실패 시 롤백
 				}
-
 				// 반환용 이미지 추가
 				diary.Images = append(diary.Images, diaryImage)
 			}

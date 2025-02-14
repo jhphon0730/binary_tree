@@ -41,5 +41,5 @@ type UpdateDiaryDTO struct {
 	DiaryDate time.Time `form:"diary_date" binding:"required"`
 
 	Images []*multipart.FileHeader `form:"images"` // 추가할 이미지
-	DeleteImages []uint `form:"delete_images"` // 삭제할 이미지의 ID
+	DeleteImages []int // Formdata로 받지 않게
 }
