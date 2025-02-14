@@ -28,7 +28,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		// 토큰 검증 및 만료 확인과 클레임 추출
 		claims, err := auth.ValidateAndParseJWT(tokenString)
 		if err != nil {
-			response.Error(c, http.StatusUnauthorized, "토큰이 유효하지 않습니다.")
+			response.Error(c, http.StatusUnauthorized, "로그인 세션이 만료되었습니다.")
 			c.Abort()
 			return
 		}
