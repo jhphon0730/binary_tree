@@ -66,4 +66,6 @@ var (
 	ErrCannotFindCategory				= errors.New("카테고리를 찾을 수 없습니다.")
 	ErrInvalidCategory					= errors.New("유효하지 않은 카테고리입니다.")
 	ErrCannotFindDiares					= errors.New("다이어리를 찾을 수 없습니다.")
+	ErrCannotFindDiaryID				= errors.New("다이어리를 찾을 수 없습니다.")
+	ErrInvalidDiaryID						= errors.New("유효하지 않은 다이어리 ID입니다.")
 )

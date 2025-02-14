@@ -26,7 +26,7 @@ const DiaryTable = ({ diaries, onDiaryClick }: DiaryTableProps) => {
 			<TableBody>
 				{diaries.map((diary) => (
 					<TableRow key={diary.ID} className="cursor-pointer hover:bg-muted/50" onClick={() => onDiaryClick(diary)}>
-						<TableCell className="font-medium">{format(new Date(diary.CreatedAt), "PPP", { locale: ko })}</TableCell>
+						<TableCell className="font-medium p-4">{format(new Date(diary.CreatedAt), "PPP", { locale: ko })}</TableCell>
 						<TableCell>{diary.title}</TableCell>
 						<TableCell>{format(new Date(diary.diary_date), "PPP", { locale: ko })}</TableCell>
 						<TableCell>{format(new Date(diary.UpdatedAt), "PPP", { locale: ko })}</TableCell>

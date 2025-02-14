@@ -1,9 +1,19 @@
 package model
 
 import (
+	"binary_tree/internal/errors"
+
 	"gorm.io/gorm"
+
 	"time"
 )
+
+type DiaryImage struct {
+	gorm.Model
+
+	DiaryID uint   `json:"diary_id" gorm:"not null" binding:"required" validate:"required"`  // 다이어리와 연결
+	ImageURL string `json:"image_url" gorm:"type:text;not null"`                            // 이미지 URL
+}
 
 type Diary struct {
 	gorm.Model
@@ -22,9 +32,13 @@ type Diary struct {
 	Images []DiaryImage `json:"images" gorm:"foreignKey:DiaryID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`  // 다이어리 이미지들
 }
 
-type DiaryImage struct {
-	gorm.Model
+// find By diaryID
+func FindDiaryWithImagesByID(DB *gorm.DB, diaryID uint) (Diary, error) {
+	var diary Diary
 
-	DiaryID uint   `json:"diary_id" gorm:"not null" binding:"required" validate:"required"`  // 다이어리와 연결
-	ImageURL string `json:"image_url" gorm:"type:text;not null"`                            // 이미지 URL
+	if err := DB.Preload("Images").First(&diary, diaryID).Error; err != nil {
+		return Diary{}, errors.ErrDiaryNotFound
+	}
+
+	return diary, nil
 }

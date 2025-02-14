@@ -16,6 +16,7 @@ type DiaryService interface {
 	GetCoupleDiary(userID uint) ([]model.Diary, int, error)
 	GetMyCoupleDiary(userID uint) ([]model.Diary, int, error)
 	CreateDiary(userID uint, createDTO dto.CreateDiaryDTO) (model.Diary, int, error)
+	GetDiaryWithImages(diaryID uint) (model.Diary, int, error)
 }
 
 type diaryService struct {
@@ -125,4 +126,14 @@ func (d *diaryService) CreateDiary(userID uint, createDTO dto.CreateDiaryDTO) (m
 	}
 
 	return created, http.StatusCreated, nil
+}
+
+// 다이어리 조회 ( 이미지 포함 )
+func (d *diaryService) GetDiaryWithImages(diaryID uint) (model.Diary, int, error) {
+	diary, err := model.FindDiaryWithImagesByID(d.DB, diaryID)
+	if err != nil {
+		return model.Diary{}, http.StatusInternalServerError, errors.ErrCannotFindDiares
+	}
+
+	return diary, http.StatusOK, nil
 }
