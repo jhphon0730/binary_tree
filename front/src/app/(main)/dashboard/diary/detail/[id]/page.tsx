@@ -1,4 +1,5 @@
 import React from "react"
+import Link from "next/link"
 import { format } from "date-fns"
 import { CalendarIcon, Pencil, Trash2 } from "lucide-react"
 
@@ -32,14 +33,18 @@ const DiaryDetailPage = async ({ params }: { params: { id: string } }) => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">{diary.title}</h1>
         <div className="space-x-2">
-          <Button variant="outline">
-            <Pencil className="mr-2 h-4 w-4" />
-            수정
-          </Button>
-          <Button variant="destructive">
-            <Trash2 className="mr-2 h-4 w-4" />
-            삭제
-          </Button>
+					<Link href={`/dashboard/diary/update/${diary.ID}`}>
+						<Button variant="outline">
+							<Pencil className="mr-2 h-4 w-4" />
+							수정
+						</Button>
+					</Link>
+					<Link href="">
+						<Button variant="destructive">
+							<Trash2 className="mr-2 h-4 w-4" />
+							삭제
+						</Button>
+					</Link>
         </div>
       </div>
 

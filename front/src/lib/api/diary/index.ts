@@ -98,3 +98,48 @@ export const GetDiaryByID = async ({diaryID}: GetDiaryByIDRequest): Promise<Resp
 		error: res.error,
 	}
 }
+
+/** 다이어리 수정 함수
+ * 삭제할 이미지의 경우 id를 배열로 서버에게 보내줌
+ */
+type UpdateDiaryRequest = {
+	diaryID: number;
+	title: string;
+	content: string;
+	diary_date: Date;
+	emotion?: string;
+	new_images?: File[];
+	deleteImages?: number[];
+};
+type UpdateDiaryResponse = { }
+export const UpdateDiary = async (updateDiaryProps: UpdateDiaryRequest): Promise<Response<UpdateDiaryResponse>> => {
+	const formData = new FormData()
+	formData.append("diaryID", updateDiaryProps.diaryID.toString())
+	formData.append("title", updateDiaryProps.title)
+	formData.append("content", updateDiaryProps.content)
+	formData.append("diary_date", updateDiaryProps.diary_date.toISOString())
+	if (updateDiaryProps.emotion) {
+		formData.append("emotion", updateDiaryProps.emotion)
+	}
+	if (updateDiaryProps.new_images) {
+		updateDiaryProps.new_images.forEach((image) => {
+			formData.append("images", image)
+		})
+	}
+	if (updateDiaryProps.deleteImages) {
+		updateDiaryProps.deleteImages.forEach((id) => {
+			formData.append("delete_images", id.toString())
+		})
+	}
+	const res = await FetchWithAuthFormData(`/diaries/update?diaryID=${updateDiaryProps.diaryID}`, {
+		method: "PUT",
+		body: formData,
+	}) 
+
+	return {
+		data: res.data,
+		state: res.state,
+		message: res.message,
+		error: res.error,
+	}
+}

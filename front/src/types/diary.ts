@@ -9,7 +9,7 @@ export type Diary = {
 
 	title: string;
 	content: string;
-	emotion: string;
+	emotion: Emotion;
 	diary_date: string; // go- date
 
   CreatedAt: string;
