@@ -56,12 +56,12 @@ const DiaryDetailPage = async ({ params }: { params: { id: string } }) => {
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <CalendarIcon className="h-4 w-4" />
             <span>{format(new Date(diary.diary_date), "PPP")}</span>
+						{diary.emotion && (
+							<div className="text-sm font-medium">
+								{emotionOptions.find((e) => e.value === diary.emotion)?.label || diary.emotion}
+							</div>
+						)}
           </div>
-          {diary.emotion && (
-            <div className="text-sm font-medium">
-              감정: {emotionOptions.find((e) => e.value === diary.emotion)?.label || diary.emotion}
-            </div>
-          )}
           <p className="whitespace-pre-wrap">{diary.content}</p>
         </CardContent>
       </Card>
