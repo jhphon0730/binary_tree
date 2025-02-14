@@ -77,3 +77,24 @@ export const CreateDiary = async (createDiaryProps: CreateDiaryRequest): Promise
 		error: res.error,
 	}
 }
+
+/** 다이어리 조회
+ * 다이어리의 id를 받아 해당 다이어리를 조회
+ */
+type GetDiaryByIDRequest = {
+	diaryID: number
+}
+type GetDiaryByIDResponse = {
+	diary: Diary
+}
+export const GetDiaryByID = async ({diaryID}: GetDiaryByIDRequest): Promise<Response<GetDiaryByIDResponse>> => {
+	const res = await FetchWithAuth(`/diaries/detail/diaryID=${diaryID}`, {
+		method: "GET",
+	})
+	return {
+		data: res.data,
+		state: res.state,
+		message: res.message,
+		error: res.error,
+	}
+}

@@ -13,7 +13,8 @@ import { GetDiaries } from "@/lib/api/diary";
 import type { Diary, DiaryViewType } from "@/types/diary"
 
 const DiaryMainPage = () => {
-  const router = useRouter()
+	const router = useRouter()
+
   const [viewType, setViewType] = React.useState<DiaryViewType>("MY")
   const [diaries, setDiaries] = React.useState<Diary[]>([])
   const [loading, setLoading] = React.useState(true)
@@ -41,10 +42,6 @@ const DiaryMainPage = () => {
 		setViewType(() => viewType)
 	}
 
-  const handleDiaryClick = (diary: Diary) => {
-    // router.push(`/diary/${diary.id}`)
-  }
-
   return (
     <div className="container mx-auto p-4 space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -66,7 +63,7 @@ const DiaryMainPage = () => {
           ))}
         </div>
       ) : diaries.length > 0 ? (
-        <DiaryTable diaries={diaries} onDiaryClick={handleDiaryClick} />
+        <DiaryTable diaries={diaries} />
       ) : (
         <div className="text-center py-12 text-muted-foreground">작성된 다이어리가 없습니다.</div>
       )}
