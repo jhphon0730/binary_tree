@@ -88,7 +88,7 @@ type GetDiaryByIDResponse = {
 	diary: Diary
 }
 export const GetDiaryByID = async ({diaryID}: GetDiaryByIDRequest): Promise<Response<GetDiaryByIDResponse>> => {
-	const res = await FetchWithAuth(`/diaries/detail/diaryID=${diaryID}`, {
+	const res = await FetchWithAuth(`/diaries/detail?diaryID=${diaryID}`, {
 		method: "GET",
 	})
 	return {
