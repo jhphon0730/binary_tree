@@ -16,7 +16,7 @@ const DiaryTable = ({ diaries }: DiaryTableProps) => {
 	const router = useRouter()
 
 	const handleDiaryClick = (diary: Diary) => {
-		router.push(`/dashboard/diary/${diary.ID}`)
+		router.push(`/dashboard/diary/detail/${diary.ID}`)
 	}
 
   return (
