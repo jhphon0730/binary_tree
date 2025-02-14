@@ -25,7 +25,7 @@ import { usePartnerStore } from '@/store/partnerStore';
 const formSchema = z.object({
   title: z.string().min(1, "제목을 입력해주세요."),
   content: z.string().min(1, "내용을 입력해주세요."),
-  emotion: z.enum(["HAPPY", "SAD", "ANGRY", "EXCITED", "NEUTRAL"]).optional(),
+  emotion: z.enum(["", "HAPPY", "SAD", "ANGRY", "EXCITED", "NEUTRAL"]).optional(),
   diary_date: z.date({
     required_error: "날짜를 선택해주세요.",
   }),
@@ -33,7 +33,7 @@ const formSchema = z.object({
 })
 
 const emotionOptions: { value: Emotion; label: string }[] = [
-	{ value: "", label: "없음" },
+	{ value: "None", label: "없음" },
   { value: "HAPPY", label: "행복" },
   { value: "SAD", label: "슬픔" },
   { value: "ANGRY", label: "화남" },
