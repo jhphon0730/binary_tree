@@ -18,6 +18,7 @@ type DiaryController interface {
 	CreateDiary(c *gin.Context)
 	GetLatestDiary(c *gin.Context)
 	GetDiaryWithImages(c *gin.Context)
+	UpdateDiary(c *gin.Context)
 }
 
 type diaryController struct {
@@ -135,4 +136,30 @@ func (d *diaryController) GetDiaryWithImages(c *gin.Context) {
 		return
 	}
 	response.Success(c, gin.H{"diary": diary})
+}
+
+// 다이어리 수정 ( diaryID로 )
+func (d *diaryController) UpdateDiary(c *gin.Context) {
+	var updateDiaryDTO dto.UpdateDiaryDTO
+	if err := c.ShouldBind(&updateDiaryDTO); err != nil {
+		response.Error(c, http.StatusBadRequest, errors.ErrAllFieldsRequired.Error())
+		return
+	}
+	diaryID_str, isValidDiaryID := c.GetQuery("diaryID")
+	if !isValidDiaryID || diaryID_str == "" {
+		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindDiaryID.Error())
+		return
+	}
+	diaryID, err := strconv.Atoi(diaryID_str)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, errors.ErrInvalidDiaryID.Error())
+		return
+	}
+	status, err := d.diaryService.UpdateDiary(uint(diaryID), updateDiaryDTO)
+	if err != nil {
+		response.Error(c, status, err.Error())
+		return
+	}
+
+	response.Success(c, nil)
 }

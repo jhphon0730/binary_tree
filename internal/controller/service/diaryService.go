@@ -8,6 +8,7 @@ import (
 	"binary_tree/pkg/utils"
 
 	"net/http"
+
 	"gorm.io/gorm"
 )
 
@@ -17,6 +18,7 @@ type DiaryService interface {
 	GetMyCoupleDiary(userID uint) ([]model.Diary, int, error)
 	CreateDiary(userID uint, createDTO dto.CreateDiaryDTO) (model.Diary, int, error)
 	GetDiaryWithImages(diaryID uint) (model.Diary, int, error)
+	UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryDTO) (int, error)
 }
 
 type diaryService struct {
@@ -136,4 +138,79 @@ func (d *diaryService) GetDiaryWithImages(diaryID uint) (model.Diary, int, error
 	}
 
 	return diary, http.StatusOK, nil
+}
+
+/* 다이어리 수정 */
+func (d *diaryService) UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryDTO) (int, error) {
+	var diary model.Diary
+	if err := d.DB.Where("id = ?", diaryID).First(&diary).Error; err != nil {
+		return http.StatusInternalServerError, errors.ErrCannotFindDiares
+	}
+
+	err := d.DB.Transaction(func(tx *gorm.DB) error {
+		diary.Title = updateDiaryDTO.Title
+		diary.Content = updateDiaryDTO.Content
+		diary.Emotion = updateDiaryDTO.Emotion
+		diary.DiaryDate = updateDiaryDTO.DiaryDate
+		
+		// 삭제할 이미지 ID가 존재한다면 이미지 DB 삭제 및 폴더에서 삭제
+		for _, imageID := range updateDiaryDTO.DeleteImages {
+			var image model.DiaryImage
+
+			if err := tx.Where("id = ?", imageID).First(&image).Error; err != nil {
+				return err
+			}
+
+			if err := tx.Delete(&image).Error; err != nil {
+				return err
+			}
+
+			// 폴더에 있는 이미지 삭제
+			if err := utils.DeleteDiaryImage(image.ImageURL); err != nil {
+				return err
+			}
+
+			// 반환용 이미지 제거 변수에서 이미지 제거
+			for i, img := range diary.Images {
+				if img.ID == imageID {
+					diary.Images = append(diary.Images[:i], diary.Images[i+1:]...)
+					break
+				}
+			}
+		}
+
+		// 추가할 이미지가 있다면 이미지 업로드 및 DB 저장
+		if updateDiaryDTO.Images != nil {
+			for _, image := range updateDiaryDTO.Images {
+				imagePath, err := utils.UploadDiaryImage(image)
+				if err != nil {
+					return err // 이미지 업로드 실패 시 롤백
+				}
+
+				diaryImage := model.DiaryImage{
+					DiaryID:  diaryID,
+					ImageURL: imagePath,
+				}
+
+				if err := tx.Create(&diaryImage).Error; err != nil {
+					return err // 이미지 DB 저장 실패 시 롤백
+				}
+
+				// 반환용 이미지 추가
+				diary.Images = append(diary.Images, diaryImage)
+			}
+		}
+
+		if err := tx.Save(&diary).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	return http.StatusOK, nil
 }

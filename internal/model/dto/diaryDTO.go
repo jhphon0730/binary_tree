@@ -33,3 +33,13 @@ func (c *CreateDiaryDTO) Validate() error {
 	}
 	return nil
 }
+
+type UpdateDiaryDTO struct {
+	Title string `form:"title" binding:"required"`
+	Content string `form:"content" binding:"required"`
+	Emotion string `form:"emotion"`
+	DiaryDate time.Time `form:"diary_date" binding:"required"`
+
+	Images []*multipart.FileHeader `form:"images"` // 추가할 이미지
+	DeleteImages []uint `form:"delete_images"` // 삭제할 이미지의 ID
+}

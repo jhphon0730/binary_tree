@@ -45,3 +45,12 @@ func UploadDiaryImage(diaryImageFile *multipart.FileHeader) (string, error) {
 	}
 	return parentPath, nil
 }
+
+// ex) media/diary_images/image.jpg
+func DeleteDiaryImage(imagePath string) error {
+	if err := os.Remove(imagePath); err != nil {
+		return errors.ErrFailedToDeleteDiaryImage
+	}
+
+	return nil
+}

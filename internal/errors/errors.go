@@ -68,4 +68,5 @@ var (
 	ErrCannotFindDiares					= errors.New("다이어리를 찾을 수 없습니다.")
 	ErrCannotFindDiaryID				= errors.New("다이어리를 찾을 수 없습니다.")
 	ErrInvalidDiaryID						= errors.New("유효하지 않은 다이어리 ID입니다.")
+	ErrFailedToDeleteDiaryImage = errors.New("다이어리 이미지를 삭제할 수 없습니다.")
 )
