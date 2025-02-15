@@ -21,7 +21,9 @@ const emotionOptions: { value: Emotion; label: string }[] = [
 ]
 
 const DiaryDetailPage = async ({ params }: { params: { id: string } }) => {
-	const diaryDetailResponse = await GetDiaryByID({diaryID: +params.id})
+	const diaryID = await params.id
+
+	const diaryDetailResponse = await GetDiaryByID({ diaryID: Number(diaryID) })
 	if (diaryDetailResponse.error || !diaryDetailResponse.data) {
 		return <SSRError error={diaryDetailResponse.error || diaryDetailResponse.message} />
 	}
