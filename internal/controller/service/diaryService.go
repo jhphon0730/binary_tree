@@ -4,12 +4,11 @@ import (
 	"binary_tree/internal/errors"
 	"binary_tree/internal/model"
 	"binary_tree/internal/model/dto"
-
 	"binary_tree/pkg/utils"
 
-	"net/http"
-
 	"gorm.io/gorm"
+
+	"net/http"
 )
 
 type DiaryService interface {
@@ -18,7 +17,7 @@ type DiaryService interface {
 	GetMyCoupleDiary(userID uint) ([]model.Diary, int, error)
 	CreateDiary(userID uint, createDTO dto.CreateDiaryDTO) (model.Diary, int, error)
 	GetDiaryWithImages(diaryID uint) (model.Diary, int, error)
-	UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryDTO) (int, error)
+	UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryDTO) (model.Diary, int, error)
 }
 
 type diaryService struct {
@@ -141,10 +140,10 @@ func (d *diaryService) GetDiaryWithImages(diaryID uint) (model.Diary, int, error
 }
 
 /* 다이어리 수정 */
-func (d *diaryService) UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryDTO) (int, error) {
+func (d *diaryService) UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryDTO) (model.Diary, int, error) {
 	var diary model.Diary
-	if err := d.DB.Where("id = ?", diaryID).First(&diary).Error; err != nil {
-		return http.StatusInternalServerError, errors.ErrCannotFindDiares
+	if err := d.DB.Where("id = ?", diaryID).Preload("Images").First(&diary).Error; err != nil {
+		return model.Diary{}, http.StatusInternalServerError, errors.ErrCannotFindDiares
 	}
 
 	err := d.DB.Transaction(func(tx *gorm.DB) error {
@@ -206,8 +205,8 @@ func (d *diaryService) UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryD
 	})
 
 	if err != nil {
-		return http.StatusInternalServerError, err
+		return model.Diary{}, http.StatusInternalServerError, err
 	}
 
-	return http.StatusOK, nil
+	return diary, http.StatusOK, nil
 }

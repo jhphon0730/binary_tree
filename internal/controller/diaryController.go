@@ -165,11 +165,13 @@ func (d *diaryController) UpdateDiary(c *gin.Context) {
 		response.Error(c, http.StatusInternalServerError, errors.ErrInvalidDiaryID.Error())
 		return
 	}
-	status, err := d.diaryService.UpdateDiary(uint(diaryID), updateDiaryDTO)
+	diary, status, err := d.diaryService.UpdateDiary(uint(diaryID), updateDiaryDTO)
 	if err != nil {
 		response.Error(c, status, err.Error())
 		return
 	}
+
+	_ = redis.SetLatestDiary(c, diary)
 
 	response.Success(c, nil)
 }
