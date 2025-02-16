@@ -1,12 +1,11 @@
 import React from "react"
-import Link from "next/link"
 import { format } from "date-fns"
-import { CalendarIcon, Pencil, Trash2 } from "lucide-react"
+import { CalendarIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import SSRError from "@/components/SSRError"
+import PageHeader from "@/app/(main)/dashboard/diary/detail/components/PageHeader"
 
 import { GetDiaryByID } from "@/lib/api/diary";
 import { Diary, Emotion } from "@/types/diary"
@@ -32,23 +31,7 @@ const DiaryDetailPage = async ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">{diary.title}</h1>
-        <div className="space-x-2">
-					<Link href={`/dashboard/diary/update/${diary.ID}`}>
-						<Button variant="outline">
-							<Pencil className="mr-2 h-4 w-4" />
-							수정
-						</Button>
-					</Link>
-					<Link href="">
-						<Button variant="destructive">
-							<Trash2 className="mr-2 h-4 w-4" />
-							삭제
-						</Button>
-					</Link>
-        </div>
-      </div>
+			<PageHeader diary={diary} />
 
       <Card>
         <CardHeader>

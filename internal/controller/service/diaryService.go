@@ -18,6 +18,7 @@ type DiaryService interface {
 	CreateDiary(userID uint, createDTO dto.CreateDiaryDTO) (model.Diary, int, error)
 	GetDiaryWithImages(diaryID uint) (model.Diary, int, error)
 	UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryDTO) (model.Diary, int, error)
+	DeleteDiary(diaryID uint, userID uint) (int, error)
 }
 
 type diaryService struct {
@@ -209,4 +210,19 @@ func (d *diaryService) UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryD
 	}
 
 	return diary, http.StatusOK, nil
+}
+
+func (d *diaryService) DeleteDiary(diaryID uint, userID uint) (int, error) {
+	var diary model.Diary
+	if err := d.DB.Where("id = ?", diaryID).First(&diary).Error; err != nil {
+		return 500, errors.ErrCannotFindDiares
+	}
+	if diary.AuthorID != userID {
+		return 400, errors.ErrCannotDeleteDiary
+	}
+	if err := d.DB.Delete(&diary).Error; err != nil {
+		return 500, errors.ErrCannotDeleteDiary
+	}
+
+	return 200, nil
 }

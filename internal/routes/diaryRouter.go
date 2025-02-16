@@ -10,4 +10,5 @@ func registerDiaryRoutes(router *gin.RouterGroup) {
 	router.POST("/new", diaryController.CreateDiary)
 	router.GET("/latest", diaryController.GetLatestDiary)
 	router.PUT("/update", diaryController.UpdateDiary)
+	router.DELETE("/delete", diaryController.DeleteDiary)
 }

@@ -141,3 +141,22 @@ export const UpdateDiary = async (updateDiaryProps: UpdateDiaryRequest): Promise
 		error: res.error,
 	}
 }
+
+/** 다이어리 삭제 함수
+ * 삭제 시에는 작성자 본인만 삭제가 가능
+ */
+type DeleteDiaryRequest = {
+	diaryID: number
+}
+type DeleteDiaryResponse = { }
+export const DeleteDiary = async ({diaryID}: DeleteDiaryRequest): Promise<Response<DeleteDiaryResponse>> => {
+	const res = await FetchWithAuth(`/diaries/delete?diaryID=${diaryID}`, {
+		method: "DELETE",
+	})
+	return {
+		data: res.data,
+		state: res.state,
+		message: res.message,
+		error: res.error,
+	}
+}

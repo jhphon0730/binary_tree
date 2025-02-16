@@ -20,6 +20,7 @@ type DiaryController interface {
 	GetLatestDiary(c *gin.Context)
 	GetDiaryWithImages(c *gin.Context)
 	UpdateDiary(c *gin.Context)
+	DeleteDiary(c *gin.Context)
 }
 
 type diaryController struct {
@@ -173,5 +174,25 @@ func (d *diaryController) UpdateDiary(c *gin.Context) {
 
 	_ = redis.SetLatestDiary(c, diary)
 
+	response.Success(c, nil)
+}
+
+func (d *diaryController) DeleteDiary(c *gin.Context) {
+	userID := c.GetInt("userID")
+	diaryID_str, isValidDiaryID := c.GetQuery("diaryID")
+	if !isValidDiaryID || diaryID_str == "" {
+		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindDiaryID.Error())
+		return
+	}
+	diaryID, err := strconv.Atoi(diaryID_str)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, errors.ErrInvalidDiaryID.Error())
+		return
+	}
+	status, err := d.diaryService.DeleteDiary(uint(diaryID), uint(userID))
+	if err != nil {
+		response.Error(c, status, err.Error())
+		return
+	}
 	response.Success(c, nil)
 }
