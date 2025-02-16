@@ -214,14 +214,38 @@ func (d *diaryService) UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryD
 
 func (d *diaryService) DeleteDiary(diaryID uint, userID uint) (int, error) {
 	var diary model.Diary
-	if err := d.DB.Where("id = ?", diaryID).First(&diary).Error; err != nil {
+	if err := d.DB.Where("id = ?", diaryID).Preload("Images").First(&diary).Error; err != nil {
 		return 500, errors.ErrCannotFindDiares
 	}
+
 	if diary.AuthorID != userID {
 		return 400, errors.ErrCannotDeleteDiary
 	}
-	if err := d.DB.Delete(&diary).Error; err != nil {
-		return 500, errors.ErrCannotDeleteDiary
+
+	err := d.DB.Transaction(func(tx *gorm.DB) error {
+		// 이미지 삭제
+		for _, image := range diary.Images {
+			// 이미지 개별 삭제
+			if err := tx.Delete(&image).Error; err != nil {
+				return err
+			}
+
+			// 폴더에 있는 이미지 삭제
+			if err := utils.DeleteDiaryImage(image.ImageURL); err != nil {
+				return err
+			}
+		}
+
+		// 다이어리 삭제
+		if err := tx.Delete(&diary).Error; err != nil {
+			return errors.ErrCannotDeleteDiary
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return 500, err
 	}
 
 	return 200, nil
