@@ -18,7 +18,7 @@ type DiaryService interface {
 	CreateDiary(userID uint, createDTO dto.CreateDiaryDTO) (model.Diary, int, error)
 	GetDiaryWithImages(diaryID uint) (model.Diary, int, error)
 	UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryDTO) (model.Diary, int, error)
-	DeleteDiary(diaryID uint, userID uint) (int, error)
+	DeleteDiary(diaryID uint, userID uint) (uint, int, error)
 }
 
 type diaryService struct {
@@ -212,14 +212,14 @@ func (d *diaryService) UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryD
 	return diary, http.StatusOK, nil
 }
 
-func (d *diaryService) DeleteDiary(diaryID uint, userID uint) (int, error) {
+func (d *diaryService) DeleteDiary(diaryID uint, userID uint) (uint, int, error) {
 	var diary model.Diary
 	if err := d.DB.Where("id = ?", diaryID).Preload("Images").First(&diary).Error; err != nil {
-		return 500, errors.ErrCannotFindDiares
+		return 0, 500, errors.ErrCannotFindDiares
 	}
 
 	if diary.AuthorID != userID {
-		return 400, errors.ErrCannotDeleteDiary
+		return 0, 400, errors.ErrCannotDeleteDiary
 	}
 
 	err := d.DB.Transaction(func(tx *gorm.DB) error {
@@ -245,8 +245,8 @@ func (d *diaryService) DeleteDiary(diaryID uint, userID uint) (int, error) {
 	})
 
 	if err != nil {
-		return 500, err
+		return 0, 500, err
 	}
 
-	return 200, nil
+	return diary.CoupleID, 200, nil
 }

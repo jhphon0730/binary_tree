@@ -33,3 +33,11 @@ func (c *Couple) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
+// 사용자 아이디로 커플 정보 조회
+func GetCoupleByUserID(DB *gorm.DB, userID uint) (Couple, error) {
+	var couple Couple
+	if err := DB.Where("user1_id = ? OR user2_id = ?", userID, userID).First(&couple).Error; err != nil {
+		return couple, err
+	}
+	return couple, nil
+}

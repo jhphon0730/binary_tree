@@ -189,10 +189,20 @@ func (d *diaryController) DeleteDiary(c *gin.Context) {
 		response.Error(c, http.StatusInternalServerError, errors.ErrInvalidDiaryID.Error())
 		return
 	}
-	status, err := d.diaryService.DeleteDiary(uint(diaryID), uint(userID))
+	coupleID, status, err := d.diaryService.DeleteDiary(uint(diaryID), uint(userID))
 	if err != nil {
 		response.Error(c, status, err.Error())
 		return
 	}
+
+	latest_diary, err := redis.GetLatestDiary(c, coupleID)
+	if err != nil && err != errors.ErrDiaryNotFound {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if latest_diary.ID == uint(diaryID) {
+		_ = redis.DeleteLatestDiary(c, coupleID)
+	}
+
 	response.Success(c, nil)
 }
