@@ -212,6 +212,9 @@ func (d *diaryService) UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryD
 	return diary, http.StatusOK, nil
 }
 
+/* 다이어리 삭제
+ * 다이어리 삭제 시에 이미지도 함께 삭제
+*/
 func (d *diaryService) DeleteDiary(diaryID uint, userID uint) (uint, int, error) {
 	var diary model.Diary
 	if err := d.DB.Where("id = ?", diaryID).Preload("Images").First(&diary).Error; err != nil {
