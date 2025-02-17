@@ -9,6 +9,9 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+
+	"time"
+	"net/http"
 )
 
 var (
@@ -34,13 +37,23 @@ func Init() *Route {
 	// MEDIA
 	r.Static("/media", "./media")
 
-	// CORS
-	// 3000 is the frontend port
+	// CORS 설정 개선
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"*"},
+			AllowOrigins:     []string{"http://192.168.0.5:3000", "http://localhost:3000"}, // 실제 프론트엔드 주소
+			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+			AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true, // Credentials 허용
+			AllowOriginFunc: func(origin string) bool {
+					return true
+			},
+			MaxAge: 12 * time.Hour,
 	}))
+
+	// OPTIONS 요청 처리
+	r.OPTIONS("/*path", func(c *gin.Context) {
+		c.Status(http.StatusOK)
+	})
 
 	return &Route{r}
 }

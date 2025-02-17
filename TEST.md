@@ -23,3 +23,11 @@ JWT_SECRET=my_jwt_secret
 
 # Seed 
 CHAR_SET=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+
+
+docker stop gin-container
+docker rm gin-container
+docker rmi binary_backend:latest
+docker build -t binary_backend .
+docker run -d --name gin-container --network=binary --env-file .env -p 0.0.0.0:8080:8080 binary_backend
+
