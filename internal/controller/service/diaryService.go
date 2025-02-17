@@ -19,6 +19,7 @@ type DiaryService interface {
 	GetDiaryWithImages(diaryID uint) (model.Diary, int, error)
 	UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryDTO) (model.Diary, int, error)
 	DeleteDiary(diaryID uint, userID uint) (uint, int, error)
+	SearchDiaryByTitle(userID uint, title string) ([]model.Diary, int, error)
 }
 
 type diaryService struct {
@@ -253,3 +254,22 @@ func (d *diaryService) DeleteDiary(diaryID uint, userID uint) (uint, int, error)
 
 	return diary.CoupleID, 200, nil
 }
+
+/* 다이어리 검색
+ * 제목을 통해 다이어리 검색
+ * 제목이 포함된 다이어리 조회
+*/
+func (d *diaryService) SearchDiaryByTitle(userID uint, title string) ([]model.Diary, int, error) {
+	var couple model.Couple
+	if err := d.DB.Where("user1_id = ? OR user2_id = ?", userID, userID).First(&couple).Error; err != nil {
+		return nil, http.StatusInternalServerError, errors.ErrCannotFindCouple
+	}
+
+	var diaries []model.Diary
+	if err := d.DB.Where("couple_id = ? AND title LIKE ?", couple.ID, "%"+title+"%").Find(&diaries).Error; err != nil {
+		return nil, http.StatusInternalServerError, errors.ErrCannotFindDiares
+	}
+
+	return diaries, http.StatusOK, nil
+}
+
