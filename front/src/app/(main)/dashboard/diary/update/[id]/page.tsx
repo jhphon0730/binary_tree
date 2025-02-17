@@ -41,7 +41,13 @@ const emotionOptions: { value: Emotion; label: string }[] = [
   { value: "NEUTRAL", label: "보통" },
 ]
 
-const UpdateDiaryPage = ({ params }: { params: { id: string } }) => {
+type UpdateDiaryPageProps = {
+	params: Promise<{
+		id: string
+	}>;
+}
+
+const UpdateDiaryPage = ({ params }: UpdateDiaryPageProps) => {
   const router = useRouter()
 
   const [isSubmitting, setIsSubmitting] = React.useState(false)

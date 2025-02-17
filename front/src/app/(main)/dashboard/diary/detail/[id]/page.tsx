@@ -19,10 +19,16 @@ const emotionOptions: { value: Emotion; label: string }[] = [
   { value: "NEUTRAL", label: "보통" },
 ]
 
-const DiaryDetailPage = async ({ params }: { params: { id: string } }) => {
-	const diaryID = await params.id
+type DiaryDetailPageProps = {
+	params: Promise<{
+		id: string;
+	}>;
+}
 
-	const diaryDetailResponse = await GetDiaryByID({ diaryID: Number(diaryID) })
+const DiaryDetailPage = async ({ params }: DiaryDetailPageProps) => {
+	const { id } = await params;
+
+	const diaryDetailResponse = await GetDiaryByID({ diaryID: Number(id) })
 	if (diaryDetailResponse.error || !diaryDetailResponse.data) {
 		return <SSRError error={diaryDetailResponse.error || diaryDetailResponse.message} />
 	}

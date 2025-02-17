@@ -72,7 +72,8 @@ func (route *Route) RunServer(port string, serverType string) {
 	} else {
 		gin.SetMode(gin.DebugMode)
 	}
-	route.r.Run(port)
+	//:8080
+	route.r.Run("0.0.0.0"+port)
 }
 
 // Expose the Gin Engine
