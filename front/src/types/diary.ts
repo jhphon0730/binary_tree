@@ -35,3 +35,5 @@ export type DiaryImages = {
 
 export type DiaryViewType = "MY" | "COUPLE" | "ALL"
 export type Emotion = "None" | "HAPPY" | "SAD" | "ANGRY" | "EXCITED" | "NEUTRAL"
+
+export type DiarySearchType = "TITLE" | "CONTENT" | "DIARYDATE"

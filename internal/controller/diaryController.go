@@ -23,6 +23,7 @@ type DiaryController interface {
 	DeleteDiary(c *gin.Context)
 	SearchDiaryByTitle(c *gin.Context)
 	SearchDiaryByContent(c *gin.Context)
+	SearchDiaryByDiaryDate(c *gin.Context)
 }
 
 type diaryController struct {
@@ -233,6 +234,22 @@ func (d *diaryController) SearchDiaryByContent(c *gin.Context) {
 		return
 	}
 	diaries, status, err := d.diaryService.SearchDiaryByContent(uint(userID), content)
+	if err != nil {
+		response.Error(c, status, err.Error())
+		return
+	}
+
+	response.Success(c, gin.H{"diaries": diaries})
+}
+
+func (d *diaryController) SearchDiaryByDiaryDate(c *gin.Context) {
+	userID := c.GetInt("userID")
+	diary_date, isValidDiaryDate := c.GetQuery("diary_date")
+	if !isValidDiaryDate || diary_date == "" {
+		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindDiaryDate.Error())
+		return
+	}
+	diaries, status, err := d.diaryService.SearchDiaryByDiaryDate(uint(userID), diary_date)
 	if err != nil {
 		response.Error(c, status, err.Error())
 		return

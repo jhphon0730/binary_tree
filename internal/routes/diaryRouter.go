@@ -14,4 +14,5 @@ func registerDiaryRoutes(router *gin.RouterGroup) {
 
 	router.GET("/search/t", diaryController.SearchDiaryByTitle) // t for title
 	router.GET("/search/c", diaryController.SearchDiaryByContent) // c for content
+	router.GET("/search/d", diaryController.SearchDiaryByDiaryDate) // d for diary date (diary_date)
 }

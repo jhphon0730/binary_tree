@@ -73,4 +73,5 @@ var (
 	ErrCannotDeleteDiary				= errors.New("다이어리 작성자가 아니면 다이어리 삭제가 불가능합니다.")
 	ErrCannotFindTitle					= errors.New("제목을 찾을 수 없습니다.")
 	ErrCannotFindContent				= errors.New("내용을 찾을 수 없습니다.")
+	ErrCannotFindDiaryDate			= errors.New("작성 날짜를 찾을 수 없습니다.")
 )

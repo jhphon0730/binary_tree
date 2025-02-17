@@ -21,6 +21,7 @@ type DiaryService interface {
 	DeleteDiary(diaryID uint, userID uint) (uint, int, error)
 	SearchDiaryByTitle(userID uint, title string) ([]model.Diary, int, error)
 	SearchDiaryByContent(userID uint, content string) ([]model.Diary, int, error)
+	SearchDiaryByDiaryDate(userID uint, diary_date string) ([]model.Diary, int, error)
 }
 
 type diaryService struct {
@@ -289,4 +290,21 @@ func (d *diaryService) SearchDiaryByContent(userID uint, content string) ([]mode
 	}
 
 	return diaries, http.StatusOK, nil
+}
+
+/* 다이어리 검색
+ * 날짜를 통해 다이어리 검색
+*/
+func (d *diaryService) SearchDiaryByDiaryDate(userID uint, content string) ([]model.Diary, int, error) {
+	var couple model.Couple
+	if err := d.DB.Where("user1_id = ? OR user2_id = ?", userID, userID).First(&couple).Error; err != nil {
+		return nil, http.StatusInternalServerError, errors.ErrCannotFindCouple
+	}
+
+	var diary []model.Diary
+	if err := d.DB.Where("couple_id = ? AND diary_date = ?", couple.ID, content).Find(&diary).Error; err != nil {
+		return nil, http.StatusInternalServerError, errors.ErrCannotFindDiares
+	}
+
+	return diary, http.StatusOK, nil
 }
