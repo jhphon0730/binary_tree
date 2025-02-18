@@ -31,7 +31,7 @@ type GetDiariesResponse = {
 	diaries: Diary[]
 }
 export const GetDiaries = async ({DiaryViewType}: GetDiariesRequest): Promise<Response<GetDiariesResponse>> => {
-	const res = await FetchWithAuth(`/diaries/all?category=${DiaryViewType.toLowerCase()}`, {
+	const res = await FetchWithAuth(`/diaries/?category=${DiaryViewType.toLowerCase()}`, {
 		method: "GET",
 	})
 	return {
@@ -66,7 +66,7 @@ export const CreateDiary = async (createDiaryProps: CreateDiaryRequest): Promise
 			formData.append("images", image)
 		})
 	}
-	const res = await FetchWithAuthFormData(`/diaries/new`, {
+	const res = await FetchWithAuthFormData(`/diaries/`, {
 		method: "POST",
 		body: formData,
 	})
@@ -129,7 +129,7 @@ export const UpdateDiary = async (updateDiaryProps: UpdateDiaryRequest): Promise
 	if (updateDiaryProps.deleteImages) {
 		formData.append("delete_images", JSON.stringify(updateDiaryProps.deleteImages))
 	}
-	const res = await FetchWithAuthFormData(`/diaries/update?diaryID=${updateDiaryProps.diaryID}`, {
+	const res = await FetchWithAuthFormData(`/diaries/?diaryID=${updateDiaryProps.diaryID}`, {
 		method: "PUT",
 		body: formData,
 	}) 
@@ -150,7 +150,7 @@ type DeleteDiaryRequest = {
 }
 type DeleteDiaryResponse = { }
 export const DeleteDiary = async ({diaryID}: DeleteDiaryRequest): Promise<Response<DeleteDiaryResponse>> => {
-	const res = await FetchWithAuth(`/diaries/delete?diaryID=${diaryID}`, {
+	const res = await FetchWithAuth(`/diaries/?diaryID=${diaryID}`, {
 		method: "DELETE",
 	})
 	return {
