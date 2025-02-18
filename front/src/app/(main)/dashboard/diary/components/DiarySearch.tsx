@@ -53,6 +53,7 @@ const DiarySearch = () => {
 			})
 			return
 		}
+		router.push(`/dashboard/diary/search?searchType=${searchType}&searchValue=${searchValue}`)
 	}
 
 	return (

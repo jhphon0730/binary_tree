@@ -8,17 +8,15 @@ export interface Response<T> {
 }
 
 export const getJWT = async () => {
-  let token
-
   if (typeof window !== "undefined") {
-		const Cookies = await import("js-cookie")
-		token = Cookies.default.get("token")
-  } else {
-    // 서버 사이드
-    const { cookies } = await import("next/headers")
-    token = (await cookies()).get("token")?.value
-  }
-  return token
+    // 클라이언트 사이드
+    const Cookies = (await import("js-cookie")).default
+    return Cookies.get("token")
+  } 
+
+  // 서버 사이드
+  const { cookies } = await import("next/headers")
+  return (await cookies()).get("token")?.value
 }
 
 export interface fetchOptions {

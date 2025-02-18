@@ -5,10 +5,8 @@
 import React from 'react';
 import Swal from 'sweetalert2'
 import Cookies from 'js-cookie'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 
-import { useAuthStore } from '@/store/authStore';
-import { usePartnerStore } from '@/store/partnerStore';
 import { CheckIsValidSession } from '@/lib/api/config';
 
 type WithAuthLayoutProps = {
@@ -17,13 +15,12 @@ type WithAuthLayoutProps = {
 
 const WithAuthLayout = ({ children }: WithAuthLayoutProps) => {
 	const router = useRouter();
-	const authStorage = useAuthStore();
-	const partnerStorage = usePartnerStore();
+	const pathname = usePathname();
 
 	React.useEffect(() => {
-		console.log('%c[AuthLayout]', 'color: red');
+		console.log('%c[CHECK LOGIN SESSION]', 'color: red');
 		handleSession();
-	}, [authStorage.user, partnerStorage.partner]);
+	}, [pathname]);
 
 	const clearSession = () => {
 		// 세션 만료
@@ -31,13 +28,8 @@ const WithAuthLayout = ({ children }: WithAuthLayoutProps) => {
 			title: '세션이 만료되었습니다.',
 			text: '다시 로그인 해주세요.',
 			icon: 'warning',
-			showCancelButton: true,
 			confirmButtonText: '로그인',
-			cancelButtonText: '취소',
 		})
-		// REMOVE
-		authStorage.clearUser();
-		partnerStorage.clearPartner();
 		Cookies.remove('token');
 		router.push('/sign-in');
 		return
@@ -45,7 +37,7 @@ const WithAuthLayout = ({ children }: WithAuthLayoutProps) => {
 
 	const handleSession = async () => {
 		const token = Cookies.get('token');
-		if (!authStorage.user || !token || !partnerStorage.partner) {
+		if (!token) {
 			clearSession()
 			return
 		}
