@@ -31,3 +31,5 @@ docker rmi binary_backend:latest
 docker build -t binary_backend .
 docker run -d --name gin-container --network=binary --env-file .env -p 0.0.0.0:8080:8080 binary_backend
 
+# 빌드 시에 env 바꾸기 ( network도 ) 
+# 빌드 시에 프론트 env 바꾸기

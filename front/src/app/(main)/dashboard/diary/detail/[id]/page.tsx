@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import SSRError from "@/components/SSRError"
 import PageHeader from "@/app/(main)/dashboard/diary/detail/components/PageHeader"
+import RenderImage from "@/app/(main)/dashboard/diary/detail/components/RenderImage"
 
 import { GetDiaryByID } from "@/lib/api/diary";
 import { Diary, Emotion } from "@/types/diary"
@@ -68,11 +69,10 @@ const DiaryDetailPage = async ({ params }: DiaryDetailPageProps) => {
                 {diary.images.map((image, index) => (
                   <CarouselItem key={index}>
                     <div className="p-1">
-                      <img
-                        src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${image.image_url}`}
-                        alt={`Diary image ${index + 1}`}
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
+											<RenderImage 
+												src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${image.image_url}`}
+												alt={`diary image ${index}`}
+											/>
                     </div>
                   </CarouselItem>
                 ))}
