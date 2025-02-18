@@ -89,7 +89,7 @@ const DiarySearch = () => {
 							<SelectContent>
 								<SelectItem value="TITLE">제목</SelectItem>
 								<SelectItem value="CONTENT">내용</SelectItem>
-								<SelectItem value="DIARYDATE">작성 기준일</SelectItem>
+								<SelectItem value="DIARYDATE">작성일 기준</SelectItem>
 							</SelectContent>
 						</Select>
 						<div className="grid gap-2 md:grid-cols-2 grid-cols-1">
