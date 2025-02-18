@@ -8,6 +8,7 @@ import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 
 import { useAuthStore } from '@/store/authStore';
+import { usePartnerStore } from '@/store/partnerStore';
 import { CheckIsValidSession } from '@/lib/api/config';
 
 type WithAuthLayoutProps = {
@@ -17,11 +18,12 @@ type WithAuthLayoutProps = {
 const WithAuthLayout = ({ children }: WithAuthLayoutProps) => {
 	const router = useRouter();
 	const authStorage = useAuthStore();
+	const partnerStorage = usePartnerStore();
 
 	React.useEffect(() => {
 		console.log('%c[AuthLayout]', 'color: red');
 		handleSession();
-	}, [authStorage.user]);
+	}, [authStorage.user, partnerStorage.partner]);
 
 	const clearSession = () => {
 		// 세션 만료
@@ -35,6 +37,7 @@ const WithAuthLayout = ({ children }: WithAuthLayoutProps) => {
 		})
 		// REMOVE
 		authStorage.clearUser();
+		partnerStorage.clearPartner();
 		Cookies.remove('token');
 		router.push('/sign-in');
 		return
@@ -42,7 +45,7 @@ const WithAuthLayout = ({ children }: WithAuthLayoutProps) => {
 
 	const handleSession = async () => {
 		const token = Cookies.get('token');
-		if (!authStorage.user && !token) {
+		if (!authStorage.user || !token || !partnerStorage.partner) {
 			clearSession()
 			return
 		}
