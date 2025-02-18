@@ -6,7 +6,7 @@ type GetCoupleInfoResponse = {
 	coupleInfo: Couple;
 }
 export const GetCoupleInfo = async (): Promise<Response<GetCoupleInfoResponse>> => {
-	const res = await FetchWithAuth("/couples/info", {
+	const res = await FetchWithAuth("/couples/", {
 		method: "GET",
 		cache: "no-cache",
 	})
@@ -24,7 +24,7 @@ type UpdateSharedNoteRequest = {
 }
 type UpdateSharedNoteResponse = { }
 export const UpdateSharedNote = async (updateProps: UpdateSharedNoteRequest): Promise<Response<UpdateSharedNoteResponse>> => {
-	const res = await FetchWithAuth("/couples/info/shared-note", {
+	const res = await FetchWithAuth("/couples/shared-note", {
 		method: "PATCH",
 		body: JSON.stringify(updateProps),
 	})
@@ -42,7 +42,7 @@ type UpdateStartDateRequest = {
 }
 type UpdateStartDateResponse = { }
 export const UpdateStartDate = async (updateProps: UpdateStartDateRequest): Promise<Response<UpdateStartDateResponse>> => {
-	const res = await FetchWithAuth("/couples/info/start-date", {
+	const res = await FetchWithAuth("/couples/start-date", {
 		method: "PATCH",
 		body: JSON.stringify(updateProps),
 	})
