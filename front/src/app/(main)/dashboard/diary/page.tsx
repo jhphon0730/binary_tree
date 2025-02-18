@@ -11,7 +11,7 @@ import DiaryViewSelector from "@/app/(main)/dashboard/diary/components/DiaryView
 import DiarySearch from "@/app/(main)/dashboard/diary/components/DiarySearch"
 
 import { GetDiaries } from "@/lib/api/diary";
-import { Diary, DiaryViewType, DiarySearchType } from "@/types/diary"
+import { Diary, DiaryViewType } from "@/types/diary"
 
 const DiaryMainPage = () => {
 	const router = useRouter()
