@@ -53,7 +53,20 @@ const DiarySearch = () => {
 			})
 			return
 		}
-		router.push(`/dashboard/diary/search?searchType=${searchType}&searchValue=${searchValue}`)
+		if (searchType === "DIARYDATE") {
+			const date = new Date(searchValue as string)
+			const year = date.getFullYear()
+			const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
+			const day = date.getDate()
+			const formattedDate = `${year}-${month}-${day}`
+			router.push(`/dashboard/diary/search?searchType=${searchType}&searchValue=${formattedDate}`)
+		} else {
+			router.push(`/dashboard/diary/search?searchType=${searchType}&searchValue=${searchValue}`)
+		}
+
+		setIsOpen(() => false)
+		setSearchType(() => "TITLE")
+		setSearchValue(() => "")
 	}
 
 	return (

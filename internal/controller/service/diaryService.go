@@ -302,7 +302,8 @@ func (d *diaryService) SearchDiaryByDiaryDate(userID uint, content string) ([]mo
 	}
 
 	var diary []model.Diary
-	if err := d.DB.Where("couple_id = ? AND diary_date = ?", couple.ID, content).Find(&diary).Error; err != nil {
+	// DB에는 2025-02-17 00:00:00+00 형식 저장인데, 검색 시에는 2025-02-17 형식으로 검색해야 함
+	if err := d.DB.Where("couple_id = ? AND DATE(diary_date) = ?", couple.ID, content).Find(&diary).Error; err != nil {
 		return nil, http.StatusInternalServerError, errors.ErrCannotFindDiares
 	}
 
