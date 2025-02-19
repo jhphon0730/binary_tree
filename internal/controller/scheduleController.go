@@ -8,12 +8,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"strconv"
 	"net/http"
 )
 
 type ScheduleController interface {
-	GetMySchedules(c *gin.Context)
 	GetSchedules(c *gin.Context)
 	CreateSchedule(c *gin.Context)
 }
@@ -28,34 +26,40 @@ func NewScheduleController(scheduleService service.ScheduleService) ScheduleCont
 	}
 }
 
-func (d *scheduleController) GetMySchedules(c *gin.Context) {
-	userID := c.GetInt("userID")
-	schedules, status, err := d.scheduleService.GetMySchedules(uint(userID))
-	if err != nil {
-		response.Error(c, status, err.Error())
-		return
-	}
-	response.Success(c, gin.H{"schedules": schedules})
-}
-
 func (d *scheduleController) GetSchedules(c *gin.Context) {
-	coupleID_str, isValidCoupleID := c.GetQuery("coupleID")
-	if !isValidCoupleID || coupleID_str == "" {
-		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindCoupleID.Error())
-		return
-	}
-	coupleID, err := strconv.Atoi(coupleID_str)
-	if err != nil {
-		response.Error(c, http.StatusInternalServerError, errors.ErrInvalidCoupleID.Error())
+	userID := c.GetInt("userID")
+	category, isValidCategory := c.GetQuery("category")
+	if !isValidCategory || category == "" {
+		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindCategory.Error())
 		return
 	}
 
-	schedules, status, err := d.scheduleService.GetSchedules(uint(coupleID))
-	if err != nil {
-		response.Error(c, status, err.Error())
-		return
+	switch category {
+		case "my":
+			schedules, status, err := d.scheduleService.GetMySchedules(uint(userID))
+			if err != nil {
+				response.Error(c, status, err.Error())
+				return
+			}
+			response.Success(c, gin.H{"schedules": schedules})
+		case "couple":
+			schedules, status, err := d.scheduleService.GetMyCoupleSchedules(uint(userID))
+			if err != nil {
+				response.Error(c, status, err.Error())
+				return
+			}
+			response.Success(c, gin.H{"schedules": schedules})
+		case "all":
+			schedules, status, err := d.scheduleService.GetSchedules(uint(userID))
+			if err != nil {
+				response.Error(c, status, err.Error())
+				return
+			}
+			response.Success(c, gin.H{"schedules": schedules})
 	}
-		response.Success(c, gin.H{"schedules": schedules})
+
+	response.Error(c, http.StatusBadRequest, errors.ErrCannotFindCategory.Error())
+	return
 }
 
 func (d *scheduleController) CreateSchedule(c *gin.Context) {
