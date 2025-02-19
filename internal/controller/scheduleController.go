@@ -62,7 +62,7 @@ func (d *scheduleController) CreateSchedule(c *gin.Context) {
 	userID := c.GetInt("userID")
 	var createScheduleDTO dto.CreateScheduleDTO
 	if err := c.ShouldBindJSON(&createScheduleDTO); err != nil {
-		response.Error(c, http.StatusInternalServerError, errors.ErrInvalidRequest.Error())
+		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
