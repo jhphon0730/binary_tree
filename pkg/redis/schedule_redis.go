@@ -55,31 +55,6 @@ func CloseScheduleRedis() {
 	log.Println("Redis connection closed!")
 }
 
-/* 새로운 일정 추가 시, Redis에 저장
-	- schedule_today:coupleID에 저장
-	* 해당 일정이 오늘을 포함하는 일정이면 오늘의 일정에 추가
-*/
-func AddScheduleToRedis(ctx context.Context, coupleID int, schedule model.Schedule) error {
-	redisClient := getScheduleRedis(ctx)
-
-	today := time.Now()
-	todayStr := today.Format("2006-01-02")
-	startStr := schedule.StartDate.Format("2006-01-02")
-	endStr := schedule.EndDate.Format("2006-01-02")
-
-	// 오늘 포함된 일정이면 schedule_today:coupleID에 저장
-	if (schedule.StartDate.Before(today) || startStr == todayStr) && 
-	   (schedule.EndDate.After(today) || endStr == todayStr) {
-		todayKey := fmt.Sprintf("schedule_today:%d", coupleID)
-		err := redisClient.SAdd(ctx, todayKey, schedule.ID).Err()
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 /* 반복 일정이 아닌 일정이지만 오늘 일정에 포함되는지 확인하여 Redis에 저장 (매일 새벽 5시 실행)
 	- schedule_today:coupleID에 저장
 	- repeat_type은 "" (빈 문자열) 이어야 함
