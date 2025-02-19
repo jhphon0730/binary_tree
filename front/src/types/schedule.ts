@@ -21,3 +21,5 @@ export type Schedule = CreateScheduleDTO & {
   UpdatedAt: string;
   DeletedAt: string;
 }
+
+export type ScheduleViewType = "MY" | "COUPLE" | "ALL"

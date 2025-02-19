@@ -56,10 +56,10 @@ func (d *scheduleController) GetSchedules(c *gin.Context) {
 				return
 			}
 			response.Success(c, gin.H{"schedules": schedules})
+		default:
+			response.Error(c, http.StatusBadRequest, errors.ErrCannotFindCategory.Error())
+			return
 	}
-
-	response.Error(c, http.StatusBadRequest, errors.ErrCannotFindCategory.Error())
-	return
 }
 
 func (d *scheduleController) CreateSchedule(c *gin.Context) {
