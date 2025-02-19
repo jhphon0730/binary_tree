@@ -50,5 +50,6 @@ func MigrateDB() error {
 	return db_instance.AutoMigrate(
 		&model.User{}, &model.Couple{},
 		&model.Diary{}, &model.DiaryImage{},
+		&model.Schedule{}, &model.ScheduleDetail{},
 	)
 }

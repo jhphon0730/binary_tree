@@ -20,11 +20,12 @@ var (
 	userService   service.UserService   = service.NewUserService(DB)
 	coupleService service.CoupleService = service.NewCoupleService(DB)
 	diaryService service.DiaryService   = service.NewDiaryService(DB)
+	scheduleService service.ScheduleService = service.NewScheduleService(DB)
 	
-
 	userController   controller.UserController   = controller.NewUserController(userService, coupleService)
 	coupleController controller.CoupleController = controller.NewCoupleController(coupleService)
 	diaryController controller.DiaryController = controller.NewDiaryController(diaryService)
+	scheduleController controller.ScheduleController = controller.NewScheduleController(scheduleService)
 )
 
 type Route struct {
@@ -75,6 +76,12 @@ func (route *Route) RegisterRoutes() {
 	diary_router.Use(middleware.AuthMiddleware())
 	{
 		registerDiaryRoutes(diary_router)
+	}
+
+	schedule_router := route.r.Group("/schedules/")
+	schedule_router.Use(middleware.AuthMiddleware())
+	{
+		registerScheduleRoutes(schedule_router)
 	}
 }
 

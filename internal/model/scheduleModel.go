@@ -10,7 +10,7 @@ import (
 CREATE TABLE schedules (
     id SERIAL PRIMARY KEY,
     couple_id INT NOT NULL,
-    user_id INT NOT NULL,
+    author_id INT NOT NULL,
     title VARCHAR(255) NOT NULL,  
     description TEXT,             
     start_date DATE NOT NULL,     
@@ -24,7 +24,7 @@ CREATE TABLE schedules (
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
     FOREIGN KEY (couple_id) REFERENCES couples(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE schedule_details (

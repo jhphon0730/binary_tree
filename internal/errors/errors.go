@@ -74,4 +74,7 @@ var (
 	ErrCannotFindTitle					= errors.New("제목을 찾을 수 없습니다.")
 	ErrCannotFindContent				= errors.New("내용을 찾을 수 없습니다.")
 	ErrCannotFindDiaryDate			= errors.New("작성 날짜를 찾을 수 없습니다.")
+
+	// Schedule
+	ErrCannotFindSchedules = errors.New("일정을 찾을 수 없습니다.")
 )

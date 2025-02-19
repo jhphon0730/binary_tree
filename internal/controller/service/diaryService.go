@@ -221,11 +221,11 @@ func (d *diaryService) UpdateDiary(diaryID uint, updateDiaryDTO dto.UpdateDiaryD
 func (d *diaryService) DeleteDiary(diaryID uint, userID uint) (uint, int, error) {
 	var diary model.Diary
 	if err := d.DB.Where("id = ?", diaryID).Preload("Images").First(&diary).Error; err != nil {
-		return 0, 500, errors.ErrCannotFindDiares
+		return 0, http.StatusInternalServerError, errors.ErrCannotFindDiares
 	}
 
 	if diary.AuthorID != userID {
-		return 0, 400, errors.ErrCannotDeleteDiary
+		return 0, http.StatusForbidden, errors.ErrCannotDeleteDiary
 	}
 
 	err := d.DB.Transaction(func(tx *gorm.DB) error {
@@ -251,10 +251,10 @@ func (d *diaryService) DeleteDiary(diaryID uint, userID uint) (uint, int, error)
 	})
 
 	if err != nil {
-		return 0, 500, err
+		return 0, http.StatusInternalServerError, err
 	}
 
-	return diary.CoupleID, 200, nil
+	return diary.CoupleID, http.StatusOK, nil
 }
 
 /* 다이어리 검색
