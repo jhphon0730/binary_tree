@@ -52,7 +52,7 @@ const formSchema = z.object({
   }).default(() => new Date()),
   event_type: z.enum(["anniversary", "daily", "party", "work", "holiday", "reminder", "custom"]),
   is_repeat: z.boolean().default(false),
-  repeat_type: z.enum(["yearly", "monthly", "daily"]).optional(),
+  repeat_type: z.enum(["yearly", "monthly", "daily", "none"]).optional(),
   repeat_until: z.date().optional().nullable(),
 })
 
@@ -70,12 +70,12 @@ const NewSchedulePage = () => {
       end_date: new Date(),
       event_type: "daily",
       is_repeat: false,
-      repeat_type: "daily",
+      repeat_type: "none",
       repeat_until: null,
     },
   })
 
-  // const isRepeat = form.watch("is_repeat")
+  const isRepeat = form.watch("is_repeat")
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (values.start_date > values.end_date) {
@@ -86,7 +86,6 @@ const NewSchedulePage = () => {
       return
     }
 
-		// #TODO :  Create 함수 붙여주기...
 		const res = await CreateSchedule({
 			title: values.title,
 			description: values.description,
@@ -244,6 +243,33 @@ const NewSchedulePage = () => {
               </FormItem>
             )}
           />
+
+					{ isRepeat && (
+						<FormField
+							control={form.control}
+							name="repeat_type"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>반복 주기</FormLabel>
+									<Select onValueChange={field.onChange} defaultValue={field.value}>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue placeholder="반복 주기를 선택하세요" />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{repeatTypes.map((type) => (
+												<SelectItem key={type.value} value={type.value}>
+													{type.label}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					)}
 
           {/* isRepeat && (
             <div className="space-y-6">

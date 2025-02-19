@@ -60,7 +60,7 @@ type Schedule struct {
 	EventType   string    `json:"event_type" gorm:"type:varchar(50);not null" binding:"required"`
 
 	// Repeat Fields
-	RepeatType  string     `json:"repeat_type" gorm:"type:varchar(10);default:'daily'"` // ('yearly', 'monthly', 'daily')
+	RepeatType  string     `json:"repeat_type" gorm:"type:varchar(10);default:''"` // ('yearly', 'monthly', 'daily')
 	RepeatUntil *time.Time `json:"repeat_until" gorm:"default:NULL"` // NULL이면 무한 반복
 
 	// Details

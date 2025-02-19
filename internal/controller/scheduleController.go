@@ -4,6 +4,7 @@ import (
 	"binary_tree/internal/model/dto"
 	"binary_tree/internal/errors"
 	"binary_tree/internal/controller/service"
+	"binary_tree/pkg/redis"
 	"binary_tree/pkg/response"
 
 	"github.com/gin-gonic/gin"
@@ -75,5 +76,8 @@ func (d *scheduleController) CreateSchedule(c *gin.Context) {
 		response.Error(c, status, err.Error())
 		return
 	}
+
+	_ = redis.RunDailyScheduleUpdate(c)
+
 	response.Success(c, gin.H{"message": "일정이 추가되었습니다."})
 }

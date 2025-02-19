@@ -12,5 +12,5 @@ type CreateScheduleDTO struct {
 	EventType 	string `json:"event_type" binding:"required"`
 
 	RepeatType 	string `json:"repeat_type"`
-	RepeatUntil *time.Time `json:"repeat_until" binding:"required"`
+	RepeatUntil *time.Time `json:"repeat_until"`
 }
