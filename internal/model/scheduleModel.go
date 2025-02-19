@@ -79,3 +79,7 @@ type ScheduleDetail struct {
 	StartTime   string `json:"start_time" gorm:"type:time;not null" binding:"required"` // "HH:MM:SS" 형식
 	EndTime     string `json:"end_time" gorm:"type:time;not null" binding:"required"`   // "HH:MM:SS" 형식
 }
+
+func (s *Schedule) Save(db *gorm.DB) error {
+	return db.Save(s).Error
+}

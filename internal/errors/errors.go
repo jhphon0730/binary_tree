@@ -3,6 +3,8 @@ package errors
 import "errors"
 
 var (
+	ErrInvalidRequest = errors.New("잘못된 요청입니다.")
+
 	// USER
 	ErrCannotFindUser        = errors.New("사용자를 찾을 수 없습니다.")
 	ErrUserAlreadyExists     = errors.New("이미 존재하는 사용자입니다.")

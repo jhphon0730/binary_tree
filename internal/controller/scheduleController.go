@@ -1,9 +1,10 @@
 package controller
 
 import (
-	"binary_tree/pkg/response"
+	"binary_tree/internal/model/dto"
 	"binary_tree/internal/errors"
 	"binary_tree/internal/controller/service"
+	"binary_tree/pkg/response"
 
 	"github.com/gin-gonic/gin"
 
@@ -14,6 +15,7 @@ import (
 type ScheduleController interface {
 	GetMySchedules(c *gin.Context)
 	GetSchedules(c *gin.Context)
+	CreateSchedule(c *gin.Context)
 }
 
 type scheduleController struct {
@@ -54,4 +56,20 @@ func (d *scheduleController) GetSchedules(c *gin.Context) {
 		return
 	}
 		response.Success(c, gin.H{"schedules": schedules})
+}
+
+func (d *scheduleController) CreateSchedule(c *gin.Context) {
+	userID := c.GetInt("userID")
+	var createScheduleDTO dto.CreateScheduleDTO
+	if err := c.ShouldBindJSON(&createScheduleDTO); err != nil {
+		response.Error(c, http.StatusInternalServerError, errors.ErrInvalidRequest.Error())
+		return
+	}
+
+	status, err := d.scheduleService.CreateSchedule(uint(userID), createScheduleDTO)
+	if err != nil {
+		response.Error(c, status, err.Error())
+		return
+	}
+	response.Success(c, gin.H{"message": "일정이 추가되었습니다."})
 }
