@@ -131,7 +131,7 @@ func UpdateDailyRepeatSchedulesInRedis(ctx context.Context) error {
 	// Redis pipeline 사용
 	pipe := redisClient.Pipeline()
 	for _, schedule := range schedules {
-		if schedule.RepeatUntil != nil && schedule.RepeatUntil.Before(today) {
+		if schedule.RepeatUntil.Before(today) {
 			continue
 		}
 

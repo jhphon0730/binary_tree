@@ -75,7 +75,7 @@ const NewSchedulePage = () => {
     },
   })
 
-  const isRepeat = form.watch("is_repeat")
+  // const isRepeat = form.watch("is_repeat")
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (values.start_date > values.end_date) {
@@ -94,7 +94,7 @@ const NewSchedulePage = () => {
 			end_date: values.end_date,
 			event_type: values.event_type,
 			repeat_type: values.repeat_type,
-			repeat_until: values.repeat_until,
+			repeat_until: values.end_date,
 		})
 		if (res.error) {
 			await Swal.fire({
@@ -245,7 +245,7 @@ const NewSchedulePage = () => {
             )}
           />
 
-          {isRepeat && (
+          {/* isRepeat && (
             <div className="space-y-6">
               <FormField
                 control={form.control}
@@ -306,7 +306,7 @@ const NewSchedulePage = () => {
                 )}
               />
             </div>
-          )}
+          ) */}
 
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
