@@ -34,7 +34,6 @@ const eventTypes: { value: EventType; label: string }[] = [
 
 // repeatTypes 배열 수정
 const repeatTypes: { value: RepeatType; label: string }[] = [
-  { value: "none", label: "반복 안함" },
   { value: "yearly", label: "매년" },
   { value: "monthly", label: "매월" },
   { value: "daily", label: "매일" },
@@ -53,7 +52,7 @@ const formSchema = z.object({
   }).default(() => new Date()),
   event_type: z.enum(["anniversary", "daily", "party", "work", "holiday", "reminder", "custom"]),
   is_repeat: z.boolean().default(false),
-  repeat_type: z.enum(["none", "yearly", "monthly", "daily"]).optional(),
+  repeat_type: z.enum(["yearly", "monthly", "daily"]).optional(),
   repeat_until: z.date().optional().nullable(),
 })
 
@@ -71,7 +70,7 @@ const NewSchedulePage = () => {
       end_date: new Date(),
       event_type: "daily",
       is_repeat: false,
-      repeat_type: "none",
+      repeat_type: "daily",
       repeat_until: null,
     },
   })

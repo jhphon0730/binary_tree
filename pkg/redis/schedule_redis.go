@@ -135,6 +135,12 @@ func UpdateDailyRepeatSchedulesInRedis(ctx context.Context) error {
 			continue
 		}
 
+		// 시작일이 오늘 이후이면 반복 일정에 추가하지 않음
+		if schedule.StartDate.After(today) {
+			continue
+		}
+
+
 		if schedule.RepeatType == "daily" ||
 			(schedule.RepeatType == "monthly" && schedule.StartDate.Day() == day) ||
 			(schedule.RepeatType == "yearly" && schedule.StartDate.Day() == day && schedule.StartDate.Month() == month) {
