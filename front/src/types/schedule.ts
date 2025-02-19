@@ -1,5 +1,5 @@
 export type EventType = "anniversary" | "daily" | "party" | "work" | "holiday" | "reminder" | "custom"
-export type RepeatType = "yearly" | "monthly" | "daily" | ""
+export type RepeatType = "yearly" | "monthly" | "daily" | "none" // none -> ""
 
 export type CreateScheduleDTO = {
   title: string

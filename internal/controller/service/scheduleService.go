@@ -65,6 +65,7 @@ func (s *scheduleService) CreateSchedule(userID uint, createScheduleDTO dto.Crea
 	createdSchedule.EndDate = createScheduleDTO.EndDate
 	createdSchedule.EventType = createScheduleDTO.EventType
 	createdSchedule.RepeatType = createScheduleDTO.RepeatType
+	createdSchedule.RepeatUntil = createScheduleDTO.RepeatUntil
 
 	if err := createdSchedule.Save(s.DB); err != nil {
 		return http.StatusInternalServerError, err

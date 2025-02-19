@@ -8,7 +8,10 @@ type CreateScheduleResponse = { }
 export const CreateSchedule = async (createScheduleProps: CreateScheduleRequest): Promise<Response<CreateScheduleResponse>> => {
 	const res = await FetchWithAuth("/schedules/", {
 		method: "POST",
-		body: JSON.stringify(createScheduleProps),
+		body: JSON.stringify({
+			...createScheduleProps,
+			repeat_type: createScheduleProps.repeat_type === "none" ? "" : createScheduleProps.repeat_type,
+		}),
 	})
 	return {
 		data: res.data,
