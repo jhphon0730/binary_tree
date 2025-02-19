@@ -34,7 +34,7 @@ func InitDiaryRedisInstance(ctx context.Context) error {
 	return nil
 }
 
-func GetRedisRedis(ctx context.Context) *redis.Client {
+func GetDiaryRedis(ctx context.Context) *redis.Client {
 	diaryOnce.Do(func() {
 		InitDiaryRedisInstance(ctx)
 	})

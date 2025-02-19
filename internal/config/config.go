@@ -24,6 +24,7 @@ type Redis struct {
 	USER_DB int
 	CoupleInvitationDB int
 	DiaryDB int
+	ScheduleDB int
 }
 
 type Config struct {
@@ -74,6 +75,7 @@ func LoadConfig() (*Config, error) {
 			USER_DB:  0,
 			CoupleInvitationDB: 1,
 			DiaryDB: 2,
+			ScheduleDB: 3,
 		},
 		JWT_SECRET: getEnv("JWT_SECRET", ""),
 		CHAR_SET:   getEnv("CHAR_SET", "asdqwe123"),

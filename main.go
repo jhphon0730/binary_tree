@@ -53,11 +53,23 @@ func main() {
 		log.Fatalf("Error initializing diary redis: %s", err)
 	}
 	defer redis.CloseDiaryRedis()
+	//// redis - schedule
+	log.Println("Initializing Schedule redis...")
+	if err := redis.InitScheduleRedisInstance(ctx); err != nil {
+		log.Fatalf("Error initializing schedule redis: %s", err)
+	}
+	defer redis.CloseScheduleRedis()
 
 	// Bcrypt
 	log.Println("Initializing Bcrypt...")
 	if err := utils.InitBcrypt(); err != nil {
 		log.Fatalf("BCRYPT Setting Error: %s", err)
+	}
+
+	// 캘린더 초기화
+	log.Println("Initializing Calendar...")
+	if err := redis.RunDailyScheduleUpdate(ctx); err != nil {
+		log.Fatalf("Error initializing calendar: %s", err)
 	}
 
 	// Run server
