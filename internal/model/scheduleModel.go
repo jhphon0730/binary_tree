@@ -45,36 +45,37 @@ type Schedule struct {
 	gorm.Model
 
 	// User
-	CoupleID uint `json:"couple_id" gorm:"not null" binding:"required" validate:"required"`  // 어떤 커플의 일기인지
-	AuthorID uint `json:"author_id" gorm:"not null" binding:"required" validate:"required"`  // 작성자 ID
-	// -- preload
-	Couple Couple `gorm:"foreignKey:CoupleID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Author User   `gorm:"foreignKey:AuthorID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	CoupleID uint `json:"couple_id" gorm:"not null" binding:"required" validate:"required"`
+	AuthorID uint `json:"author_id" gorm:"not null" binding:"required" validate:"required"`
 
-	// Deault Fields
-	Title     		string    `json:"title" gorm:"type:varchar(255);not null" binding:"required"`
-	Description   string    `json:"description" gorm:"type:text;not null" binding:"required"`
-	StartDate 		time.Time `json:"start_date" gorm:"not null" binding:"required"`
-	EndDate 			time.Time `json:"end_date" gorm:"not null" binding:"required"`
-	EventType 		string `json:"event_type" gorm:"type:varchar(50);not null" binding:"required"`
+	// Foreign Keys
+	Couple Couple `gorm:"foreignKey:CoupleID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Author User   `gorm:"foreignKey:AuthorID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+
+	// Default Fields
+	Title       string    `json:"title" gorm:"type:varchar(255);not null" binding:"required"`
+	Description string    `json:"description" gorm:"type:text;not null" binding:"required"`
+	StartDate   time.Time `json:"start_date" gorm:"not null" binding:"required"`
+	EndDate     time.Time `json:"end_date" gorm:"not null" binding:"required"`
+	EventType   string    `json:"event_type" gorm:"type:varchar(50);not null" binding:"required"`
 
 	// Repeat Fields
-	RepeatType 	string `json:"repeat_type" gorm:"type:varchar(10);default:NULL"` // ('yearly', 'monthly', 'daily', NULL)
-	RepeatUntil time.Time `json:"repeat_until" gorm:"default:NULL"` // 반복 종료일 (NULL이면 무한 반복)
+	RepeatType  string     `json:"repeat_type" gorm:"type:varchar(10);default:''"` // ('yearly', 'monthly', 'daily', '')
+	RepeatUntil *time.Time `json:"repeat_until" gorm:"default:NULL"` // NULL이면 무한 반복
 
 	// Details
-	Details []ScheduleDetail `json:"details" gorm:"foreignKey:ScheduleID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`  // 일정 세부 내용들
+	Details []ScheduleDetail `json:"details" gorm:"foreignKey:ScheduleID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type ScheduleDetail struct {
 	gorm.Model
 
 	// Schedule
-	ScheduleID uint `json:"schedule_id" gorm:"not null" binding:"required" validate:"required"`  // 어떤 일정(schedules) 소속인지
+	ScheduleID uint `json:"schedule_id" gorm:"not null" binding:"required" validate:"required"`
 
 	// Detail Fields
-	Title 	 			string    `json:"title" gorm:"type:varchar(255);not null" binding:"required"`
-	Description   string    `json:"description" gorm:"type:text;not null" binding:"required"`
-	StartTime 	  time.Time `json:"start_time" gorm:"not null" binding:"required"`
-	EndTime 	    time.Time `json:"end_time" gorm:"not null" binding:"required"`
+	Title       string `json:"title" gorm:"type:varchar(255);not null" binding:"required"`
+	Description string `json:"description" gorm:"type:text;not null" binding:"required"`
+	StartTime   string `json:"start_time" gorm:"type:time;not null" binding:"required"` // "HH:MM:SS" 형식
+	EndTime     string `json:"end_time" gorm:"type:time;not null" binding:"required"`   // "HH:MM:SS" 형식
 }

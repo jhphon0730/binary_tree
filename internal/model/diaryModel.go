@@ -21,8 +21,8 @@ type Diary struct {
 	CoupleID uint `json:"couple_id" gorm:"not null" binding:"required" validate:"required"`  // 어떤 커플의 일기인지
 	AuthorID uint `json:"author_id" gorm:"not null" binding:"required" validate:"required"`  // 작성자 ID
 
-	Couple Couple `gorm:"foreignKey:CoupleID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Author User   `gorm:"foreignKey:AuthorID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Couple Couple `gorm:"foreignKey:CoupleID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Author User   `gorm:"foreignKey:AuthorID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	Title     string    `json:"title" gorm:"type:varchar(255);not null" binding:"required"`
 	Content   string    `json:"content" gorm:"type:text;not null" binding:"required"`
