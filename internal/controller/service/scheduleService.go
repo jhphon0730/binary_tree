@@ -18,7 +18,7 @@ type ScheduleService interface {
 	GetSchedules(userID uint) ([]model.Schedule, int, error)
 	GetMyCoupleSchedules(userID uint) ([]model.Schedule, int, error)
 	CreateSchedule(userID uint, createScheduleDTO dto.CreateScheduleDTO) (uint, int, error)
-	DeleteSchedule(scheduleID uint, userID uint) (int, error)
+	DeleteSchedule(scheduleID uint, userID uint) (uint, int, error)
 	GetScheduleByID(scheduleID uint) (model.Schedule, int, error)
 	GetRedisSchedulesByCoupleID(userID uint) ([]model.Schedule, int, error)
 	GetRedisRepeatSchedulesByCoupleID(userID uint) ([]model.Schedule, int, error)
@@ -109,26 +109,26 @@ func (s *scheduleService) CreateSchedule(userID uint, createScheduleDTO dto.Crea
 /* 캘린더 삭제
 	* 캘린더에 있던 상세 일정도 삭제
 */
-func (s *scheduleService) DeleteSchedule(scheduleID uint, userID uint) (int, error) {
+func (s *scheduleService) DeleteSchedule(scheduleID uint, userID uint) (uint, int, error) {
 	schedule, err := model.FindScheduleByID(s.DB, scheduleID)
 	if err != nil {
-		return http.StatusInternalServerError, errors.ErrCannotFindSchedule
+		return 0, http.StatusInternalServerError, errors.ErrCannotFindSchedule
 	}
 
 	couple, err := model.GetCoupleByUserID(s.DB, userID)
 	if err != nil {
-		return http.StatusInternalServerError, errors.ErrCannotFindCouple
+		return 0, http.StatusInternalServerError, errors.ErrCannotFindCouple
 	}
 
 	if schedule.CoupleID != couple.ID {
-		return http.StatusForbidden, errors.ErrIsNotScheduleOwner
+		return 0, http.StatusForbidden, errors.ErrIsNotScheduleOwner
 	}
 
 	if err := schedule.Delete(s.DB); err != nil {
-		return http.StatusInternalServerError, errors.ErrCannotDeleteSchedule
+		return 0, http.StatusInternalServerError, errors.ErrCannotDeleteSchedule
 	}
 
-	return http.StatusOK, nil
+	return couple.ID, http.StatusOK, nil
 }
 
 /* 캘린더 ID로 캘린더 조회 */

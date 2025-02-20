@@ -106,13 +106,13 @@ func (d *scheduleController) DeleteSchedule(c *gin.Context) {
 		return
 	}
 
-	status, err := d.scheduleService.DeleteSchedule(uint(scheduleID), uint(userID))
+	coupleID, status, err := d.scheduleService.DeleteSchedule(uint(scheduleID), uint(userID))
 	if err != nil {
 		response.Error(c, status, err.Error())
 		return
 	}
 
-	err = redis.RunDailyScheduleUpdateByCoupleID(c, uint(userID))
+	err = redis.RunDailyScheduleUpdateByCoupleID(c, coupleID)
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
