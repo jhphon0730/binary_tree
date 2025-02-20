@@ -257,7 +257,14 @@ func clearDailySchedulesInRedis(ctx context.Context) error {
 	redisClient := getScheduleRedis(ctx)
 
 	// `schedule_today:*`와 `schedule_repeat_today:*` 키 삭제
-	return redisClient.Del(ctx, "schedule_today:*", "schedule_repeat_today:*").Err()
+	keys, _ := redisClient.Keys(ctx, "schedule_today:*").Result()
+	repeatKeys, _ := redisClient.Keys(ctx, "schedule_repeat_today:*").Result()
+
+	keys = append(keys, repeatKeys...)
+	if len(keys) > 0 {
+		return redisClient.Del(ctx, keys...).Err()
+	}
+	return nil
 }
 
 // 오늘 일정 및 반복 일정을 Redis에서 가져오는 함수
