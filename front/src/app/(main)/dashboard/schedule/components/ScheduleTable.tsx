@@ -16,7 +16,7 @@ const ScheduleTable: React.FC<ScheduleTableProps> = ({ schedules }) => {
   const router = useRouter()
 
   const handleScheduleClick = (scheduleId: number) => {
-    router.push(`/dashboard/schedule/${scheduleId}`)
+    router.push(`/dashboard/schedule/detail/${scheduleId}`)
   }
 
   return (
