@@ -9,12 +9,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"strconv"
 	"net/http"
 )
 
 type ScheduleController interface {
 	GetSchedules(c *gin.Context)
 	CreateSchedule(c *gin.Context)
+	DeleteSchedule(c *gin.Context)
 
 	GetRedisSchedulesByCoupleID(c *gin.Context)
 	GetRedisRepeatSchedulesByCoupleID(c *gin.Context)
@@ -83,6 +85,31 @@ func (d *scheduleController) CreateSchedule(c *gin.Context) {
 	_ = redis.RunDailyScheduleUpdateByCoupleID(c, coupleID)
 
 	response.Success(c, gin.H{"message": "일정이 추가되었습니다."})
+}
+
+func (d *scheduleController) DeleteSchedule(c *gin.Context) {
+	userID := c.GetInt("userID")
+	scheduleIDStr, isValidScheduleIDStr := c.GetQuery("scheduleID")
+	if !isValidScheduleIDStr || scheduleIDStr == "" {
+		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindScheduleID.Error())
+		return
+	}
+
+	scheduleID, err := strconv.Atoi(scheduleIDStr)
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindScheduleID.Error())
+		return
+	}
+
+	status, err := d.scheduleService.DeleteSchedule(uint(scheduleID), uint(userID))
+	if err != nil {
+		response.Error(c, status, err.Error())
+		return
+	}
+
+	_ = redis.RunDailyScheduleUpdateByCoupleID(c, uint(userID))
+
+	response.Success(c, gin.H{"message": "일정이 삭제되었습니다."})
 }
 
 func (d *scheduleController) GetRedisSchedulesByCoupleID(c *gin.Context) {

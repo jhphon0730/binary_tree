@@ -78,5 +78,9 @@ var (
 	ErrCannotFindDiaryDate			= errors.New("작성 날짜를 찾을 수 없습니다.")
 
 	// Schedule
-	ErrCannotFindSchedules = errors.New("일정을 찾을 수 없습니다.")
+	ErrCannotFindSchedules 				= errors.New("일정을 찾을 수 없습니다.")
+	ErrCannotFindSchedule  				= errors.New("일정을 찾을 수 없습니다.")
+	ErrCannotDeleteSchedule 			= errors.New("일정을 삭제할 수 없습니다.")
+	ErrCannotDeleteScheduleDetail = errors.New("일정 상세를 삭제할 수 없습니다.")
+	ErrCannotFindScheduleID 			= errors.New("일정을 찾을 수 없습니다.")
 )
