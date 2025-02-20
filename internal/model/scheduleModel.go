@@ -41,8 +41,8 @@ type ScheduleDetail struct {
 	// Detail Fields
 	Title       string `json:"title" gorm:"type:varchar(255);not null" binding:"required"`
 	Description string `json:"description" gorm:"type:text;not null" binding:"required"`
-	StartTime   string `json:"start_time" gorm:"type:time;not null" binding:"required"` // "HH:MM:SS" 형식
-	EndTime     string `json:"end_time" gorm:"type:time;not null" binding:"required"`   // "HH:MM:SS" 형식
+	StartTime   string `json:"start_time" gorm:"type:text;not null" binding:"required"` // "HH:MM:SS" 형식
+	EndTime     string `json:"end_time" gorm:"type:text;not null" binding:"required"`   // "HH:MM:SS" 형식
 }
 
 func (s *Schedule) Save(db *gorm.DB) error {
