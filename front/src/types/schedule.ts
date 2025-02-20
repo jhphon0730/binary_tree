@@ -20,6 +20,23 @@ export type Schedule = CreateScheduleDTO & {
   CreatedAt: string;
   UpdatedAt: string;
   DeletedAt: string;
+
+	details: ScheduleDetail[]
+}
+
+export type ScheduleDetail = {
+	ID: number;
+
+	schedule_id: number;
+
+	title: string;
+	description: string;
+	start_time: string;
+	end_time: string;
+
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt: string;
 }
 
 export type ScheduleViewType = "MY" | "COUPLE" | "ALL"
