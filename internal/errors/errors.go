@@ -80,7 +80,9 @@ var (
 	// Schedule
 	ErrCannotFindSchedules 				= errors.New("일정을 찾을 수 없습니다.")
 	ErrCannotFindSchedule  				= errors.New("일정을 찾을 수 없습니다.")
+	ErrCannotFindScheduleDB  			= errors.New("저장된 일정을 찾을 수 없습니다.")
 	ErrCannotDeleteSchedule 			= errors.New("일정을 삭제할 수 없습니다.")
 	ErrCannotDeleteScheduleDetail = errors.New("일정 상세를 삭제할 수 없습니다.")
 	ErrCannotFindScheduleID 			= errors.New("일정을 찾을 수 없습니다.")
+	ErrIsNotScheduleOwner 				= errors.New("일정 작성자가 아니면 일정 삭제가 불가능합니다.")
 )

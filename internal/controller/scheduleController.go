@@ -82,7 +82,11 @@ func (d *scheduleController) CreateSchedule(c *gin.Context) {
 		return
 	}
 
-	_ = redis.RunDailyScheduleUpdateByCoupleID(c, coupleID)
+	err = redis.RunDailyScheduleUpdateByCoupleID(c, coupleID)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	response.Success(c, gin.H{"message": "일정이 추가되었습니다."})
 }
@@ -107,7 +111,11 @@ func (d *scheduleController) DeleteSchedule(c *gin.Context) {
 		return
 	}
 
-	_ = redis.RunDailyScheduleUpdateByCoupleID(c, uint(userID))
+	err = redis.RunDailyScheduleUpdateByCoupleID(c, uint(userID))
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	response.Success(c, gin.H{"message": "일정이 삭제되었습니다."})
 }

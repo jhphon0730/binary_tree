@@ -120,7 +120,7 @@ func (s *scheduleService) DeleteSchedule(scheduleID uint, userID uint) (int, err
 	}
 
 	if schedule.CoupleID != couple.ID {
-		return http.StatusForbidden, errors.ErrCannotDeleteSchedule
+		return http.StatusForbidden, errors.ErrIsNotScheduleOwner
 	}
 
 	if err := schedule.Delete(s.DB); err != nil {
