@@ -13,11 +13,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 	return (
 		<WithAuthLayout>
 			<SidebarProvider>
-				<div className="flex w-screen h-screen">
+				<div className="flex flex-col md:flex-row w-screen h-screen">
 					<Sidebar />
 					<div className="flex flex-col flex-grow">
 						<Navbar />
-						<main className="flex-grow p-6 overflow-auto">
+						<main className="flex-grow md:p-5 overflow-auto">
 							{children}
 						</main>
 					</div>

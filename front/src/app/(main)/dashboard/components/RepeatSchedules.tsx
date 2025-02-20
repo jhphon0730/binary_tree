@@ -35,7 +35,7 @@ const RepeatSchedules = ({ schedules }: RepeatSchedulesProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="pr-4">
+        <ScrollArea className="h-[200px] pr-4">
           { schedules.length > 0 ? (
             <div className="space-y-4">
               {schedules.map((schedule) => (
