@@ -76,3 +76,35 @@ export const GetRedisRepeatSchedulesByCoupleID = async (): Promise<Response<GetR
 		error: res.error,
 	}
 }
+
+/** 캘린더 삭제 함수 */
+type DeleteScheduleRequest = { schedule_id: number }
+type DeleteScheduleResponse = { }
+export const DeleteSchedule = async (deleteScheduleProps: DeleteScheduleRequest): Promise<Response<DeleteScheduleResponse>> => {
+	const res = await FetchWithAuth(`/schedules/?scheduleID=${deleteScheduleProps.schedule_id}`, {
+		method: "DELETE",
+	})
+	return {
+		data: res.data,
+		state: res.state,
+		message: res.message,
+		error: res.error,
+	}
+}
+
+/** 캘린더 상세 조회 함수 */
+type GetScheduleByIDRequest = { schedule_id: number }
+type GetScheduleByIDResponse = {
+	schedule: Schedule
+}
+export const GetScheduleByID = async (getScheduleByIDProps: GetScheduleByIDRequest): Promise<Response<GetScheduleByIDResponse>> => {
+	const res = await FetchWithAuth(`/schedules/detail?scheduleID=${getScheduleByIDProps.schedule_id}`, {
+		method: "GET",
+	})
+	return {
+		data: res.data,
+		state: res.state,
+		message: res.message,
+		error: res.error,
+	}
+}
