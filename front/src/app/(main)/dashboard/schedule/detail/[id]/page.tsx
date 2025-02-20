@@ -1,15 +1,13 @@
 import React from 'react';
-import Swal from "sweetalert2"
-import Link from "next/link"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
-import { CalendarClock, CalendarDays, Clock, Pencil, Repeat, Trash2, Type } from "lucide-react"
+import { CalendarClock, CalendarDays, Clock, Repeat, Type } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import SSRError from "@/components/SSRError"
+import PageHeader from "@/app/(main)/dashboard/schedule/detail/components/PageHeader"
 
 import { Schedule } from "@/types/schedule"
 import { GetScheduleByID } from "@/lib/api/schedule"
@@ -53,20 +51,7 @@ const ScheduleDetailPage = async ({ params }: ScheduleDetailPageProps) => {
 	if (scheduleDetailResponse.error || !scheduleDetailResponse.data) {
 		return <SSRError error={scheduleDetailResponse.error || scheduleDetailResponse.message} />
 	}
-
 	schedule = scheduleDetailResponse.data.schedule
-	loading = false
-
-  if (loading) {
-    return (
-      <div className="container mx-auto p-4">
-        <div className="max-w-3xl mx-auto space-y-4">
-          <div className="h-8 bg-muted rounded animate-pulse" />
-          <div className="h-[200px] bg-muted rounded animate-pulse" />
-        </div>
-      </div>
-    )
-  }
 
   if (!schedule) {
     return (
@@ -79,19 +64,9 @@ const ScheduleDetailPage = async ({ params }: ScheduleDetailPageProps) => {
   return (
     <div className="container mx-auto p-4 space-y-6">
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">{schedule.title}</h1>
-          <div className="space-x-2">
-            <Button variant="outline" size="sm">
-              <Pencil className="h-4 w-4 mr-2" />
-              수정
-            </Button>
-            <Button variant="destructive" size="sm">
-              <Trash2 className="h-4 w-4 mr-2" />
-              삭제
-            </Button>
-          </div>
-        </div>
+				<PageHeader 
+					schedule={schedule}
+				/>
 
         <div className="grid gap-6">
           <Card>
