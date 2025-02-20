@@ -27,7 +27,7 @@ const TodaySchedules = ({ schedules }: TodaySchedulesProps) => {
   }
 
   return (
-    <Card className="col-span-2">
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CalendarClock className="h-5 w-5" />
@@ -36,7 +36,7 @@ const TodaySchedules = ({ schedules }: TodaySchedulesProps) => {
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[200px] pr-4">
-					{ schedules.length > 0 ? (
+					{ schedules && schedules.length > 0 ? (
             <div className="space-y-4">
               {schedules.map((schedule) => (
                 <div key={schedule.ID} className="flex flex-col gap-2 rounded-lg border p-4 hover:bg-muted/50">
