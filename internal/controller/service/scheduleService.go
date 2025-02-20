@@ -19,6 +19,7 @@ type ScheduleService interface {
 	GetMyCoupleSchedules(userID uint) ([]model.Schedule, int, error)
 	CreateSchedule(userID uint, createScheduleDTO dto.CreateScheduleDTO) (uint, int, error)
 	DeleteSchedule(scheduleID uint, userID uint) (int, error)
+	GetScheduleByID(scheduleID uint) (model.Schedule, int, error)
 	GetRedisSchedulesByCoupleID(userID uint) ([]model.Schedule, int, error)
 	GetRedisRepeatSchedulesByCoupleID(userID uint) ([]model.Schedule, int, error)
 }
@@ -128,6 +129,16 @@ func (s *scheduleService) DeleteSchedule(scheduleID uint, userID uint) (int, err
 	}
 
 	return http.StatusOK, nil
+}
+
+/* 캘린더 ID로 캘린더 조회 */
+func (s *scheduleService) GetScheduleByID(scheduleID uint) (model.Schedule, int, error) {
+	schedule, err := model.FindScheduleByIDWithDetails(s.DB, scheduleID)
+	if err != nil {
+		return model.Schedule{}, http.StatusInternalServerError, errors.ErrCannotFindSchedule
+	}
+
+	return *schedule, http.StatusOK, nil
 }
 
 // 사용자와 커플의 일정을 Redis에서 조회

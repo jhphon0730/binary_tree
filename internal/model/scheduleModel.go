@@ -62,3 +62,13 @@ func FindScheduleByID(db *gorm.DB, scheduleID uint) (*Schedule, error) {
 
 	return &schedule, nil
 }
+
+// FindScheduleByIDWithDetails
+func FindScheduleByIDWithDetails(db *gorm.DB, scheduleID uint) (*Schedule, error) {
+	var schedule Schedule
+	if err := db.Preload("Details").Where("id = ?", scheduleID).First(&schedule).Error; err != nil {
+		return nil, err
+	}
+
+	return &schedule, nil
+}

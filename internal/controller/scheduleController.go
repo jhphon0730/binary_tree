@@ -17,6 +17,7 @@ type ScheduleController interface {
 	GetSchedules(c *gin.Context)
 	CreateSchedule(c *gin.Context)
 	DeleteSchedule(c *gin.Context)
+	GetScheduleByID(c *gin.Context)
 
 	GetRedisSchedulesByCoupleID(c *gin.Context)
 	GetRedisRepeatSchedulesByCoupleID(c *gin.Context)
@@ -118,6 +119,28 @@ func (d *scheduleController) DeleteSchedule(c *gin.Context) {
 	}
 
 	response.Success(c, gin.H{"message": "일정이 삭제되었습니다."})
+}
+
+func (d *scheduleController) GetScheduleByID(c *gin.Context) {
+	scheduleIDStr, isValidScheduleIDStr := c.GetQuery("scheduleID")
+	if !isValidScheduleIDStr || scheduleIDStr == "" {
+		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindScheduleID.Error())
+		return
+	}
+
+	scheduleID, err := strconv.Atoi(scheduleIDStr)
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindScheduleID.Error())
+		return
+	}
+
+	schedule, status, err := d.scheduleService.GetScheduleByID(uint(scheduleID))
+	if err != nil {
+		response.Error(c, status, err.Error())
+		return
+	}
+
+	response.Success(c, gin.H{"schedule": schedule})
 }
 
 func (d *scheduleController) GetRedisSchedulesByCoupleID(c *gin.Context) {
