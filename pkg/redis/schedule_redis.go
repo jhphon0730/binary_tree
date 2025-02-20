@@ -13,6 +13,7 @@ import (
 	"time"
 	"sync"
 	"context"
+	"encoding/json"
 )
 
 var (
@@ -67,7 +68,7 @@ func updateDailySchedulesByCoupleID(ctx context.Context, coupleID uint) error {
 	todayStr := today.Format("2006-01-02")
 
 	var schedules []model.Schedule
-	if err := db.Where("couple_id = ? AND repeat_type = ''", coupleID).Find(&schedules).Error; err != nil {
+	if err := db.Where("couple_id = ? AND repeat_type = '' OR repeat_type IS NULL", coupleID).Find(&schedules).Error; err != nil {
 		return err
 	}
 
@@ -80,7 +81,12 @@ func updateDailySchedulesByCoupleID(ctx context.Context, coupleID uint) error {
 		if (schedule.StartDate.Before(today) || startStr == todayStr) &&
 			(schedule.EndDate.After(today) || endStr == todayStr) {
 			todayKey := fmt.Sprintf("schedule_today:%d", schedule.CoupleID)
-			pipe.SAdd(ctx, todayKey, schedule.ID)
+			serialized, err := json.Marshal(schedule)
+			if err != nil {
+					log.Printf("Failed to serialize schedule ID %d: %v", schedule.ID, err)
+					continue // 해당 일정은 건너뜀
+			}
+			pipe.SAdd(ctx, todayKey, serialized)
 		}
 	}
 	_, err := pipe.Exec(ctx)
@@ -119,7 +125,12 @@ func updateDailyRepeatSchedulesByCoupleID(ctx context.Context, coupleID uint) er
 			(schedule.RepeatType == "yearly" && schedule.StartDate.Day() == day && schedule.StartDate.Month() == month) {
 
 			todayKey := fmt.Sprintf("schedule_repeat_today:%d", schedule.CoupleID)
-			pipe.SAdd(ctx, todayKey, schedule.ID)
+			serialized, err := json.Marshal(schedule)
+			if err != nil {
+					log.Printf("Failed to serialize schedule ID %d: %v", schedule.ID, err)
+					continue // 해당 일정은 건너뜀
+			}
+			pipe.SAdd(ctx, todayKey, serialized)
 		}
 	}
 	_, err := pipe.Exec(ctx)
@@ -134,14 +145,7 @@ func clearDailySchedulesByCoupleID(ctx context.Context, coupleID uint) error {
 	todayKey := fmt.Sprintf("schedule_today:%d", coupleID)
 	repeatKey := fmt.Sprintf("schedule_repeat_today:%d", coupleID)
 
-	keys, _ := redisClient.Keys(ctx, todayKey).Result()
-	repeatKeys, _ := redisClient.Keys(ctx, repeatKey).Result()
-
-	keys = append(keys, repeatKeys...)
-	if len(keys) > 0 {
-		return redisClient.Del(ctx, keys...).Err()
-	}
-	return nil
+	return redisClient.Del(ctx, todayKey, repeatKey).Err()
 }
 
 func RunDailyScheduleUpdateByCoupleID(ctx context.Context, coupleID uint) error {
@@ -175,7 +179,7 @@ func updateDailySchedulesInRedis(ctx context.Context) error {
 	todayStr := today.Format("2006-01-02")
 
 	var schedules []model.Schedule
-	err := db.Where("repeat_type = ''").Find(&schedules).Error
+	err := db.Where("repeat_type = '' OR repeat_type IS NULL").Find(&schedules).Error
 	if err != nil {
 		return err
 	}
@@ -188,7 +192,12 @@ func updateDailySchedulesInRedis(ctx context.Context) error {
 
 		if (schedule.StartDate.Before(today) || startStr == todayStr) && (schedule.EndDate.After(today) || endStr == todayStr) {
 			todayKey := fmt.Sprintf("schedule_today:%d", schedule.CoupleID)
-			pipe.SAdd(ctx, todayKey, schedule.ID)
+			serialized, err := json.Marshal(schedule)
+			if err != nil {
+					log.Printf("Failed to serialize schedule ID %d: %v", schedule.ID, err)
+					continue // 해당 일정은 건너뜀
+			}
+			pipe.SAdd(ctx, todayKey, serialized)
 		}
 	}
 	_, err = pipe.Exec(ctx)
@@ -231,7 +240,12 @@ func updateDailyRepeatSchedulesInRedis(ctx context.Context) error {
 			(schedule.RepeatType == "yearly" && schedule.StartDate.Day() == day && schedule.StartDate.Month() == month) {
 
 			todayKey := fmt.Sprintf("schedule_repeat_today:%d", schedule.CoupleID)
-			pipe.SAdd(ctx, todayKey, schedule.ID)
+			serialized, err := json.Marshal(schedule)
+			if err != nil {
+					log.Printf("Failed to serialize schedule ID %d: %v", schedule.ID, err)
+					continue // 해당 일정은 건너뜀
+			}
+			pipe.SAdd(ctx, todayKey, serialized)
 		}
 	}
 	_, err = pipe.Exec(ctx)
@@ -243,14 +257,7 @@ func clearDailySchedulesInRedis(ctx context.Context) error {
 	redisClient := getScheduleRedis(ctx)
 
 	// `schedule_today:*`와 `schedule_repeat_today:*` 키 삭제
-	keys, _ := redisClient.Keys(ctx, "schedule_today:*").Result()
-	repeatKeys, _ := redisClient.Keys(ctx, "schedule_repeat_today:*").Result()
-
-	keys = append(keys, repeatKeys...)
-	if len(keys) > 0 {
-		return redisClient.Del(ctx, keys...).Err()
-	}
-	return nil
+	return redisClient.Del(ctx, "schedule_today:*", "schedule_repeat_today:*").Err()
 }
 
 // 오늘 일정 및 반복 일정을 Redis에서 가져오는 함수
@@ -271,4 +278,50 @@ func RunDailyScheduleUpdate(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+// 오늘 일정을 가져오는 함수
+func GetDailySchedulesByCoupleID(ctx context.Context, coupleID uint) ([]model.Schedule, error) {
+	redisClient := getScheduleRedis(ctx)
+	todayKey := fmt.Sprintf("schedule_today:%d", coupleID)
+
+	serialized, err := redisClient.SMembers(ctx, todayKey).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	var schedules []model.Schedule
+	for _, s := range serialized {
+		var schedule model.Schedule
+		if err := json.Unmarshal([]byte(s), &schedule); err != nil {
+			log.Printf("Failed to deserialize schedule: %v", err)
+			continue
+		}
+		schedules = append(schedules, schedule)
+	}
+
+	return schedules, nil
+}
+
+// 오늘 반복 일정을 가져오는 함수
+func GetDailyRepeatSchedulesByCoupleID(ctx context.Context, coupleID uint) ([]model.Schedule, error) {
+	redisClient := getScheduleRedis(ctx)
+	todayKey := fmt.Sprintf("schedule_repeat_today:%d", coupleID)
+
+	serialized, err := redisClient.SMembers(ctx, todayKey).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	var schedules []model.Schedule
+	for _, s := range serialized {
+		var schedule model.Schedule
+		if err := json.Unmarshal([]byte(s), &schedule); err != nil {
+			log.Printf("Failed to deserialize schedule: %v", err)
+			continue
+		}
+		schedules = append(schedules, schedule)
+	}
+
+	return schedules, nil
 }
