@@ -5,8 +5,11 @@ import (
 	"binary_tree/internal/model"
 	"binary_tree/internal/model/dto"
 
+	"binary_tree/pkg/redis"
+
 	"gorm.io/gorm"
 
+	"context"
 	"net/http"
 )
 
@@ -15,6 +18,8 @@ type ScheduleService interface {
 	GetSchedules(userID uint) ([]model.Schedule, int, error)
 	GetMyCoupleSchedules(userID uint) ([]model.Schedule, int, error)
 	CreateSchedule(userID uint, createScheduleDTO dto.CreateScheduleDTO) (uint, int, error)
+	GetRedisSchedulesByCoupleID(userID uint) ([]model.Schedule, int, error)
+	GetRedisRepeatSchedulesByCoupleID(userID uint) ([]model.Schedule, int, error)
 }
 
 type scheduleService struct {
@@ -40,13 +45,13 @@ func (s *scheduleService) GetMySchedules(userID uint) ([]model.Schedule, int, er
 
 // 사용자와 사용자의 커플이 서로 작성한 캘린더을 조회
 func (s *scheduleService) GetSchedules(userID uint) ([]model.Schedule, int, error) {
-	coupleID, err := model.GetCoupleByUserID(s.DB, userID)
+	couple, err := model.GetCoupleByUserID(s.DB, userID)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
 	var schedules []model.Schedule
-	if err := s.DB.Where("couple_id = ?", coupleID.ID).Find(&schedules).Error; err != nil {
+	if err := s.DB.Where("couple_id = ?", couple.ID).Find(&schedules).Error; err != nil {
 		return nil, http.StatusInternalServerError, errors.ErrCannotFindSchedules
 	}
 
@@ -97,4 +102,28 @@ func (s *scheduleService) CreateSchedule(userID uint, createScheduleDTO dto.Crea
 	}
 
 	return couple.ID, http.StatusCreated, nil
+}
+
+// 사용자와 커플의 일정을 Redis에서 조회
+func (s *scheduleService) GetRedisSchedulesByCoupleID(userID uint) ([]model.Schedule, int, error) {
+	couple, err := model.GetCoupleByUserID(s.DB, userID)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	schedules, err := redis.GetDailySchedulesByCoupleID(context.Background(), couple.ID)
+
+	return schedules, http.StatusOK, nil
+}
+
+// 사용자와 커플의 반복 일정을 Redis에서 조회
+func (s *scheduleService) GetRedisRepeatSchedulesByCoupleID(userID uint) ([]model.Schedule, int, error) {
+	couple, err := model.GetCoupleByUserID(s.DB, userID)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	schedules, err := redis.GetDailyRepeatSchedulesByCoupleID(context.Background(), couple.ID)
+
+	return schedules, http.StatusOK, nil
 }

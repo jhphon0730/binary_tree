@@ -15,6 +15,9 @@ import (
 type ScheduleController interface {
 	GetSchedules(c *gin.Context)
 	CreateSchedule(c *gin.Context)
+
+	GetRedisSchedulesByCoupleID(c *gin.Context)
+	GetRedisRepeatSchedulesByCoupleID(c *gin.Context)
 }
 
 type scheduleController struct {
@@ -80,4 +83,28 @@ func (d *scheduleController) CreateSchedule(c *gin.Context) {
 	_ = redis.RunDailyScheduleUpdateByCoupleID(c, coupleID)
 
 	response.Success(c, gin.H{"message": "일정이 추가되었습니다."})
+}
+
+func (d *scheduleController) GetRedisSchedulesByCoupleID(c *gin.Context) {
+	userID := c.GetInt("userID")
+
+	schedules, status, err := d.scheduleService.GetRedisSchedulesByCoupleID(uint(userID))
+	if err != nil {
+		response.Error(c, status, err.Error())
+		return
+	}
+
+	response.Success(c, gin.H{"schedules": schedules})
+}
+
+func (d *scheduleController) GetRedisRepeatSchedulesByCoupleID(c *gin.Context) {
+	userID := c.GetInt("userID")
+
+	schedules, status, err := d.scheduleService.GetRedisRepeatSchedulesByCoupleID(uint(userID))
+	if err != nil {
+		response.Error(c, status, err.Error())
+		return
+	}
+
+	response.Success(c, gin.H{"schedules": schedules})
 }

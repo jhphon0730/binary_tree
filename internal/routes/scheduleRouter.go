@@ -7,4 +7,7 @@ import (
 func registerScheduleRoutes(router *gin.RouterGroup) {
 	router.GET("/", scheduleController.GetSchedules)
 	router.POST("/", scheduleController.CreateSchedule)
+
+	router.GET("/redis", scheduleController.GetRedisSchedulesByCoupleID)
+	router.GET("/redis/repeat", scheduleController.GetRedisRepeatSchedulesByCoupleID)
 }
