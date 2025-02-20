@@ -42,3 +42,37 @@ export const GetSchedules = async ({ScheduleViewType}: GetSchedulesRequest): Pro
 		error: res.error,
 	}
 }
+
+/** 커플의 캘린더 목록 조회 함수 ( 오늘 날짜에 해당하는 일정 ) */
+type GetRedisSchedulesByCoupleIDRequest = { }
+type GetRedisSchedulesByCoupleIDResponse = {
+	schedules: Schedule[]
+}
+export const GetRedisSchedulesByCoupleID = async (): Promise<Response<GetRedisSchedulesByCoupleIDResponse>> => {
+	const res = await FetchWithAuth("/schedules/redis", {
+		method: "GET",
+	})
+	return {
+		data: res.data,
+		state: res.state,
+		message: res.message,
+		error: res.error,
+	}
+}
+
+/** 커플의 캘린더 목록 조회 함수 ( 오늘 날짜에 해당하는 반복 일정 ) */
+type GetRedisRepeatSchedulesByCoupleIDRequest = { }
+type GetRedisRepeatSchedulesByCoupleIDResponse = {
+	schedules: Schedule[]
+}
+export const GetRedisRepeatSchedulesByCoupleID = async (): Promise<Response<GetRedisRepeatSchedulesByCoupleIDResponse>> => {
+	const res = await FetchWithAuth("/schedules/redis/repeat", {
+		method: "GET",
+	})
+	return {
+		data: res.data,
+		state: res.state,
+		message: res.message,
+		error: res.error,
+	}
+}
