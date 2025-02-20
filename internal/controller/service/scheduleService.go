@@ -14,7 +14,7 @@ type ScheduleService interface {
 	GetMySchedules(userID uint) ([]model.Schedule, int, error)
 	GetSchedules(userID uint) ([]model.Schedule, int, error)
 	GetMyCoupleSchedules(userID uint) ([]model.Schedule, int, error)
-	CreateSchedule(userID uint, createScheduleDTO dto.CreateScheduleDTO) (int, error)
+	CreateSchedule(userID uint, createScheduleDTO dto.CreateScheduleDTO) (uint, int, error)
 }
 
 type scheduleService struct {
@@ -74,10 +74,10 @@ func (s *scheduleService) GetMyCoupleSchedules(userID uint) ([]model.Schedule, i
 }
 
 /* 캘린더/캘린더 추가 */
-func (s *scheduleService) CreateSchedule(userID uint, createScheduleDTO dto.CreateScheduleDTO) (int, error) {
+func (s *scheduleService) CreateSchedule(userID uint, createScheduleDTO dto.CreateScheduleDTO) (uint, int, error) {
 	couple, err := model.GetCoupleByUserID(s.DB, userID)
 	if err != nil {
-		return http.StatusInternalServerError, err
+		return 0, http.StatusInternalServerError, err
 	}
 
 	var createdSchedule model.Schedule
@@ -93,8 +93,8 @@ func (s *scheduleService) CreateSchedule(userID uint, createScheduleDTO dto.Crea
 	createdSchedule.RepeatUntil = createScheduleDTO.RepeatUntil
 
 	if err := createdSchedule.Save(s.DB); err != nil {
-		return http.StatusInternalServerError, err
+		return 0, http.StatusInternalServerError, err
 	}
 
-	return http.StatusCreated, nil
+	return couple.ID, http.StatusCreated, nil
 }

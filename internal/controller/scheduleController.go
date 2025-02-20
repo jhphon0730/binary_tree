@@ -71,13 +71,13 @@ func (d *scheduleController) CreateSchedule(c *gin.Context) {
 		return
 	}
 
-	status, err := d.scheduleService.CreateSchedule(uint(userID), createScheduleDTO)
+	coupleID, status, err := d.scheduleService.CreateSchedule(uint(userID), createScheduleDTO)
 	if err != nil {
 		response.Error(c, status, err.Error())
 		return
 	}
 
-	_ = redis.RunDailyScheduleUpdate(c)
+	_ = redis.RunDailyScheduleUpdateByCoupleID(c, coupleID)
 
 	response.Success(c, gin.H{"message": "일정이 추가되었습니다."})
 }
