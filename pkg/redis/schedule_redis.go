@@ -6,6 +6,7 @@ import (
 	"binary_tree/internal/errors"
 	"binary_tree/internal/database"
 
+	"github.com/robfig/cron/v3"
 	"github.com/go-redis/redis/v8"
 
 	"log"
@@ -267,8 +268,56 @@ func clearDailySchedulesInRedis(ctx context.Context) error {
 	return nil
 }
 
-// 오늘 일정 및 반복 일정을 Redis에서 가져오는 함수
+// RunDailyScheduleUpdate: 서버 실행 시 1회 실행 + 매일 새벽 5시 실행
 func RunDailyScheduleUpdate(ctx context.Context) error {
+	// 서버 실행 시 즉시 실행
+	log.Println("[Cron] 서버 시작과 함께 일정 데이터 캐싱 실행")
+	if err := runScheduleCaching(ctx); err != nil {
+		log.Printf("[Cron] 초기 일정 캐싱 실패: %v", err)
+	}
+
+	// 크론 스케줄러 설정 (매일 새벽 5시 실행)
+	c := cron.New()
+	_, err := c.AddFunc("0 5 * * *", func() {
+		log.Println("[Cron] 자동 일정 데이터 캐싱 시작 (새벽 5시)")
+		if err := runScheduleCaching(ctx); err != nil {
+			log.Printf("[Cron] 자동 일정 캐싱 실패: %v", err)
+		}
+	})
+	if err != nil {
+		return err
+	}
+
+	c.Start()
+	log.Println("[Cron] 매일 새벽 5시 자동 일정 캐싱 스케줄러 등록됨")
+
+	// 크론 실행 상태를 주기적으로 확인
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				c.Stop()
+				log.Println("[Cron] 매일 새벽 5시 자동 일정 캐싱 스케줄러 종료됨")
+				return
+			default:
+				time.Sleep(5 * time.Hour)
+				entries := c.Entries()
+				if len(entries) == 0 {
+					log.Println("[Cron] 등록된 작업이 없습니다.")
+				} else {
+					for _, entry := range entries {
+						log.Printf("[Cron] 다음 실행 시간: %s", entry.Next.Format("2006-01-02 15:04:05"))
+					}
+				}
+			}
+		}
+	}()
+
+	return nil
+}
+
+// runScheduleCaching: 오늘 일정 및 반복 일정 캐싱 실행
+func runScheduleCaching(ctx context.Context) error {
 	// 1. Redis 초기화 (기존 일정 삭제)
 	if err := clearDailySchedulesInRedis(ctx); err != nil {
 		return err
