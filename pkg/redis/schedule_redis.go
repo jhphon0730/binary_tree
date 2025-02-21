@@ -1,5 +1,4 @@
 package redis
-
 import (
 	"binary_tree/internal/model"
 	"binary_tree/internal/config"
@@ -268,52 +267,41 @@ func clearDailySchedulesInRedis(ctx context.Context) error {
 	return nil
 }
 
-// RunDailyScheduleUpdate: 서버 실행 시 1회 실행 + 매일 새벽 5시 실행
+// RunDailyScheduleUpdate: 서버 실행 시 1회 실행 + 매일 정해진 시간에 실행
 func RunDailyScheduleUpdate(ctx context.Context) error {
-	// 서버 실행 시 즉시 실행
-	log.Println("[Cron] 서버 시작과 함께 일정 데이터 캐싱 실행")
+	// 크론 스케줄러 생성
+	c := cron.New()
+
 	if err := runScheduleCaching(ctx); err != nil {
 		log.Printf("[Cron] 초기 일정 캐싱 실패: %v", err)
 	}
 
-	// 크론 스케줄러 설정 (매일 새벽 5시 실행)
-	c := cron.New()
+	// 크론 스케줄러 설정 (매일 새벽 5시)
 	_, err := c.AddFunc("0 5 * * *", func() {
 		log.Println("[Cron] 자동 일정 데이터 캐싱 시작 (새벽 5시)")
-		if err := runScheduleCaching(ctx); err != nil {
-			log.Printf("[Cron] 자동 일정 캐싱 실패: %v", err)
-		}
-	})
-	if err != nil {
-		return err
-	}
 
-	c.Start()
-	log.Println("[Cron] 매일 새벽 5시 자동 일정 캐싱 스케줄러 등록됨")
-
-	// 크론 실행 상태를 주기적으로 확인
-	go func() {
-		for {
-			select {
-			case <-ctx.Done():
-				c.Stop()
-				log.Println("[Cron] 매일 새벽 5시 자동 일정 캐싱 스케줄러 종료됨")
+		for i := 0; i < 3; i++ { // 최대 3번 재시도
+			if err := runScheduleCaching(ctx); err != nil {
+				log.Printf("[Cron] 자동 일정 캐싱 실패 (재시도 %d): %v", i+1, err)
+				time.Sleep(5 * time.Second) // 5초 대기 후 재시도
+			} else {
+				log.Println("[Cron] 자동 일정 데이터 캐싱 성공")
 				return
-			default:
-				time.Sleep(5 * time.Hour)
-				entries := c.Entries()
-				if len(entries) == 0 {
-					log.Println("[Cron] 등록된 작업이 없습니다.")
-				} else {
-					for _, entry := range entries {
-						log.Printf("[Cron] 다음 실행 시간: %s", entry.Next.Format("2006-01-02 15:04:05"))
-					}
-				}
 			}
 		}
-	}()
 
-	return nil
+		log.Println("[Cron] 최대 재시도 횟수를 초과하여 일정 데이터 캐싱 실패 🚨")
+	})
+
+	if err != nil {
+		return fmt.Errorf("[Cron] 스케줄러 등록 실패: %w", err)
+	}
+
+	// 크론 스케줄러 실행 (별도 고루틴에서 실행)
+	go c.Start()
+	log.Println("[Cron] 매일 새벽 5시 자동 일정 캐싱 스케줄러 등록됨")
+
+	return nil 
 }
 
 // runScheduleCaching: 오늘 일정 및 반복 일정 캐싱 실행
