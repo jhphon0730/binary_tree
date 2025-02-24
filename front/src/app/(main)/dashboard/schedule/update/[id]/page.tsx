@@ -77,6 +77,7 @@ const UpdateSchedulePage = ({ params }: UpdateSchedulePageProps) => {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
+	const [deleteScheduleDetails, setDeleteScheduleDetails] = useState<number[]>([])
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -141,12 +142,16 @@ const UpdateSchedulePage = ({ params }: UpdateSchedulePageProps) => {
     ])
   }
 
-  const removeDetail = (index: number) => {
+  const removeDetail = (detailID: number | undefined, index: number) => {
     const currentDetails = form.getValues("details")
     form.setValue(
       "details",
       currentDetails.filter((_, i) => i !== index),
     )
+
+		if (detailID) {
+			setDeleteScheduleDetails([...deleteScheduleDetails, detailID])
+		}
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -181,6 +186,10 @@ const UpdateSchedulePage = ({ params }: UpdateSchedulePageProps) => {
 		repeat_until = is_repeat ? values.end_date : null;
 
 		console.table({ id, title, description, start_date, end_date, event_type, repeat_type, repeat_until, is_repeat });
+		const newDetails = values.details.filter((detail) => !detail.ID);
+		const updatedDetails = values.details.filter((detail) => detail.ID);
+
+		console.log({ newDetails, updatedDetails, deleteScheduleDetails });
   }
 
   if (loading) {
@@ -365,7 +374,7 @@ const UpdateSchedulePage = ({ params }: UpdateSchedulePageProps) => {
             <CardContent>
               <ScrollArea className="h-[400px] pr-4">
                 <div className="space-y-4">
-                  {details.map((_, index) => (
+                  {details.map((detail, index) => (
                     <Card key={index}>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">상세 일정 #{index + 1}</CardTitle>
@@ -373,7 +382,7 @@ const UpdateSchedulePage = ({ params }: UpdateSchedulePageProps) => {
                           type="button"
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeDetail(index)}
+                          onClick={() => removeDetail(detail.ID, index)}
                           className="text-destructive hover:text-destructive"
                         >
                           <Trash2 className="h-4 w-4" />
