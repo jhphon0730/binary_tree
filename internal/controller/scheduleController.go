@@ -17,6 +17,7 @@ type ScheduleController interface {
 	GetSchedules(c *gin.Context)
 	CreateSchedule(c *gin.Context)
 	DeleteSchedule(c *gin.Context)
+	UpdateSchedule(c *gin.Context)
 	GetScheduleByID(c *gin.Context)
 
 	GetRedisSchedulesByCoupleID(c *gin.Context)
@@ -119,6 +120,41 @@ func (d *scheduleController) DeleteSchedule(c *gin.Context) {
 	}
 
 	response.Success(c, gin.H{"message": "일정이 삭제되었습니다."})
+}
+
+func (d *scheduleController) UpdateSchedule(c *gin.Context) {
+	var UpdateScheduleDTO dto.UpdateScheduleDTO
+	if err := c.ShouldBindJSON(&UpdateScheduleDTO); err != nil {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	userID := c.GetInt("userID")
+	scheduleIDStr, isValidScheduleIDStr := c.GetQuery("scheduleID")
+	if !isValidScheduleIDStr || scheduleIDStr == "" {
+		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindScheduleID.Error())
+		return
+	}
+
+	scheduleID, err := strconv.Atoi(scheduleIDStr)
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, errors.ErrCannotFindScheduleID.Error())
+		return
+	}
+
+	coupleID, status, err := d.scheduleService.UpdateSchedule(uint(scheduleID), uint(userID), UpdateScheduleDTO)
+	if err != nil {
+		response.Error(c, status, err.Error())
+		return
+	}
+
+	err = redis.RunDailyScheduleUpdateByCoupleID(c, coupleID)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response.Success(c, gin.H{"message": "일정이 수정되었습니다."})
 }
 
 func (d *scheduleController) GetScheduleByID(c *gin.Context) {

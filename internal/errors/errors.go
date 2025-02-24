@@ -85,4 +85,7 @@ var (
 	ErrCannotDeleteScheduleDetail = errors.New("일정 상세를 삭제할 수 없습니다.")
 	ErrCannotFindScheduleID 			= errors.New("일정을 찾을 수 없습니다.")
 	ErrIsNotScheduleOwner 				= errors.New("일정 작성자가 아니면 일정 삭제가 불가능합니다.")
+	ErrCannotUpdateScheduleDetail = errors.New("일정 상세를 업데이트할 수 없습니다.")
+	ErrCannotCreateScheduleDetail = errors.New("일정 상세를 생성할 수 없습니다.")
+	ErrCannotUpdateSchedule				= errors.New("일정을 업데이트할 수 없습니다.")
 )

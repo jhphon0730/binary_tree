@@ -72,3 +72,15 @@ func FindScheduleByIDWithDetails(db *gorm.DB, scheduleID uint) (*Schedule, error
 
 	return &schedule, nil
 }
+
+func (s *ScheduleDetail) Save(db *gorm.DB) error {
+	return db.Save(&s).Error
+}
+
+func UpdateScheduleDetail(db *gorm.DB, detail ScheduleDetail) error {
+	return db.Save(&detail).Error
+}
+
+func DeleteScheduleDetail(db *gorm.DB, detailID uint) error {
+	return db.Delete(&ScheduleDetail{}, detailID).Error
+}

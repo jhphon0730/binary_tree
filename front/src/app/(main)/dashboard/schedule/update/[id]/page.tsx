@@ -22,7 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { cn } from "@/lib/utils"
-import { GetScheduleByID } from "@/lib/api/schedule";
+import { GetScheduleByID, UpdateScheduleByID } from "@/lib/api/schedule";
 import type { EventType, RepeatType } from "@/types/schedule"
 
 const eventTypes: { value: EventType; label: string }[] = [
@@ -53,7 +53,7 @@ const formSchema = z.object({
   }),
   event_type: z.enum(["anniversary", "daily", "party", "work", "holiday", "reminder", "custom"]),
   is_repeat: z.boolean().default(false),
-  repeat_type: z.enum(["none", "yearly", "monthly", "daily"]).optional(),
+  repeat_type: z.enum(["yearly", "monthly", "daily", "none"]).optional(),
   repeat_until: z.date().optional().nullable(),
   details: z.array(
     z.object({
@@ -88,7 +88,7 @@ const UpdateSchedulePage = ({ params }: UpdateSchedulePageProps) => {
       end_date: new Date(),
       event_type: "daily",
       is_repeat: false,
-      repeat_type: "none",
+      repeat_type: "daily",
       repeat_until: null,
       details: [],
     },
@@ -119,7 +119,7 @@ const UpdateSchedulePage = ({ params }: UpdateSchedulePageProps) => {
 		form.setValue("end_date", new Date(schedule.end_date))
 		form.setValue("event_type", schedule.event_type)
 		form.setValue("is_repeat", schedule.repeat_type ? true : false)
-		form.setValue("repeat_type", schedule.repeat_type)
+		form.setValue("repeat_type", schedule.repeat_type || "daily")
 		form.setValue("repeat_until", schedule.repeat_until ? new Date(schedule.repeat_until) : null)
 		form.setValue("details", schedule.details)
 
@@ -181,15 +181,31 @@ const UpdateSchedulePage = ({ params }: UpdateSchedulePageProps) => {
     setIsSubmitting(true)
 
 		const { id } = await params;
-		let { title, description, start_date, end_date, event_type, repeat_type, repeat_until, is_repeat } = values;
-		repeat_type = is_repeat ? values.repeat_type : "none";
-		repeat_until = is_repeat ? values.end_date : null;
-
-		console.table({ id, title, description, start_date, end_date, event_type, repeat_type, repeat_until, is_repeat });
 		const newDetails = values.details.filter((detail) => !detail.ID);
 		const updatedDetails = values.details.filter((detail) => detail.ID);
+		let { title, description, start_date, end_date, event_type, repeat_until, is_repeat } = values;
 
-		console.log({ newDetails, updatedDetails, deleteScheduleDetails });
+		repeat_until = is_repeat ? values.end_date : null;
+
+		const res = await UpdateScheduleByID({
+			scheduleID: Number(id), title, description, start_date, end_date, event_type, 
+			repeat_type: is_repeat ? values.repeat_type : "none", repeat_until: is_repeat ? values.end_date : null, 
+			update_details: updatedDetails, new_details: newDetails, delete_details: deleteScheduleDetails
+		})
+		if (res.error) {
+			Swal.fire({
+				icon: "error",
+				title: "일정 수정에 실패했습니다.",
+				text: res.error || "일정 수정 중 오류가 발생했습니다.",
+			})
+			return
+		}
+		Swal.fire({
+			icon: "success",
+			title: "일정 수정 완료",
+			text: "일정이 성공적으로 수정되었습니다.",
+		})
+		router.push("/dashboard/schedule")
   }
 
   if (loading) {

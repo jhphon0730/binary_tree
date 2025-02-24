@@ -1,6 +1,6 @@
 import { FetchWithAuth, Response } from "@/lib/api"
 
-import { Schedule, CreateScheduleDTO, ScheduleViewType } from "@/types/schedule"
+import { Schedule, CreateScheduleDTO, ScheduleViewType, EventType, RepeatType } from "@/types/schedule"
 
 /* 캘린더/일정 추가 함수 */
 type CreateScheduleRequest = CreateScheduleDTO & { }
@@ -100,6 +100,37 @@ type GetScheduleByIDResponse = {
 export const GetScheduleByID = async (getScheduleByIDProps: GetScheduleByIDRequest): Promise<Response<GetScheduleByIDResponse>> => {
 	const res = await FetchWithAuth(`/schedules/detail?scheduleID=${getScheduleByIDProps.scheduleID}`, {
 		method: "GET",
+	})
+	return {
+		data: res.data,
+		state: res.state,
+		message: res.message,
+		error: res.error,
+	}
+}
+
+/** 캘린더 수정 함수 */
+type UpdateScheduleByIDRequest = {
+	scheduleID: number
+	title: string;
+	description: string;
+  start_date: Date
+  end_date: Date
+  event_type: EventType
+  repeat_type?: RepeatType
+  repeat_until?: Date | null
+	new_details: any;
+	update_details: any;
+	delete_details: number[];
+}
+type UpdateScheduleByIDResponse = { }
+export const UpdateScheduleByID = async (updateScheduleByIDProps: UpdateScheduleByIDRequest): Promise<Response<UpdateScheduleByIDResponse>> => {
+	const res = await FetchWithAuth(`/schedules/?scheduleID=${updateScheduleByIDProps.scheduleID}`, {
+		method: "PUT",
+		body: JSON.stringify({
+			...updateScheduleByIDProps,
+			repeat_type: updateScheduleByIDProps.repeat_type === "none" ? "" : updateScheduleByIDProps.repeat_type,
+		}),
 	})
 	return {
 		data: res.data,
